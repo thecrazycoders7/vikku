@@ -1,11 +1,8 @@
-import { useNavigate } from 'react-router-dom'
 import { ArrowRight, ChevronDown } from 'lucide-react'
-import KanbanHero from './KanbanHero'
 import { useTheme } from '../contexts/ThemeContext'
 
 export default function Hero() {
   const { theme } = useTheme()
-  const navigate = useNavigate()
   const scrollToServices = () =>
     document.querySelector('#services')?.scrollIntoView({ behavior: 'smooth' })
   const scrollToContact = () =>
@@ -25,9 +22,8 @@ export default function Hero() {
       />
 
       {/* Layout grid */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-8 lg:gap-6 items-center">
-        {/* Left: Content */}
-        <div className="text-center lg:text-left flex flex-col items-center lg:items-start">
+      <div className="relative z-10 w-full max-w-3xl mx-auto px-6 flex flex-col items-center text-center">
+        <div className="flex flex-col items-center">
         {/* Badge */}
         <div className="section-tag">
           Software &amp; Tech Agency
@@ -73,7 +69,7 @@ export default function Hero() {
         </p>
 
         {/* CTAs */}
-        <div className="flex items-center justify-center lg:justify-start gap-2 mb-8">
+        <div className="flex items-center justify-center gap-2 mb-8">
           <button
             onClick={scrollToContact}
             className="relative inline-flex items-center gap-2 rounded-full font-semibold text-black text-xs transition-all duration-300 px-6 py-3 bg-white hover:bg-white/90 active:scale-95"
@@ -86,10 +82,10 @@ export default function Hero() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-2 max-w-md mx-auto lg:mx-0 w-full">
+        <div className="grid grid-cols-3 gap-2 max-w-md mx-auto w-full">
           {[
-            { value: '8', label: 'Completed' },
-            { value: '4 USA', label: '4 India' },
+            { value: '9', label: 'Completed' },
+            { value: '4 USA', label: '5 India' },
             { value: '2+', label: 'Ongoing' },
           ].map(({ value, label }) => (
             <div key={label} className="glass rounded-lg px-3 py-4">
@@ -98,17 +94,6 @@ export default function Hero() {
             </div>
           ))}
         </div>
-        </div>
-
-        {/* Right: Kanban preview */}
-        <div className="flex flex-col justify-center items-center gap-3">
-          <KanbanHero />
-          <button
-            onClick={() => navigate('/pm')}
-            className="text-xs text-white/50 hover:text-white/80 transition-colors"
-          >
-            Try our free PM Tool <span className="underline">here →</span>
-          </button>
         </div>
       </div>
 

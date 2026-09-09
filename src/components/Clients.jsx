@@ -37,6 +37,13 @@ const clients = [
     desc: 'Advertising & Marketing',
     caseStudy: '/work/rolex-ads',
   },
+  {
+    name: 'Nivi Collections',
+    domain: 'nivicollections.com',
+    url: 'https://www.nivicollections.com/',
+    desc: 'Fashion & Collections',
+    caseStudy: null,
+  },
 ]
 
 function ClientCard({ name, domain, url, desc, caseStudy }) {
