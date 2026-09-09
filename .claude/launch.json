@@ -1,0 +1,27 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vikku",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173,
+      "autoPort": true
+    },
+    {
+      "name": "itcabs-proto",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["/Users/apple/itcabs/prototype/server.js"],
+      "port": 8777,
+      "autoPort": false
+    },
+    {
+      "name": "tapbywisein",
+      "cwd": "tapbywisein/Founder-Card/Frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "5174", "--strictPort"],
+      "port": 5174,
+      "autoPort": false
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Block auth-gated and admin pages
+Disallow: /dashboard/
+Disallow: /pm/dashboard
+Disallow: /admin/
+Disallow: /account
+Disallow: /reset-password
+Disallow: /r-view/
+
+Sitemap: https://www.vikku.in/sitemap.xml

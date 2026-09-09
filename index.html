@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Vikku PM" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vikku - Software & Tech Agency | Web Apps, Platforms & Digital Products</title>
+    <meta name="description" content="Vikku is a software & tech agency that builds web apps, staffing platforms, e-commerce stores, and custom digital products. Based in India, serving clients globally." />
+    <meta name="keywords" content="software agency india, web development agency, react development, staffing platform development, e-commerce website development, custom web app, tech agency" />
+    <meta name="author" content="Vikku" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://vikku.in/" />
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content="https://vikku.in/" />
+    <meta property="og:title"       content="Vikku - Software & Tech Agency" />
+    <meta property="og:description" content="We build web apps, staffing platforms, e-commerce stores, and custom digital products for ambitious teams." />
+    <meta property="og:image"       content="https://vikku.in/og-image.png" />
+    <!-- Twitter -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="Vikku - Software & Tech Agency" />
+    <meta name="twitter:description" content="We build web apps, staffing platforms, e-commerce stores, and custom digital products for ambitious teams." />
+    <meta name="twitter:image"       content="https://vikku.in/og-image.png" />
+    <!-- Analytics (Google tag + Microsoft Clarity) - skipped on localhost so dev traffic doesn't pollute stats -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      if (!['localhost', '127.0.0.1'].includes(location.hostname)) {
+        var ga = document.createElement('script');
+        ga.async = true;
+        ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-VFDQ5CD808';
+        document.head.appendChild(ga);
+        gtag('js', new Date());
+        gtag('config', 'G-VFDQ5CD808');
+
+        (function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "x0ejzzii5h");
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Vikku",
+      "url": "https://www.vikku.in",
+      "logo": "https://www.vikku.in/logo.png",
+      "description": "Software & tech agency building web apps, staffing platforms, e-commerce stores, and custom digital products.",
+      "sameAs": []
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
