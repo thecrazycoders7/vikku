@@ -4,6 +4,7 @@ import { Menu, X, ChevronDown, LogOut } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import useLockBodyScroll from '../hooks/useLockBodyScroll'
 import ThemeToggle from './ThemeToggle'
+import { CAL_ATTRS } from '../lib/cal'
 
 const navLinks = [
   { label: 'Services', href: '#services' },
@@ -30,7 +31,7 @@ const navLinks = [
       { label: 'Maintenance Calculator', path: '/tools/maintenance-calculator' },
     ],
   },
-  { label: 'Contact',  href: '#contact' },
+  { label: 'Contact',  href: '#contact', cal: true },
 ]
 
 export default function Navbar() {
@@ -105,7 +106,7 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map(({ label, href, dropdown, footerLabel, dropdownOnly }) => {
+          {navLinks.map(({ label, href, dropdown, footerLabel, dropdownOnly, cal }) => {
             const isActive = activeId === href.slice(1)
             if (dropdown) {
               const isOpen = openDropdown === label
@@ -167,7 +168,8 @@ export default function Navbar() {
             return (
               <button
                 key={label}
-                onClick={() => handleNav(href)}
+                {...(cal ? CAL_ATTRS : {})}
+                onClick={cal ? undefined : () => handleNav(href)}
                 className={`text-xs transition-colors duration-200 tracking-wide relative ${
                   isActive ? 'text-white' : 'text-white hover:text-white/90'
                 }`}
@@ -237,12 +239,13 @@ export default function Navbar() {
         <div className="md:hidden fixed inset-0 z-40 bg-black/95 backdrop-blur-xl flex flex-col pt-16">
           <div className="overflow-y-auto flex-1 px-4 py-4">
             <div className="glass rounded-2xl overflow-hidden mb-4">
-              {navLinks.map(({ label, href, dropdown }) => {
+              {navLinks.map(({ label, href, dropdown, cal }) => {
                 const isExpanded = mobileExpanded === label
                 return (
                 <div key={label} className="border-b border-white/[0.05] last:border-0">
                   <button
-                    onClick={() => dropdown ? setMobileExpanded(isExpanded ? null : label) : handleNav(href)}
+                    {...(cal ? CAL_ATTRS : {})}
+                    onClick={cal ? () => setMenuOpen(false) : () => dropdown ? setMobileExpanded(isExpanded ? null : label) : handleNav(href)}
                     className="w-full flex items-center justify-between px-5 py-4 text-sm text-white font-medium active:bg-white/[0.05] transition-colors"
                   >
                     {label}

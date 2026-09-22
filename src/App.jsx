@@ -14,7 +14,6 @@ import TechStack           from './components/TechStack'
 import About               from './components/About'
 import Testimonials        from './components/Testimonials'
 import FAQ                 from './components/FAQ'
-import Contact             from './components/Contact'
 import Footer              from './components/Footer'
 import ScrollToTop         from './components/ScrollToTop'
 import CursorGlow          from './components/CursorGlow'
@@ -96,7 +95,6 @@ function Home() {
         <About />
         <Testimonials />
         <FAQ />
-        <Contact />
       </main>
       <Footer />
       <ScrollToTop />
