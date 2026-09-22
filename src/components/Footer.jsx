@@ -22,6 +22,7 @@ const legal = [
   { label: 'Terms of Service', href: '/terms' },
   { label: 'Cookie Policy', href: '/cookies' },
   { label: 'Refund Policy', href: '/refunds' },
+  { label: 'Request Data Deletion', href: 'mailto:connect@vikku.in?subject=Data%20Deletion%20Request&body=Please%20delete%20the%20personal%20data%20associated%20with%20my%20account%3A%20' },
 ]
 
 const socials = [
@@ -139,6 +140,7 @@ export default function Footer() {
                   {subStatus === 'loading' ? 'Subscribing...' : 'Subscribe'}
                 </button>
                 {subStatus === 'error' && <p className="text-red-400 text-[10px]">Something went wrong. Try again.</p>}
+                <p className="text-[9px] text-white/30 leading-relaxed">By subscribing you agree to our <a href="/privacy" className="underline underline-offset-2 hover:text-white/60">Privacy Policy</a>. Unsubscribe anytime.</p>
               </form>
             )}
           </div>

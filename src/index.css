@@ -114,6 +114,15 @@ select option {
   }
 }
 
+/* Accessibility: a visible focus ring for keyboard users, even where
+   Tailwind's focus:outline-none is used. Mouse focus (:focus, not
+   :focus-visible) stays clean. */
+*:focus-visible {
+  outline: 2px solid var(--brand-primary) !important;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 /* ── Brand theme mapping ───────────────────────────────────────────
    The app is authored dark-first (bg-black / text-white / bg-white tints).
    These rules remap those Tailwind utilities onto the light brand palette.
