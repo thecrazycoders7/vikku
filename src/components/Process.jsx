@@ -4,24 +4,28 @@ const steps = [
   {
     number: '01',
     title: 'Discovery',
+    img: '/process/discovery.png',
     desc: 'We start with a deep-dive into your goals, users, and requirements. This shapes everything that follows.',
     points: ['Requirements gathering', 'Competitor research', 'Tech stack selection', 'Project scoping & estimate'],
   },
   {
     number: '02',
     title: 'Design',
+    img: '/process/design.png',
     desc: 'We wireframe and prototype the product - nailing the UX flow and visual identity before a single line of code is written.',
     points: ['Wireframes & user flows', 'UI design system', 'Interactive prototype', 'Client review & sign-off'],
   },
   {
     number: '03',
     title: 'Build',
+    img: '/process/build.png',
     desc: 'Agile sprints with weekly demos. You stay in the loop at every stage - no black boxes, no surprises.',
     points: ['Sprint-based development', 'Weekly progress demos', 'QA & testing each sprint', 'Staging environment'],
   },
   {
     number: '04',
     title: 'Launch',
+    img: '/process/launch.png',
     desc: 'We deploy, monitor, and hand over - with documentation, training, and ongoing support as needed.',
     points: ['Production deployment', 'Performance monitoring', 'Handover & documentation', 'Post-launch support'],
   },
@@ -65,7 +69,7 @@ export default function Process() {
         </div>
 
         <div ref={sectionRef} className="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
-          {steps.map(({ number, title, desc, points }, idx) => (
+          {steps.map(({ number, title, img, desc, points }, idx) => (
             <div
               key={number}
               className="glass rounded-xl p-5 flex flex-col gap-4 relative group hover:border-white/15 transition-all"
@@ -76,6 +80,14 @@ export default function Process() {
                 transitionDelay: visible ? `${idx * 0.15}s` : '0s',
               }}
             >
+              {/* Step image */}
+              <img
+                src={img}
+                alt={title}
+                loading="lazy"
+                className="w-full aspect-[3/2] object-cover rounded-lg"
+              />
+
               {/* Step number */}
               <span className="font-mono text-[2rem] font-bold text-white/[0.06] leading-none select-none">
                 {number}
