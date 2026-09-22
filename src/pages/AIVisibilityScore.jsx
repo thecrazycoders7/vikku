@@ -164,6 +164,35 @@ export default function AIVisibilityScore() {
               </form>
             </div>
 
+            {/* About this tool */}
+            <div className="glass rounded-2xl p-6 sm:p-8 mt-8">
+              <div className="grid md:grid-cols-2 gap-6 items-center">
+                <img
+                  src="/tools/visibility.png"
+                  alt="AI Visibility Score"
+                  loading="lazy"
+                  className="w-full aspect-[16/10] object-cover rounded-xl border border-white/[0.06]"
+                />
+                <div>
+                  <p className="text-[10px] font-semibold text-white/40 uppercase tracking-wider mb-2">About this tool</p>
+                  <h3 className="font-display font-bold text-xl text-white mb-3">Find out if AI recommends your business</h3>
+                  <p className="text-sm text-white/60 leading-relaxed mb-4">
+                    AI assistants like ChatGPT, Perplexity, and Gemini are becoming the new front door for
+                    customers. This tool checks whether your website gives them what they need to find,
+                    understand, and recommend you - then shows you exactly what to fix.
+                  </p>
+                  <ul className="space-y-2 text-sm text-white/60">
+                    {['A visibility score out of 100', "A prioritized list of what's blocking you", 'Concrete, plain-English fixes'].map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] flex-shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
             <ToolFAQ content={TOOL_FAQ.ai_visibility_score} />
           </>
         ) : (

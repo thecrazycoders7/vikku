@@ -10,6 +10,7 @@ import { getMyToolResults } from '../lib/toolResultsService'
 // image yet, so it falls back to the ToolArt SVG.
 const TOOL_IMG = {
   pm: '/tools/pm.png',
+  visibility: '/tools/visibility.png',
   roi: '/tools/roi.png',
   cost: '/tools/cost.png',
   timeline: '/tools/timeline.png',
