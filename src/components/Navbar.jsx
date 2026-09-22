@@ -9,17 +9,6 @@ import { CAL_ATTRS } from '../lib/cal'
 const navLinks = [
   { label: 'Services', href: '#services' },
   {
-    label: 'Work', href: '#work', dropdownOnly: true,
-    dropdown: [
-      { label: 'Staffing & HR Platform',    path: '/work/staffing-platform' },
-      { label: 'HSO CCTV - Online Store',    path: '/work/hso-cctv' },
-      { label: 'Rolex Ads - 4x Leads',       path: '/work/rolex-ads' },
-      { label: 'Media Manager - 6 Clients',  path: '/work/media-manager' },
-    ],
-  },
-  { label: 'Process',  href: '#process' },
-  { label: 'About',    href: '#about' },
-  {
     label: 'Tools', href: '#tools', footerLabel: 'Explore all free tools', dropdownOnly: true,
     dropdown: [
       { label: 'Free PM Tool',           path: '/pm' },
@@ -31,6 +20,8 @@ const navLinks = [
       { label: 'Maintenance Calculator', path: '/tools/maintenance-calculator' },
     ],
   },
+  { label: 'Process',  href: '#process' },
+  { label: 'About',    href: '#about' },
   { label: 'Contact',  href: '#contact', cal: true },
 ]
 
