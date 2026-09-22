@@ -15,7 +15,7 @@ export default function TemplateGallery({ selectedKey, onPick, includeBlank = tr
       onClick={() => onPick(t.key)}
       className={`flex items-start gap-3 p-4 rounded-xl border text-left transition-all ${
         selectedKey === t.key
-          ? 'border-violet-500 bg-violet-500/10'
+          ? 'border-orange-500 bg-orange-500/10'
           : 'border-white/[0.08] hover:border-white/25 hover:bg-white/[0.04]'
       }`}
     >

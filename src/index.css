@@ -4,9 +4,9 @@
 
 /* ── Vikku brand color system (single source of truth) ───────────── */
 :root {
-  --brand-primary: #2563EB;      /* Electric Blue  */
-  --brand-primary-dark: #1D4ED8; /* Deep Blue      */
-  --brand-accent: #7C3AED;       /* Violet         */
+  --brand-primary: #EA580C;      /* Orange 600     */
+  --brand-primary-dark: #C2410C; /* Orange 700     */
+  --brand-accent: #F97316;       /* Orange 500     */
   --bg: #F8FAFC;                 /* Off White      */
   --surface: #FFFFFF;            /* White (cards)  */
   --text: #0F172A;               /* Dark Navy      */
@@ -15,7 +15,7 @@
   --success: #16A34A;
   --warning: #F59E0B;
   --error: #DC2626;
-  --brand-gradient: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+  --brand-gradient: linear-gradient(135deg, #FB923C 0%, #EA580C 100%);
 
   --page-bg: var(--bg);
   color-scheme: light;
@@ -55,11 +55,11 @@ select option {
     background: var(--bg);
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(37, 99, 235, 0.45);
+    background: rgba(234, 88, 12, 0.45);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(37, 99, 235, 0.75);
+    background: rgba(234, 88, 12, 0.75);
   }
 }
 
@@ -95,8 +95,8 @@ select option {
 
   .section-tag {
     @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-widest uppercase mb-5;
-    background: rgba(37, 99, 235, 0.10);
-    border: 1px solid rgba(37, 99, 235, 0.22);
+    background: rgba(234, 88, 12, 0.10);
+    border: 1px solid rgba(234, 88, 12, 0.22);
     color: var(--brand-primary);
     letter-spacing: 0.05em;
   }
@@ -184,7 +184,7 @@ html.light .placeholder-white\/30::placeholder { color: #94A3B8 !important; }
 
 /* Accent text colors → AA-safe, brand-aligned (400 shades are too light on white) */
 html.light .text-blue-400,   html.light .text-blue-400\/80   { color: var(--brand-primary) !important; }
-html.light .text-violet-400, html.light .text-purple-400     { color: var(--brand-accent) !important; }
+html.light .text-violet-400, html.light .text-purple-400     { color: var(--brand-primary-dark) !important; }
 html.light .text-green-400,  html.light .text-green-400\/80  { color: var(--success) !important; }
 html.light .text-red-400,    html.light .text-red-400\/80    { color: var(--error) !important; }
 html.light .text-orange-400, html.light .text-orange-400\/80 { color: #D97706 !important; }
