@@ -20,10 +20,7 @@ import RouteTracker        from './components/RouteTracker'
 import ErrorBoundary       from './components/ErrorBoundary'
 import usePageMeta         from './hooks/usePageMeta'
 
-const CaseStudyStaffing      = lazy(() => import('./pages/CaseStudyStaffing'))
-const CaseStudyHSO           = lazy(() => import('./pages/CaseStudyHSO'))
-const CaseStudyRolexAds      = lazy(() => import('./pages/CaseStudyRolexAds'))
-const CaseStudyMediaManager  = lazy(() => import('./pages/CaseStudyMediaManager'))
+const CaseStudy              = lazy(() => import('./pages/CaseStudy'))
 const Login                 = lazy(() => import('./pages/Login'))
 const Signup                = lazy(() => import('./pages/Signup'))
 const ForgotPassword        = lazy(() => import('./pages/ForgotPassword'))
@@ -140,10 +137,7 @@ export default function App() {
               <Route path="/pm/refer"                       element={<ReferralPage />} />
               <Route path="/pm/projects/:id/invoice"    element={<InvoiceGenerator />} />
               <Route path="/showcase/:token"            element={<PublicShowcase />} />
-              <Route path="/work/staffing-platform"       element={<CaseStudyStaffing />} />
-              <Route path="/work/hso-cctv"           element={<CaseStudyHSO />} />
-              <Route path="/work/rolex-ads"          element={<CaseStudyRolexAds />} />
-              <Route path="/work/media-manager"      element={<CaseStudyMediaManager />} />
+              <Route path="/work/:slug"              element={<CaseStudy />} />
               <Route path="/payment-demo"            element={<PaymentDemo />} />
               <Route path="/vibelevel"               element={<VibeLevel />} />
               <Route path="/privacy"                 element={<PrivacyPolicy />} />
