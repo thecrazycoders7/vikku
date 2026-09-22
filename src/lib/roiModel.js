@@ -3,10 +3,10 @@
 // narrates the result. Currency: INR. Horizon: 3 years.
 
 export const CATEGORIES = [
-  { key: 'ai_automation', label: 'AI Automation',       icon: '🤖', blurb: 'Automate a repetitive, high-volume process with AI' },
-  { key: 'process',       label: 'Process Automation',  icon: '⚙️', blurb: 'Replace manual/operational work with software' },
-  { key: 'marketing',     label: 'Marketing',           icon: '📈', blurb: 'Grow leads, conversion, and revenue' },
-  { key: 'software',      label: 'Custom Software / SaaS', icon: '🖥️', blurb: 'Replace tools & manual work with a custom system' },
+  { key: 'ai_automation', label: 'AI Automation', blurb: 'Automate a repetitive, high-volume process with AI' },
+  { key: 'process',       label: 'Process Automation', blurb: 'Replace manual/operational work with software' },
+  { key: 'marketing',     label: 'Marketing', blurb: 'Grow leads, conversion, and revenue' },
+  { key: 'software',      label: 'Custom Software / SaaS', blurb: 'Replace tools & manual work with a custom system' },
 ]
 
 // Field kinds:

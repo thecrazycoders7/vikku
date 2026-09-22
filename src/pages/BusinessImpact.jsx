@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, RotateCcw, Sparkles, TrendingUp, ShieldCheck, He
 import Seo from '../components/Seo'
 import { CAL_ATTRS } from '../lib/cal'
 import AISummary from '../components/tools/AISummary'
+import { useAuth } from '../contexts/AuthContext'
 import {
   CATEGORIES, CATEGORY_FIELDS, CAPACITY_OPTIONS, ADOPTION, RISK_FACTORS,
   computeModel, inr, inrShort,
@@ -17,6 +18,7 @@ const SOURCE_TAG = {
 
 export default function BusinessImpact() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [stage, setStage] = useState('category') // category | questions | result
   const [category, setCategory] = useState('')
   const [values, setValues] = useState({})
@@ -38,7 +40,7 @@ export default function BusinessImpact() {
   // ---- Category ----
   if (stage === 'category') {
     return (
-      <Shell navigate={navigate}>
+      <Shell navigate={navigate} home={user ? '/dashboard' : '/'}>
         <Head eyebrow="Business Impact Calculator" title="What are you evaluating?" sub="We’ll build a small financial model of your business — not just an ROI number." />
         <div className="grid sm:grid-cols-2 gap-3">
           {CATEGORIES.map((c) => (
@@ -130,13 +132,13 @@ export default function BusinessImpact() {
 }
 
 // ---- shared UI ----
-function Shell({ children, navigate, onBack }) {
+function Shell({ children, navigate, onBack, home = '/' }) {
   return (
     <div className="min-h-screen bg-black text-white">
       <Seo title="Business Impact Calculator — Vikku" description="Model the financial impact of automation, software, or marketing on your business — TCO, ROI, NPV, payback, and a full business case." url="https://vikku.in/tools/business-impact" />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05] px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <button onClick={() => (onBack ? onBack() : navigate('/'))} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> Back</button>
+          <button onClick={() => (onBack ? onBack() : navigate(home))} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> {!onBack && home !== '/' ? 'Dashboard' : 'Back'}</button>
           <span className="text-xs text-white/50">Vikku Business Impact</span>
         </div>
       </div>

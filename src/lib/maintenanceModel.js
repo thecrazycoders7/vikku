@@ -2,12 +2,12 @@
 // monthly cost breakdown with support tiers. Currency: INR.
 
 export const TYPES = [
-  { key: 'website',   label: 'Website',        icon: '🌐', base: 4000 },
-  { key: 'webapp',    label: 'Web Application', icon: '🖥️', base: 12000 },
-  { key: 'mobile',    label: 'Mobile App',      icon: '📱', base: 14000 },
-  { key: 'saas',      label: 'SaaS Platform',   icon: '☁️', base: 20000 },
-  { key: 'ecommerce', label: 'E-commerce',      icon: '🛒', base: 16000 },
-  { key: 'ai',        label: 'AI Product',      icon: '🤖', base: 22000 },
+  { key: 'website',   label: 'Website', base: 4000 },
+  { key: 'webapp',    label: 'Web Application', base: 12000 },
+  { key: 'mobile',    label: 'Mobile App', base: 14000 },
+  { key: 'saas',      label: 'SaaS Platform', base: 20000 },
+  { key: 'ecommerce', label: 'E-commerce', base: 16000 },
+  { key: 'ai',        label: 'AI Product', base: 22000 },
 ]
 
 export const SCALE = [

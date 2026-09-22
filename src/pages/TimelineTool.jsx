@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, RotateCcw, Sparkles, Check, Flag } from 'lucide-react'
 import Seo from '../components/Seo'
 import { CAL_ATTRS } from '../lib/cal'
+import { useAuth } from '../contexts/AuthContext'
 import { TYPES, SIZE, PLATFORMS, TEAM, DESIGN, COMPLEXITY, estimateTimeline, weekDate } from '../lib/timelineModel'
 
 const STEPS = [
@@ -18,6 +19,8 @@ const PHASE_COLORS = ['#f59e0b', '#f97316', '#ea580c', '#c2410c', '#9a3412']
 
 export default function TimelineTool() {
   const navigate = useNavigate()
+  const { user } = useAuth()
+  const homePath = user ? '/dashboard' : '/'
   const [step, setStep] = useState(0)
   const [done, setDone] = useState(false)
   const [a, setA] = useState({ type: '', size: '', platforms: [], team: '', design: '', complexity: [] })
@@ -43,7 +46,7 @@ export default function TimelineTool() {
       <Seo title="Project Timeline Calculator — Vikku" description="Get a realistic, phase-by-phase project timeline with milestones and dates." url="https://vikku.in/tools/timeline" />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> Back</button>
+          <button onClick={() => navigate(homePath)} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> {user ? 'Dashboard' : 'Back'}</button>
           <span className="text-xs text-white/50 font-mono">Step {step + 1} of {total}</span>
         </div>
         <div className="h-1 w-full bg-white/[0.06]"><div className="h-full transition-all duration-500" style={{ width: `${pct}%`, background: 'var(--brand-gradient)' }} /></div>

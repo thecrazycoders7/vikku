@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Check, RotateCcw, Sparkles } from 'lucide-react'
 import Seo from '../components/Seo'
 import { CAL_ATTRS } from '../lib/cal'
 import AISummary from '../components/tools/AISummary'
+import { useAuth } from '../contexts/AuthContext'
 import {
   PROJECT_TYPES, PLATFORMS, ROLES, FEATURE_GROUPS, INTEGRATIONS, AI_CAPS,
   SCALE_USERS, SECURITY_LEVELS, DESIGN_OPTIONS, MAINTENANCE,
@@ -30,6 +31,8 @@ const CHEERS = ['Nice.', 'Great pick.', 'Got it.', 'Perfect.', 'Love it.', 'On a
 
 export default function ProjectEstimator() {
   const navigate = useNavigate()
+  const { user } = useAuth()
+  const homePath = user ? '/dashboard' : '/'
   const [step, setStep] = useState(0)
   const [done, setDone] = useState(false)
   const [a, setA] = useState({
@@ -64,8 +67,8 @@ export default function ProjectEstimator() {
       {/* Header + progress */}
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-white hover:text-white/70 transition-colors text-sm">
-            <ArrowLeft size={16} /> Back
+          <button onClick={() => navigate(homePath)} className="flex items-center gap-2 text-white hover:text-white/70 transition-colors text-sm">
+            <ArrowLeft size={16} /> {user ? 'Dashboard' : 'Back'}
           </button>
           <span className="text-xs text-white/60 font-mono">Step {step + 1} of {total}</span>
         </div>

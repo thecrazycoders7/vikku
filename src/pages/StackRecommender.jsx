@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, RotateCcw, Sparkles, Check, Layers } from 'lucide-react'
 import Seo from '../components/Seo'
 import { CAL_ATTRS } from '../lib/cal'
+import { useAuth } from '../contexts/AuthContext'
 import { Q, Q_ORDER, recommend } from '../lib/techStack'
 
 const CHEERS = ['Nice.', 'Got it.', 'Great.', 'Perfect.', 'Almost there!', 'Last one!']
 
 export default function StackRecommender() {
   const navigate = useNavigate()
+  const { user } = useAuth()
+  const homePath = user ? '/dashboard' : '/'
   const [step, setStep] = useState(0)
   const [done, setDone] = useState(false)
   const [a, setA] = useState({ type: '', platforms: [], priority: '', scale: '', realtime: '', ai: '', team: '' })
@@ -35,7 +38,7 @@ export default function StackRecommender() {
       <Seo title="Tech Stack Recommender — Vikku" description="Answer a few questions and get an opinionated, reasoned tech stack for your project — frontend, backend, database, hosting and more." url="https://vikku.in/tools/tech-recommender" />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> Back</button>
+          <button onClick={() => navigate(homePath)} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> {user ? 'Dashboard' : 'Back'}</button>
           <span className="text-xs text-white/50 font-mono">Step {step + 1} of {total}</span>
         </div>
         <div className="h-1 w-full bg-white/[0.06]"><div className="h-full transition-all duration-500" style={{ width: `${pct}%`, background: 'var(--brand-gradient)' }} /></div>
