@@ -97,10 +97,10 @@ export default function Dashboard() {
         {
           icon: Clock,
           title: 'Project Timeline Calculator',
-          description: 'Get a realistic timeline with phase breakdown and milestones',
+          description: 'Get a realistic timeline with phase breakdown and dated milestones',
           useWhen: 'You need a delivery date you can commit to',
-          gives: 'Week-by-week phases with clear milestones',
-          art: 'timeline', path: '/dashboard/timeline-calculator',
+          gives: 'Phase-by-phase schedule, milestones, and what drives the timeline',
+          art: 'timeline', path: '/dashboard/timeline',
         },
         {
           icon: LayoutDashboard,
@@ -120,10 +120,10 @@ export default function Dashboard() {
         {
           icon: Wrench,
           title: 'Maintenance Calculator',
-          description: 'Estimate the ongoing monthly cost to maintain and support your product',
+          description: 'Estimate the ongoing monthly cost to run and support your product',
           useWhen: 'You want to budget beyond launch day',
-          gives: 'A monthly figure covering hosting, support and updates',
-          art: 'maintenance', path: '/dashboard/maintenance-calculator',
+          gives: 'A monthly cost breakdown with Basic/Standard/Premium tiers',
+          art: 'maintenance', path: '/dashboard/maintenance',
         },
       ],
     },

@@ -31,6 +31,8 @@ const ProjectEstimator      = lazy(() => import('./pages/ProjectEstimator'))
 const ROICalculator         = lazy(() => import('./pages/ROICalculator'))
 const BusinessImpact        = lazy(() => import('./pages/BusinessImpact'))
 const TimelineCalculator    = lazy(() => import('./pages/TimelineCalculator'))
+const TimelineTool          = lazy(() => import('./pages/TimelineTool'))
+const MaintenanceTool       = lazy(() => import('./pages/MaintenanceTool'))
 const TechRecommender       = lazy(() => import('./pages/TechRecommender'))
 const StackRecommender      = lazy(() => import('./pages/StackRecommender'))
 const MaintenanceCalculator = lazy(() => import('./pages/MaintenanceCalculator'))
@@ -122,6 +124,10 @@ export default function App() {
               <Route path="/dashboard/business-impact"     element={<BusinessImpact />} />
               <Route path="/tools/business-impact"         element={<BusinessImpact />} />
               <Route path="/dashboard/timeline-calculator" element={<TimelineCalculator />} />
+              <Route path="/dashboard/timeline"             element={<TimelineTool />} />
+              <Route path="/tools/timeline"                 element={<TimelineTool />} />
+              <Route path="/dashboard/maintenance"          element={<MaintenanceTool />} />
+              <Route path="/tools/maintenance"              element={<MaintenanceTool />} />
               <Route path="/dashboard/tech-recommender"         element={<TechRecommender />} />
               <Route path="/dashboard/stack-recommender"      element={<StackRecommender />} />
               <Route path="/tools/stack-recommender"          element={<StackRecommender />} />

@@ -55,9 +55,9 @@ const TOOLS = [
     name: 'Timeline Calculator',
     img: '/tools/timeline.png',
     tagline: 'Get a realistic timeline, not a sales pitch',
-    desc: 'Phase-by-phase breakdown - discovery, design, dev, testing, launch. Know what to expect before the project starts.',
+    desc: 'Phase-by-phase breakdown - discovery, design, dev, testing, launch - with dated milestones and what’s driving the schedule.',
     cta: 'Plan your timeline',
-    path: '/dashboard/timeline-calculator',
+    path: '/dashboard/timeline',
   },
   {
     icon: LayoutDashboard,
@@ -77,9 +77,9 @@ const TOOLS = [
     name: 'Maintenance Calculator',
     img: '/tools/maintenance.png',
     tagline: 'Know what it costs to keep your product alive',
-    desc: 'Get a monthly maintenance budget - hosting, monitoring, bug fixes, security patches, and support hours. No surprises.',
+    desc: 'A monthly running-cost breakdown - hosting, monitoring, security, bug fixes and support - with Basic/Standard/Premium tiers.',
     cta: 'Estimate maintenance cost',
-    path: '/dashboard/maintenance-calculator',
+    path: '/dashboard/maintenance',
   },
 ]
 
