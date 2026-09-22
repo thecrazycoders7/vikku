@@ -54,12 +54,14 @@ const clients = [
 function ClientCard({ name, domain, url, desc, img }) {
   return (
     <div className="glass rounded-xl overflow-hidden flex flex-col hover:bg-white/[0.055] hover:border-white/[0.13] transition-all duration-300 group flex-shrink-0 w-56">
-      <img
-        src={img}
-        alt={name}
-        loading="lazy"
-        className="w-full aspect-[16/10] object-cover object-top border-b border-white/[0.06]"
-      />
+      <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${name}`}>
+        <img
+          src={img}
+          alt={name}
+          loading="lazy"
+          className="w-full aspect-[16/10] object-cover object-top border-b border-white/[0.06]"
+        />
+      </a>
       <div className="p-2.5 flex flex-col gap-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
@@ -83,7 +85,6 @@ function ClientCard({ name, domain, url, desc, img }) {
 
 export default function Clients() {
   const set1 = [...clients, ...clients, ...clients]
-  const set2 = [...clients, ...clients, ...clients]
 
   return (
     <section id="clients" className="py-10 relative overflow-hidden">
@@ -101,17 +102,10 @@ export default function Clients() {
         style={{ background: 'linear-gradient(to left, var(--page-bg) 20%, transparent)' }}
       />
 
-      {/* Row 1   slides left */}
-      <div className="marquee-track mb-1.5" style={{ animation: 'marquee-left 30s linear infinite' }}>
+      {/* Single row, slides left */}
+      <div className="marquee-track" style={{ animation: 'marquee-left 30s linear infinite' }}>
         {set1.map((client, i) => (
           <ClientCard key={`a-${client.domain}-${i}`} {...client} />
-        ))}
-      </div>
-
-      {/* Row 2   slides right */}
-      <div className="marquee-track" style={{ animation: 'marquee-right 24s linear infinite' }}>
-        {set2.map((client, i) => (
-          <ClientCard key={`b-${client.domain}-${i}`} {...client} />
         ))}
       </div>
 
