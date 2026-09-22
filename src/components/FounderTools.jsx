@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { DollarSign, Clock, LayoutDashboard, TrendingUp, Kanban, ArrowRight, Sparkles, Wrench } from 'lucide-react'
+import { DollarSign, Clock, LayoutDashboard, TrendingUp, Kanban, ArrowRight, Sparkles, Wrench, Radar } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 const TOOLS = [
@@ -16,15 +16,15 @@ const TOOLS = [
     badge: 'Most used',
   },
   {
-    icon: DollarSign,
-    color: 'text-green-400',
-    bg: 'bg-green-500/10',
-    name: 'AI Cost Estimator',
-    img: '/tools/cost.png',
-    tagline: 'Know the cost before you commit',
-    desc: 'Describe your idea and get a detailed cost breakdown - development, design, infra - in minutes. No guesswork.',
-    cta: 'Estimate your idea',
-    path: '/dashboard/cost-estimator',
+    icon: Radar,
+    color: 'text-cyan-400',
+    bg: 'bg-cyan-500/10',
+    name: 'AI Visibility Score',
+    img: '/tools/visibility.png',
+    tagline: 'See if AI will recommend your business',
+    desc: 'Paste your URL and get a visibility score, a prioritized list of blockers, and concrete fixes - in seconds.',
+    cta: 'Check my visibility',
+    path: '/dashboard/ai-visibility-score',
   },
   {
     icon: TrendingUp,
@@ -36,6 +36,17 @@ const TOOLS = [
     desc: 'Calculate the revenue impact of going digital versus staying offline. Present the numbers to stakeholders with confidence.',
     cta: 'Calculate ROI',
     path: '/dashboard/roi-calculator',
+  },
+  {
+    icon: DollarSign,
+    color: 'text-green-400',
+    bg: 'bg-green-500/10',
+    name: 'AI Cost Estimator',
+    img: '/tools/cost.png',
+    tagline: 'Know the cost before you commit',
+    desc: 'Describe your idea and get a detailed cost breakdown - development, design, infra - in minutes. No guesswork.',
+    cta: 'Estimate your idea',
+    path: '/dashboard/cost-estimator',
   },
   {
     icon: Clock,
