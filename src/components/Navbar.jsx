@@ -16,7 +16,7 @@ const navLinks = [
       { label: 'Business Impact',        path: '/tools/business-impact' },
       { label: 'Project Estimator',      path: '/tools/project-estimator' },
       { label: 'Timeline Calculator',    path: '/tools/timeline-calculator' },
-      { label: 'Tech Stack Recommender', path: '/tools/tech-recommender' },
+      { label: 'Tech Stack Recommender', path: '/tools/stack-recommender' },
       { label: 'Maintenance Calculator', path: '/tools/maintenance-calculator' },
     ],
   },
