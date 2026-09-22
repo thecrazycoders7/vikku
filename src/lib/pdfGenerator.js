@@ -5,7 +5,7 @@ import { TOOL_LABELS } from './toolResultsService'
 const money = (n, sym = '₹') => `${sym}${Number(n || 0).toLocaleString('en-IN')}`
 const INK = [15, 23, 42]      // slate-900
 const MUTED = [100, 116, 139] // slate-500
-const ACCENT = [124, 58, 237] // violet-600
+const ACCENT = [234, 88, 12] // orange-600
 
 function lines(tool, r) {
   const sym = r.currencySymbol || '₹'
