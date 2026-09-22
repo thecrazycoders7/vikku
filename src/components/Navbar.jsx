@@ -14,7 +14,7 @@ const navLinks = [
       { label: 'Free PM Tool',           path: '/pm' },
       { label: 'AI Visibility Score',    path: '/tools/ai-visibility-score' },
       { label: 'ROI Calculator',         path: '/tools/roi-calculator' },
-      { label: 'Cost Estimator',         path: '/tools/cost-estimator' },
+      { label: 'Project Estimator',      path: '/tools/project-estimator' },
       { label: 'Timeline Calculator',    path: '/tools/timeline-calculator' },
       { label: 'Tech Stack Recommender', path: '/tools/tech-recommender' },
       { label: 'Maintenance Calculator', path: '/tools/maintenance-calculator' },

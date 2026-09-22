@@ -27,6 +27,7 @@ const ResetPassword         = lazy(() => import('./pages/ResetPassword'))
 const Account               = lazy(() => import('./pages/Account'))
 const Dashboard             = lazy(() => import('./pages/Dashboard'))
 const CostEstimator         = lazy(() => import('./pages/CostEstimator'))
+const ProjectEstimator      = lazy(() => import('./pages/ProjectEstimator'))
 const ROICalculator         = lazy(() => import('./pages/ROICalculator'))
 const TimelineCalculator    = lazy(() => import('./pages/TimelineCalculator'))
 const TechRecommender       = lazy(() => import('./pages/TechRecommender'))
@@ -113,6 +114,8 @@ export default function App() {
               <Route path="/account"                 element={<Account />} />
               <Route path="/dashboard"               element={<Dashboard />} />
               <Route path="/dashboard/cost-estimator"     element={<CostEstimator />} />
+              <Route path="/dashboard/project-estimator"  element={<ProjectEstimator />} />
+              <Route path="/tools/project-estimator"      element={<ProjectEstimator />} />
               <Route path="/dashboard/roi-calculator"      element={<ROICalculator />} />
               <Route path="/dashboard/timeline-calculator" element={<TimelineCalculator />} />
               <Route path="/dashboard/tech-recommender"         element={<TechRecommender />} />
