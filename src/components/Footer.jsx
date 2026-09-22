@@ -20,6 +20,8 @@ const tools = [
 const legal = [
   { label: 'Privacy Policy', href: '/privacy' },
   { label: 'Terms of Service', href: '/terms' },
+  { label: 'Cookie Policy', href: '/cookies' },
+  { label: 'Refund Policy', href: '/refunds' },
 ]
 
 const socials = [
