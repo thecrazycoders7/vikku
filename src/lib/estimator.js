@@ -5,14 +5,14 @@
 
 // ---- Option catalogs (drive the wizard UI) --------------------------------
 export const PROJECT_TYPES = [
-  { key: 'website',    label: 'Website',          icon: '🌐', base: 90  },
-  { key: 'webapp',     label: 'Web Application',   icon: '🖥️', base: 160 },
-  { key: 'mobile',     label: 'Mobile App',        icon: '📱', base: 170 },
-  { key: 'saas',       label: 'SaaS Platform',     icon: '☁️', base: 220 },
-  { key: 'ecommerce',  label: 'E-commerce',        icon: '🛒', base: 190 },
-  { key: 'ai',         label: 'AI Product',        icon: '🤖', base: 210 },
-  { key: 'internal',   label: 'Internal Software', icon: '🏢', base: 150 },
-  { key: 'other',      label: 'Other',             icon: '✨', base: 150 },
+  { key: 'website',    label: 'Website', base: 90  },
+  { key: 'webapp',     label: 'Web Application', base: 160 },
+  { key: 'mobile',     label: 'Mobile App', base: 170 },
+  { key: 'saas',       label: 'SaaS Platform', base: 220 },
+  { key: 'ecommerce',  label: 'E-commerce', base: 190 },
+  { key: 'ai',         label: 'AI Product', base: 210 },
+  { key: 'internal',   label: 'Internal Software', base: 150 },
+  { key: 'other',      label: 'Other', base: 150 },
 ]
 
 export const PLATFORMS = [

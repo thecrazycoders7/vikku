@@ -2,12 +2,12 @@
 // phase-by-phase schedule with milestones, a realistic range, and drivers.
 
 export const TYPES = [
-  { key: 'website',   label: 'Website',          icon: '🌐', weeks: 3 },
-  { key: 'webapp',    label: 'Web Application',   icon: '🖥️', weeks: 8 },
-  { key: 'mobile',    label: 'Mobile App',        icon: '📱', weeks: 9 },
-  { key: 'saas',      label: 'SaaS Platform',     icon: '☁️', weeks: 12 },
-  { key: 'ecommerce', label: 'E-commerce',        icon: '🛒', weeks: 9 },
-  { key: 'ai',        label: 'AI Product',        icon: '🤖', weeks: 11 },
+  { key: 'website',   label: 'Website', weeks: 3 },
+  { key: 'webapp',    label: 'Web Application', weeks: 8 },
+  { key: 'mobile',    label: 'Mobile App', weeks: 9 },
+  { key: 'saas',      label: 'SaaS Platform', weeks: 12 },
+  { key: 'ecommerce', label: 'E-commerce', weeks: 9 },
+  { key: 'ai',        label: 'AI Product', weeks: 11 },
 ]
 
 export const SIZE = [

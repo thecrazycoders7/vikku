@@ -6,12 +6,12 @@ export const Q = {
   type: {
     q: 'What are you building?',
     options: [
-      { key: 'website',   label: 'Marketing website', icon: '🌐' },
-      { key: 'webapp',    label: 'Web application',    icon: '🖥️' },
-      { key: 'mobile',    label: 'Mobile app',         icon: '📱' },
-      { key: 'saas',      label: 'SaaS platform',      icon: '☁️' },
-      { key: 'ecommerce', label: 'E-commerce',         icon: '🛒' },
-      { key: 'internal',  label: 'Internal tool',      icon: '🏢' },
+      { key: 'website',   label: 'Marketing website' },
+      { key: 'webapp',    label: 'Web application' },
+      { key: 'mobile',    label: 'Mobile app' },
+      { key: 'saas',      label: 'SaaS platform' },
+      { key: 'ecommerce', label: 'E-commerce' },
+      { key: 'internal',  label: 'Internal tool' },
     ],
   },
   platforms: {
@@ -25,9 +25,9 @@ export const Q = {
   priority: {
     q: 'What matters most right now?',
     options: [
-      { key: 'speed', label: 'Ship fast', icon: '⚡', hint: 'Launch quickly, iterate later' },
-      { key: 'scale', label: 'Scale',     icon: '📈', hint: 'Built to handle heavy growth' },
-      { key: 'balanced', label: 'Balanced', icon: '⚖️', hint: 'A sensible middle ground' },
+      { key: 'speed', label: 'Ship fast', hint: 'Launch quickly, iterate later' },
+      { key: 'scale', label: 'Scale', hint: 'Built to handle heavy growth' },
+      { key: 'balanced', label: 'Balanced', hint: 'A sensible middle ground' },
     ],
   },
   scale: {
