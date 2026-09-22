@@ -28,6 +28,10 @@ async function callEdgeFunction(fnName, body, useUserToken = false) {
   return response.json()
 }
 
+export async function generateSummary(kind, data) {
+  return callEdgeFunction('openai-summary', { kind, data })
+}
+
 export async function estimateProjectCost(requirements, location = null) {
   try {
     return await callEdgeFunction('openai-estimate', { requirements, location })

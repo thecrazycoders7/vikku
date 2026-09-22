@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, Check, RotateCcw, Sparkles } from 'lucide-react'
 import Seo from '../components/Seo'
 import { CAL_ATTRS } from '../lib/cal'
+import AISummary from '../components/tools/AISummary'
 import {
   PROJECT_TYPES, PLATFORMS, ROLES, FEATURE_GROUPS, INTEGRATIONS, AI_CAPS,
   SCALE_USERS, SECURITY_LEVELS, DESIGN_OPTIONS, MAINTENANCE,
@@ -379,6 +380,18 @@ function Result({ a, r, navigate, onEdit, onRestart }) {
           ))}
         </div>
         <p className="text-[11px] text-white/30 text-center mb-10">Estimate based on typical build effort — not a fixed quote. Final scope and price are confirmed on a scoping call.</p>
+
+        <AISummary kind="estimate" data={{
+          projectType: PROJECT_TYPES.find((t) => t.key === a.type)?.label,
+          description: a.description,
+          platforms: a.platforms, roles: a.roles, featureCount: a.features.length,
+          complexity: r.complexity, totalHours: r.totalHours,
+          timelineWeeks: `${r.weeks.min}-${r.weeks.max}`,
+          investmentRange: `${inrShort(r.priceMin)}-${inrShort(r.priceMax)}`,
+          hoursByDiscipline: r.hours,
+          drivers: r.drivers.map((d) => d.label),
+          packages: r.packages.map((p) => ({ name: p.name, price: inrShort(p.price) })),
+        }} />
 
         {/* CTA */}
         <div className="glass-strong rounded-2xl p-8 text-center">
