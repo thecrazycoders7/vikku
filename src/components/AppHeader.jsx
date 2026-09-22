@@ -42,7 +42,7 @@ export default function AppHeader({ breadcrumbs = [], actions, badge }) {
           <button
             onClick={() => navigate('/')}
             className="flex items-center flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity"
-            style={{ width: '32px', height: '32px' }}
+            style={{ width: '64px', height: '64px' }}
             aria-label="Vikku home"
           >
             <img src="/logo.png" alt="Vikku" className="w-full h-full object-contain object-center" />
