@@ -21,6 +21,12 @@ export function AuthProvider({ children }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      // OAuth/magic-link land back with tokens in the URL hash
+      // (e.g. /dashboard#access_token=...). Supabase parses them but leaves a
+      // bare `#` in the address bar — strip it once the session is in.
+      if (session && /access_token|refresh_token/.test(window.location.hash)) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search)
+      }
       // Keep the same user object when the id is unchanged. Supabase fires
       // TOKEN_REFRESHED on every tab refocus; minting a new user object each
       // time re-runs every effect keyed on `user` (e.g. ProjectDetail's load),
