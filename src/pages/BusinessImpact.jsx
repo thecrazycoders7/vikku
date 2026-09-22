@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, RotateCcw, Sparkles, TrendingUp, ShieldCheck, HelpCircle } from 'lucide-react'
 import Seo from '../components/Seo'
 import { CAL_ATTRS } from '../lib/cal'
+import AISummary from '../components/tools/AISummary'
 import {
   CATEGORIES, CATEGORY_FIELDS, CAPACITY_OPTIONS, ADOPTION, RISK_FACTORS,
   computeModel, inr, inrShort,
@@ -305,6 +306,18 @@ function Result({ navigate, category, model, values, setValues, fields, opts, se
         </div>
 
         <p className="text-[11px] text-white/30 text-center mb-10">This is a financial model based on your inputs and industry benchmarks — not a guarantee. Validate with a pilot before committing.</p>
+
+        <AISummary kind="impact" data={{
+          category: CATEGORIES.find((c) => c.key === category)?.label,
+          annualBenefit: inrShort(m.annualBenefit),
+          roi3yr: `${m.roi3}%`, roiBeforeRisk: `${m.roiRaw}%`,
+          paybackMonths: m.paybackMonth, npv: inrShort(m.npv),
+          firstYearInvestment: inr(m.firstYearInvestment),
+          threeYear: m.years.map((y) => ({ year: y.year, investment: inr(y.investment), benefit: inr(y.benefit), net: inr(y.net) })),
+          valueDrivers: m.drivers.map((d) => ({ label: d.label, amount: inr(d.amount) })),
+          confidence: m.confidence,
+          risksSelected: opts.risks,
+        }} />
 
         {/* CTA */}
         <div className="glass-strong rounded-2xl p-8 text-center">
