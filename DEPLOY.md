@@ -35,7 +35,7 @@ dashboard. This file is the checklist for that.
 | `openai-maintenance` | Legacy maintenance (superseded by the client-side calculator) |
 | `openai-plan` | AI project planner (Vikku PM) |
 | `openai-visibility` | AI Visibility Score analysis |
-| `openai-summary` | AI executive summary for the Estimator & Business Impact tools |
+| `smooth-handler` | AI executive summary for the Estimator & Business Impact tools (slug is `smooth-handler`; display name "openai-summary") |
 | `admin-stats`, `get-client-file`, `send-notification`, `task-reminders`, `weekly-digest` | Non-AI app functions |
 
 The client-side tools (Project Estimator, Business Impact, Tech Stack, Timeline,
@@ -50,9 +50,9 @@ These have repo changes not yet pushed to Supabase:
 - [ ] **`openai-visibility`** — updated prompt/response for the richer report
   (6 dimensions, "what AI sees", tested queries, competitors, 30-day plan).
   Until deployed, the page falls back to the basic report. (PR #35)
-- [ ] **`openai-summary`** — **new** function powering the "Generate AI executive
-  summary" button on the Estimator & Business Impact results. Until deployed,
-  that button shows a retryable error. (PR #37)
+- [x] **`smooth-handler`** — **new** function powering the "Generate AI executive
+  summary" button on the Estimator & Business Impact results. Deployed (its
+  Supabase slug is `smooth-handler`; the frontend calls that slug). (PR #37)
 
 ## Verifying a deploy
 

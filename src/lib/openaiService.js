@@ -28,8 +28,10 @@ async function callEdgeFunction(fnName, body, useUserToken = false) {
   return response.json()
 }
 
+// NOTE: deployed under the Supabase slug 'smooth-handler' (slug is fixed at
+// creation and can't be renamed; the display name is 'openai-summary').
 export async function generateSummary(kind, data) {
-  return callEdgeFunction('openai-summary', { kind, data })
+  return callEdgeFunction('smooth-handler', { kind, data })
 }
 
 export async function estimateProjectCost(requirements, location = null) {
