@@ -79,13 +79,16 @@ export default function LeadCaptureModal({ open, onClose, source, shareId, onUnl
               We'll send you a follow-up with tips based on your results. Meanwhile-
             </p>
             <div className="space-y-3">
-              <a
-                href="mailto:connect@vikku.in?subject=I%20used%20your%20tool%20and%20want%20to%20talk"
-                className="flex items-center justify-between glass rounded-xl px-4 py-3 text-sm text-white hover:border-white/20 transition-all group"
+              <button
+                type="button"
+                data-cal-namespace="30min"
+                data-cal-link="harsha-vardhan-reddy-sanikommu-vikku/30min"
+                data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+                className="w-full flex items-center justify-between glass rounded-xl px-4 py-3 text-sm text-white hover:border-white/20 transition-all group"
               >
                 <span>Book a free consultation</span>
                 <ArrowRight size={14} className="text-white/30 group-hover:text-white transition-colors" />
-              </a>
+              </button>
               <a
                 href="/pm"
                 className="flex items-center justify-between glass rounded-xl px-4 py-3 text-sm text-white hover:border-white/20 transition-all group"
