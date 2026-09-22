@@ -13,8 +13,8 @@ const navLinks = [
     dropdown: [
       { label: 'Free PM Tool',           path: '/pm' },
       { label: 'AI Visibility Score',    path: '/tools/ai-visibility-score' },
-      { label: 'Cost Estimator',         path: '/tools/cost-estimator' },
       { label: 'ROI Calculator',         path: '/tools/roi-calculator' },
+      { label: 'Cost Estimator',         path: '/tools/cost-estimator' },
       { label: 'Timeline Calculator',    path: '/tools/timeline-calculator' },
       { label: 'Tech Stack Recommender', path: '/tools/tech-recommender' },
       { label: 'Maintenance Calculator', path: '/tools/maintenance-calculator' },
