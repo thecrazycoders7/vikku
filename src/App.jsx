@@ -20,7 +20,6 @@ import RouteTracker        from './components/RouteTracker'
 import ErrorBoundary       from './components/ErrorBoundary'
 import usePageMeta         from './hooks/usePageMeta'
 
-const CaseStudy              = lazy(() => import('./pages/CaseStudy'))
 const Login                 = lazy(() => import('./pages/Login'))
 const Signup                = lazy(() => import('./pages/Signup'))
 const ForgotPassword        = lazy(() => import('./pages/ForgotPassword'))
@@ -137,7 +136,6 @@ export default function App() {
               <Route path="/pm/refer"                       element={<ReferralPage />} />
               <Route path="/pm/projects/:id/invoice"    element={<InvoiceGenerator />} />
               <Route path="/showcase/:token"            element={<PublicShowcase />} />
-              <Route path="/work/:slug"              element={<CaseStudy />} />
               <Route path="/payment-demo"            element={<PaymentDemo />} />
               <Route path="/vibelevel"               element={<VibeLevel />} />
               <Route path="/privacy"                 element={<PrivacyPolicy />} />
