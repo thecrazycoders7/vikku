@@ -6,6 +6,17 @@ import AppHeader from '../components/AppHeader'
 import ToolArt from '../components/ToolArt'
 import { getMyToolResults } from '../lib/toolResultsService'
 
+// Real tool illustrations (shared with the landing page). AI Visibility has no
+// image yet, so it falls back to the ToolArt SVG.
+const TOOL_IMG = {
+  pm: '/tools/pm.png',
+  roi: '/tools/roi.png',
+  cost: '/tools/cost.png',
+  timeline: '/tools/timeline.png',
+  stack: '/tools/techstack.png',
+  maintenance: '/tools/maintenance.png',
+}
+
 export default function Dashboard() {
   const { user, loading, displayName } = useAuth()
   const navigate = useNavigate()
@@ -186,7 +197,7 @@ export default function Dashboard() {
           className="mb-8 glass rounded-2xl overflow-hidden cursor-pointer hover:border-white/20 transition-all group"
         >
           <div className="h-32 sm:h-40 w-full overflow-hidden">
-            <ToolArt art="pm" />
+            <img src={TOOL_IMG.pm} alt="Vikku PM" className="w-full h-full object-cover" />
           </div>
           <div className="p-6 sm:p-8">
             <div className="flex items-start justify-between gap-4 mb-2">
@@ -244,7 +255,9 @@ export default function Dashboard() {
                   className="glass rounded-2xl overflow-hidden group transition-all hover:border-white/20 cursor-pointer flex flex-col"
                 >
                   <div className="h-28 w-full overflow-hidden">
-                    <ToolArt art={tool.art} />
+                    {TOOL_IMG[tool.art]
+                      ? <img src={TOOL_IMG[tool.art]} alt={tool.title} loading="lazy" className="w-full h-full object-cover" />
+                      : <ToolArt art={tool.art} />}
                   </div>
                   <div className="p-6 flex flex-col flex-1">
                     <div className="mb-3">
