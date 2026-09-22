@@ -8,6 +8,7 @@ const TOOLS = [
     color: 'text-violet-400',
     bg: 'bg-violet-500/10',
     name: 'PM Tool',
+    img: '/tools/pm.png',
     tagline: 'Stop losing track of what needs to get done',
     desc: 'Kanban board, milestones, team collaboration, and AI project planner - all in one place. Built for founders, not enterprise teams.',
     cta: 'Open PM Tool',
@@ -19,6 +20,7 @@ const TOOLS = [
     color: 'text-green-400',
     bg: 'bg-green-500/10',
     name: 'AI Cost Estimator',
+    img: '/tools/cost.png',
     tagline: 'Know the cost before you commit',
     desc: 'Describe your idea and get a detailed cost breakdown - development, design, infra - in minutes. No guesswork.',
     cta: 'Estimate your idea',
@@ -29,6 +31,7 @@ const TOOLS = [
     color: 'text-blue-400',
     bg: 'bg-blue-500/10',
     name: 'ROI Calculator',
+    img: '/tools/roi.png',
     tagline: 'See how much you\'re leaving on the table',
     desc: 'Calculate the revenue impact of going digital versus staying offline. Present the numbers to stakeholders with confidence.',
     cta: 'Calculate ROI',
@@ -39,6 +42,7 @@ const TOOLS = [
     color: 'text-yellow-400',
     bg: 'bg-yellow-500/10',
     name: 'Timeline Calculator',
+    img: '/tools/timeline.png',
     tagline: 'Get a realistic timeline, not a sales pitch',
     desc: 'Phase-by-phase breakdown - discovery, design, dev, testing, launch. Know what to expect before the project starts.',
     cta: 'Plan your timeline',
@@ -49,6 +53,7 @@ const TOOLS = [
     color: 'text-orange-400',
     bg: 'bg-orange-500/10',
     name: 'Tech Stack Recommender',
+    img: '/tools/techstack.png',
     tagline: 'Skip the "what tech should I use?" debate',
     desc: 'Describe your product and an AI architect picks the best tech stack - frontend, backend, database, hosting - with reasoning.',
     cta: 'Get a recommendation',
@@ -59,6 +64,7 @@ const TOOLS = [
     color: 'text-cyan-400',
     bg: 'bg-cyan-500/10',
     name: 'Maintenance Calculator',
+    img: '/tools/maintenance.png',
     tagline: 'Know what it costs to keep your product alive',
     desc: 'Get a monthly maintenance budget - hosting, monitoring, bug fixes, security patches, and support hours. No surprises.',
     cta: 'Estimate maintenance cost',
@@ -110,9 +116,18 @@ export default function FounderTools() {
                 className="group relative bg-white/[0.03] border border-white/[0.07] hover:border-white/15 rounded-2xl p-5 cursor-pointer transition-all duration-200 hover:bg-white/[0.05] flex flex-col"
               >
                 {tool.badge && (
-                  <span className="absolute top-4 right-4 text-[9px] font-bold text-violet-400 bg-violet-500/10 border border-violet-500/20 px-2 py-0.5 rounded-full uppercase tracking-wide">
+                  <span className="absolute top-4 right-4 z-10 text-[9px] font-bold text-violet-400 bg-violet-500/10 border border-violet-500/20 px-2 py-0.5 rounded-full uppercase tracking-wide">
                     {tool.badge}
                   </span>
+                )}
+
+                {tool.img && (
+                  <img
+                    src={tool.img}
+                    alt={tool.name}
+                    loading="lazy"
+                    className="w-full aspect-[16/9] object-cover rounded-xl mb-4 border border-white/[0.06]"
+                  />
                 )}
 
                 <div className={`w-9 h-9 rounded-xl ${tool.bg} flex items-center justify-center mb-4 flex-shrink-0`}>

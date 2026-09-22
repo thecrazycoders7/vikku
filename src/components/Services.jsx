@@ -5,21 +5,25 @@ const webApps = [
   {
     icon: LayoutDashboard,
     title: 'Admin Dashboards',
+    img: '/services/admin.png',
     desc: 'Custom control panels and back-office portals with real-time data, role-based access, and complex workflows.',
   },
   {
     icon: Users,
     title: 'HR & Staffing Platforms',
+    img: '/services/staffing.png',
     desc: 'End-to-end workforce management   employee onboarding, timesheets, client billing, and payroll in one system.',
   },
   {
     icon: ShoppingCart,
     title: 'E-Commerce & Marketplaces',
+    img: '/services/ecommerce.png',
     desc: 'Full-featured online stores and multi-vendor marketplaces with payments, inventory, and order management.',
   },
   {
     icon: FileText,
     title: 'CRM & Client Portals',
+    img: '/services/crm.png',
     desc: 'Client-facing portals and CRM systems to manage leads, contracts, communications, and project pipelines.',
   },
   {
@@ -63,6 +67,14 @@ function AppCard({ app, index }) {
         transition: `opacity 0.5s ease ${index * 60}ms, transform 0.5s ease ${index * 60}ms, background 0.3s ease, border-color 0.3s ease`,
       }}
     >
+      {app.img && (
+        <img
+          src={app.img}
+          alt={app.title}
+          loading="lazy"
+          className="w-full aspect-[16/9] object-cover rounded-lg mb-3 border border-white/[0.06]"
+        />
+      )}
       <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-3 glass group-hover:border-white/20 transition-all">
         <Icon size={16} className="text-white" />
       </div>
