@@ -18,6 +18,7 @@ import ScrollToTop         from './components/ScrollToTop'
 import CursorGlow          from './components/CursorGlow'
 import RouteTracker        from './components/RouteTracker'
 import ErrorBoundary       from './components/ErrorBoundary'
+import CookieConsent       from './components/CookieConsent'
 import usePageMeta         from './hooks/usePageMeta'
 
 const Login                 = lazy(() => import('./pages/Login'))
@@ -51,6 +52,8 @@ const PaymentDemo            = lazy(() => import('./pages/PaymentDemo'))
 const VibeLevel              = lazy(() => import('./pages/VibeLevel'))
 const PrivacyPolicy          = lazy(() => import('./pages/PrivacyPolicy'))
 const TermsOfService         = lazy(() => import('./pages/TermsOfService'))
+const CookiePolicy           = lazy(() => import('./pages/CookiePolicy'))
+const RefundPolicy           = lazy(() => import('./pages/RefundPolicy'))
 const NotFound               = lazy(() => import('./pages/NotFound'))
 const AdminDashboard         = lazy(() => import('./pages/admin/AdminDashboard'))
 const AdminUsers             = lazy(() => import('./pages/admin/AdminUsers'))
@@ -107,6 +110,7 @@ export default function App() {
       <ThemeProvider>
       <AuthProvider>
         <RouteTracker />
+        <CookieConsent />
         <ErrorBoundary>
           <Suspense fallback={<div className="min-h-screen bg-black" />}>
             <Routes>
@@ -155,6 +159,8 @@ export default function App() {
               <Route path="/vibelevel"               element={<VibeLevel />} />
               <Route path="/privacy"                 element={<PrivacyPolicy />} />
               <Route path="/terms"                   element={<TermsOfService />} />
+              <Route path="/cookies"                 element={<CookiePolicy />} />
+              <Route path="/refunds"                 element={<RefundPolicy />} />
               <Route path="/admin"                 element={<AdminGate><AdminDashboard /></AdminGate>} />
               <Route path="/admin/users"         element={<AdminGate><AdminUsers /></AdminGate>} />
               <Route path="/admin/billing"       element={<AdminGate><AdminBilling /></AdminGate>} />
