@@ -105,10 +105,10 @@ export default function Dashboard() {
         {
           icon: LayoutDashboard,
           title: 'Tech Stack Recommender',
-          description: 'Get an AI architect\'s pick for the best tech stack for your project',
+          description: 'Answer a few questions and get an opinionated stack for your project',
           useWhen: 'You don\'t know which technologies to build on',
-          gives: 'A recommended stack with the reasoning behind each choice',
-          art: 'stack', path: '/dashboard/tech-recommender',
+          gives: 'A recommended stack per layer with reasoning and alternatives',
+          art: 'stack', path: '/dashboard/stack-recommender',
         },
       ],
     },

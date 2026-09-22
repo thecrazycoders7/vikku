@@ -32,6 +32,7 @@ const ROICalculator         = lazy(() => import('./pages/ROICalculator'))
 const BusinessImpact        = lazy(() => import('./pages/BusinessImpact'))
 const TimelineCalculator    = lazy(() => import('./pages/TimelineCalculator'))
 const TechRecommender       = lazy(() => import('./pages/TechRecommender'))
+const StackRecommender      = lazy(() => import('./pages/StackRecommender'))
 const MaintenanceCalculator = lazy(() => import('./pages/MaintenanceCalculator'))
 const AIVisibilityScore     = lazy(() => import('./pages/AIVisibilityScore'))
 const ShareableResult       = lazy(() => import('./pages/ShareableResult'))
@@ -122,6 +123,8 @@ export default function App() {
               <Route path="/tools/business-impact"         element={<BusinessImpact />} />
               <Route path="/dashboard/timeline-calculator" element={<TimelineCalculator />} />
               <Route path="/dashboard/tech-recommender"         element={<TechRecommender />} />
+              <Route path="/dashboard/stack-recommender"      element={<StackRecommender />} />
+              <Route path="/tools/stack-recommender"          element={<StackRecommender />} />
               <Route path="/dashboard/maintenance-calculator" element={<MaintenanceCalculator />} />
               <Route path="/dashboard/ai-visibility-score"    element={<AIVisibilityScore />} />
               <Route path="/tools/cost-estimator"             element={<CostEstimator />} />

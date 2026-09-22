@@ -66,9 +66,9 @@ const TOOLS = [
     name: 'Tech Stack Recommender',
     img: '/tools/techstack.png',
     tagline: 'Skip the "what tech should I use?" debate',
-    desc: 'Describe your product and an AI architect picks the best tech stack - frontend, backend, database, hosting - with reasoning.',
+    desc: 'Answer a few questions and get an opinionated stack - frontend, backend, database, hosting - with the reasoning and alternatives for each.',
     cta: 'Get a recommendation',
-    path: '/dashboard/tech-recommender',
+    path: '/dashboard/stack-recommender',
   },
   {
     icon: Wrench,
