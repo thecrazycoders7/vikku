@@ -283,7 +283,7 @@ export default function AIVisibilityScore() {
             {dimensions.length > 0 && (
               <div className="glass rounded-2xl p-8 mb-6">
                 <h3 className="font-display font-semibold text-lg text-white mb-1">AI-readiness breakdown</h3>
-                <p className="text-white/50 text-xs mb-5">Derived from the on-page signals AI systems rely on.</p>
+                <p className="text-white/50 text-xs mb-5">{result.dimensions?.length ? 'Scored across the six dimensions AI systems weigh.' : 'Derived from the on-page signals AI systems rely on.'}</p>
                 <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
                   {dimensions.map((d) => {
                     const color = d.value >= 70 ? '#4ade80' : d.value >= 40 ? '#facc15' : '#f87171'

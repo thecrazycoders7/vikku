@@ -47,9 +47,9 @@ frontend tools.
 
 These have repo changes not yet pushed to Supabase:
 
-- [ ] **`openai-visibility`** — updated prompt/response for the richer report
+- [x] **`openai-visibility`** — updated prompt/response for the richer report
   (6 dimensions, "what AI sees", tested queries, competitors, 30-day plan).
-  Until deployed, the page falls back to the basic report. (PR #35)
+  Deployed & verified live. (PR #35)
 - [x] **`smooth-handler`** — **new** function powering the "Generate AI executive
   summary" button on the Estimator & Business Impact results. Deployed (its
   Supabase slug is `smooth-handler`; the frontend calls that slug). (PR #37)
