@@ -41,11 +41,11 @@ export default function AppHeader({ breadcrumbs = [], actions, badge }) {
           })()}
           <button
             onClick={() => navigate('/')}
-            className="flex items-center overflow-hidden flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity"
-            style={{ width: '64px', height: '25px' }}
+            className="flex items-center flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity"
+            style={{ width: '32px', height: '32px' }}
             aria-label="Vikku home"
           >
-            <img src="/logo.png" alt="Vikku" className="w-full h-full object-cover object-center" />
+            <img src="/logo.png" alt="Vikku" className="w-full h-full object-contain object-center" />
           </button>
           {breadcrumbs.map((crumb, i) => {
             const isLast = i === breadcrumbs.length - 1

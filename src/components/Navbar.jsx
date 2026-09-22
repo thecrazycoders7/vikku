@@ -99,8 +99,8 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
-        <button onClick={handleLogo} className="flex items-center overflow-hidden" style={{ width: '96px', height: '38px' }}>
-          <img src="/logo.png" alt="Vikku" className="w-full h-full object-cover object-center" />
+        <button onClick={handleLogo} className="flex items-center" style={{ width: '40px', height: '40px' }}>
+          <img src="/logo.png" alt="Vikku" className="w-full h-full object-contain object-center" />
         </button>
 
         {/* Desktop nav */}
