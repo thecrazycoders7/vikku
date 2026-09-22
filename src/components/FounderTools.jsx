@@ -72,6 +72,14 @@ export default function FounderTools() {
 
   return (
     <section id="tools" className="py-24 px-6 bg-black relative overflow-hidden">
+      {/* Section background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none opacity-[0.12]"
+        style={{ backgroundImage: 'url(/ai-tools-bg.png)' }}
+      />
+      {/* Fade so cards/text stay readable over the image */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, var(--bg) 0%, transparent 25%, transparent 75%, var(--bg) 100%)' }} />
+
       {/* Subtle background glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-violet-600/5 rounded-full blur-3xl pointer-events-none" />
 
