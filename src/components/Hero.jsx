@@ -73,7 +73,7 @@ export default function Hero() {
             data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
             className="relative inline-flex items-center gap-2 rounded-full font-semibold text-black text-xs transition-all duration-300 px-6 py-3 bg-white hover:bg-white/90 active:scale-95"
           >
-            Start a Project <ArrowRight size={14} />
+            Book a Call <ArrowRight size={14} />
           </button>
           <button onClick={scrollToServices} className="inline-flex items-center gap-2 rounded-full font-semibold text-xs transition-all duration-300 px-6 py-3 border border-white/20 text-white/80 hover:bg-white/5 hover:text-white active:scale-95">
             View Services <ChevronDown size={14} />
