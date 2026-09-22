@@ -11,6 +11,7 @@ import { saveToolResult } from '../lib/toolResultsService'
 import { COST_PRESETS, TOOL_FAQ, TOOL_SEO, faqJsonLd } from '../lib/toolContent'
 import Seo from '../components/Seo'
 import { useAuth } from '../contexts/AuthContext'
+import { CAL_ATTRS } from '../lib/cal'
 
 function formatCurrency(amount, symbol) {
   return (symbol || '₹') + new Intl.NumberFormat('en-IN').format(amount)
@@ -272,7 +273,7 @@ export default function CostEstimator() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
-                  onClick={() => { navigate('/'); setTimeout(() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' }), 300) }}
+                  {...CAL_ATTRS}
                   className="bg-white text-black font-semibold px-8 py-3 rounded-xl hover:bg-white/90 transition-colors"
                 >
                   Book a free scoping call

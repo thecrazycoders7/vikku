@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { Mail, Instagram } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
+import { CAL_ATTRS } from '../lib/cal'
 
 const company = [
   { label: 'About',    href: '#about' },
   { label: 'Services', href: '#services' },
   { label: 'Work',     href: '#solution' },
   { label: 'Clients',  href: '#clients' },
-  { label: 'Contact',  href: '#contact' },
+  { label: 'Contact',  cal: true },
 ]
 
 const tools = [
@@ -80,9 +81,13 @@ export default function Footer() {
           <div>
             <h4 className="text-[10px] text-white uppercase tracking-widest mb-4">Company</h4>
             <ul className="space-y-3">
-              {company.map(({ label, href }) => (
+              {company.map(({ label, href, cal }) => (
                 <li key={label}>
-                  <a href={href} className="text-white text-xs hover:text-white/70 transition-colors">{label}</a>
+                  {cal ? (
+                    <button {...CAL_ATTRS} className="text-white text-xs hover:text-white/70 transition-colors">{label}</button>
+                  ) : (
+                    <a href={href} className="text-white text-xs hover:text-white/70 transition-colors">{label}</a>
+                  )}
                 </li>
               ))}
             </ul>

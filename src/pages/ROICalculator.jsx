@@ -11,6 +11,7 @@ import { saveToolResult } from '../lib/toolResultsService'
 import { TOOL_FAQ, TOOL_SEO, faqJsonLd } from '../lib/toolContent'
 import Seo from '../components/Seo'
 import { useAuth } from '../contexts/AuthContext'
+import { CAL_ATTRS } from '../lib/cal'
 
 const BUSINESS_TYPES = [
   'Restaurant / Cafe / Food Business',
@@ -372,7 +373,7 @@ export default function ROICalculator() {
                 Let's build your website and start capturing those leads. Free consultation, no commitment.
               </p>
               <button
-                onClick={() => { navigate('/'); setTimeout(() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' }), 300) }}
+                {...CAL_ATTRS}
                 className="bg-white text-black font-semibold px-8 py-3 rounded-xl hover:bg-white/90 transition-colors"
               >
                 Get a Free Consultation

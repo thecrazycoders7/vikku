@@ -11,6 +11,7 @@ import { saveToolResult } from '../lib/toolResultsService'
 import { TOOL_FAQ, TOOL_SEO, faqJsonLd } from '../lib/toolContent'
 import Seo from '../components/Seo'
 import { useAuth } from '../contexts/AuthContext'
+import { CAL_ATTRS } from '../lib/cal'
 
 function formatCurrency(amount, symbol) {
   return (symbol || '₹') + new Intl.NumberFormat('en-IN').format(amount)
@@ -331,7 +332,7 @@ export default function MaintenanceCalculator() {
                   Estimate a New Build
                 </button>
                 <button
-                  onClick={() => { navigate('/'); setTimeout(() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' }), 300) }}
+                  {...CAL_ATTRS}
                   className="glass text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/10 transition-colors text-sm"
                 >
                   Talk to Us
