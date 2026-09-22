@@ -10,11 +10,16 @@ export default function Hero() {
       id="hero"
       className="relative min-h-screen flex items-center overflow-hidden py-16 lg:py-0"
     >
-      {/* Subtle radial vignette */}
+      {/* Homepage background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+        style={{ backgroundImage: 'url(/vikku-home-bg.png)' }}
+      />
+      {/* Wash so the centered headline stays readable over the illustration */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(255,255,255,0.03) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse 78% 55% at 48% 42%, rgba(248,250,252,0.94) 0%, rgba(248,250,252,0.80) 45%, rgba(248,250,252,0.25) 80%, transparent 100%)',
         }}
       />
 
