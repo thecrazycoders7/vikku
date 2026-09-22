@@ -6,7 +6,7 @@ import { CAL_ATTRS } from '../lib/cal'
 const company = [
   { label: 'About',    href: '#about' },
   { label: 'Services', href: '#services' },
-  { label: 'Work',     href: '#solution' },
+  { label: 'Work',     href: '/work/staffing-platform' },
   { label: 'Clients',  href: '#clients' },
   { label: 'Contact',  cal: true },
 ]

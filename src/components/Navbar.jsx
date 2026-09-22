@@ -9,7 +9,7 @@ import { CAL_ATTRS } from '../lib/cal'
 const navLinks = [
   { label: 'Services', href: '#services' },
   {
-    label: 'Work', href: '#solution', footerLabel: 'View all work',
+    label: 'Work', href: '#work', dropdownOnly: true,
     dropdown: [
       { label: 'Staffing & HR Platform',    path: '/work/staffing-platform' },
       { label: 'HSO CCTV - Online Store',    path: '/work/hso-cctv' },
@@ -152,14 +152,16 @@ export default function Navbar() {
                           {dl}
                         </button>
                       ))}
-                      <div className="border-t border-white/[0.06] mt-1 pt-1">
-                        <button
-                          onClick={() => { handleNav(href); setOpenDropdown(null) }}
-                          className="w-full text-left px-3 py-2 text-[10px] text-white hover:text-white/60 hover:bg-white/[0.03] rounded-lg transition-all"
-                        >
-                          {footerLabel}
-                        </button>
-                      </div>
+                      {footerLabel && (
+                        <div className="border-t border-white/[0.06] mt-1 pt-1">
+                          <button
+                            onClick={() => { handleNav(href); setOpenDropdown(null) }}
+                            className="w-full text-left px-3 py-2 text-[10px] text-white hover:text-white/60 hover:bg-white/[0.03] rounded-lg transition-all"
+                          >
+                            {footerLabel}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

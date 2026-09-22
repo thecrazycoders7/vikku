@@ -7,7 +7,6 @@ import Navbar              from './components/Navbar'
 import Hero                from './components/Hero'
 import Clients             from './components/Clients'
 import Services            from './components/Services'
-import Solution            from './components/Solution'
 import FounderTools        from './components/FounderTools'
 import Process             from './components/Process'
 import TechStack           from './components/TechStack'
@@ -89,7 +88,6 @@ function Home() {
         <Clients />
         <Services />
         <FounderTools />
-        <Solution />
         <Process />
         <TechStack />
         <About />
