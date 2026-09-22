@@ -146,23 +146,26 @@ export default function FounderTools() {
             )
           })}
 
-          {/* Sign up CTA card */}
+          {/* Sign up CTA banner (full-width) */}
           <div
             onClick={() => navigate('/signup')}
-            className="group bg-white hover:bg-white/90 rounded-2xl p-5 cursor-pointer transition-all duration-200 flex flex-col justify-between"
+            className="group md:col-span-2 lg:col-span-3 relative overflow-hidden rounded-2xl cursor-pointer bg-white border border-white/[0.06] bg-cover bg-no-repeat min-h-[260px] flex items-center p-8 sm:p-10"
+            style={{ backgroundImage: 'url(/all-tools-bg.png)', backgroundPosition: 'right center' }}
           >
-            <div>
-              <p className="text-[10px] font-semibold text-black/40 uppercase tracking-wider mb-2">Get started free</p>
-              <h3 className="text-sm font-bold text-black leading-snug mb-2">
+            {/* Left wash so text stays readable over the illustration on small screens */}
+            <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to right, #ffffff 0%, rgba(255,255,255,0.85) 40%, transparent 70%)' }} />
+            <div className="relative z-10 max-w-md">
+              <p className="text-[11px] font-semibold text-black/40 uppercase tracking-wider mb-2.5">Get started free</p>
+              <h3 className="text-2xl sm:text-3xl font-display font-extrabold text-black leading-tight mb-3">
                 All tools. Free account.<br />No credit card.
               </h3>
-              <p className="text-xs text-black/50 leading-relaxed">
+              <p className="text-sm text-black/60 leading-relaxed mb-5 max-w-sm">
                 Sign up and get instant access to every tool - plus the PM tool to manage your projects once you're ready to build.
               </p>
-            </div>
-            <div className="flex items-center gap-1 mt-4 text-[11px] font-bold text-black/60 group-hover:text-black transition-colors">
-              Create free account
-              <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
+              <span className="inline-flex items-center gap-1.5 bg-[var(--brand-primary)] text-white text-sm font-semibold px-5 py-2.5 rounded-full group-hover:bg-[var(--brand-primary-dark)] transition-colors">
+                Create free account
+                <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+              </span>
             </div>
           </div>
         </div>
