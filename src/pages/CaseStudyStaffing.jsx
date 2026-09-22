@@ -228,8 +228,8 @@ export default function CaseStudyStaffing() {
                     onClick={() => setExpandedRole(role.id)}
                     className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg transition-all duration-300 text-left"
                     style={{
-                      background: isSelected ? 'rgba(59,111,240,0.12)' : 'rgba(255,255,255,0.03)',
-                      border: isSelected ? '1px solid rgba(59,111,240,0.4)' : '1px solid rgba(255,255,255,0.07)',
+                      background: isSelected ? 'rgba(37,99,235,0.10)' : 'rgba(15,23,42,0.03)',
+                      border: isSelected ? '1px solid rgba(37,99,235,0.35)' : '1px solid rgba(15,23,42,0.08)',
                     }}
                   >
                     <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>

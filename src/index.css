@@ -2,20 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Vikku brand color system (single source of truth) ───────────── */
 :root {
-  --page-bg: #000000;
-  color-scheme: dark; /* native widgets (select popups, date pickers, scrollbars) follow the theme */
+  --brand-primary: #2563EB;      /* Electric Blue  */
+  --brand-primary-dark: #1D4ED8; /* Deep Blue      */
+  --brand-accent: #7C3AED;       /* Violet         */
+  --bg: #F8FAFC;                 /* Off White      */
+  --surface: #FFFFFF;            /* White (cards)  */
+  --text: #0F172A;               /* Dark Navy      */
+  --text-secondary: #64748B;     /* Slate          */
+  --border: #E2E8F0;             /* Light Slate    */
+  --success: #16A34A;
+  --warning: #F59E0B;
+  --error: #DC2626;
+  --brand-gradient: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+
+  --page-bg: var(--bg);
+  color-scheme: light;
 }
 
-/* Options don't inherit the styled select's background; without explicit
-   colors several platforms render the dropdown list white-on-white in dark mode */
 select option {
-  background-color: #111111;
-  color: rgba(255, 255, 255, 0.9);
-}
-html.light select option {
-  background-color: #ffffff;
-  color: #0f172a;
+  background-color: var(--surface);
+  color: var(--text);
 }
 
 @layer base {
@@ -33,8 +41,8 @@ html.light select option {
   }
 
   body {
-    background: #000000;
-    color: #ffffff;
+    background: var(--bg);
+    color: var(--text);
     font-family: 'Inter', system-ui, sans-serif;
     line-height: 1.6;
     overflow-x: hidden;
@@ -44,34 +52,42 @@ html.light select option {
     width: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #000000;
+    background: var(--bg);
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(59,111,240,0.5);
+    background: rgba(37, 99, 235, 0.45);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(59,111,240,0.8);
+    background: rgba(37, 99, 235, 0.75);
   }
 }
 
 @layer components {
+  /* Solid cards (glassmorphism removed) */
   .glass {
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   }
 
   .glass-strong {
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
   }
 
+  /* Primary CTA (used across Contact, case studies, error/404 pages) */
+  .btn-primary {
+    background: var(--brand-primary);
+    color: #ffffff;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+  }
+  .btn-primary:hover { background: var(--brand-primary-dark); }
+
   .gradient-text {
-    background: linear-gradient(135deg, #fff 0%, #B0B8D1 100%);
+    background: var(--brand-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -79,16 +95,16 @@ html.light select option {
 
   .section-tag {
     @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-widest uppercase mb-5;
-    background: rgba(59, 111, 240, 0.12);
-    border: 1px solid rgba(59, 111, 240, 0.25);
-    color: #B0B8D1;
+    background: rgba(37, 99, 235, 0.10);
+    border: 1px solid rgba(37, 99, 235, 0.22);
+    color: var(--brand-primary);
     letter-spacing: 0.05em;
   }
 
   .divider {
     border: none;
     height: 1px;
-    background: rgba(255,255,255,0.08);
+    background: var(--border);
   }
 }
 
@@ -98,107 +114,46 @@ html.light select option {
   }
 }
 
-/* ── Light theme overrides ─────────────────────────────────────── */
-html.light {
-  --page-bg: #f1f5f9;
-  color-scheme: light;
-}
+/* ── Brand theme mapping ───────────────────────────────────────────
+   The app is authored dark-first (bg-black / text-white / bg-white tints).
+   These rules remap those Tailwind utilities onto the light brand palette.
+   `html.light` is always present (set in index.html), so this IS the theme. */
 
-html.light body {
-  background: #f1f5f9;
-  color: #0f172a;
-}
+html.light select option { background-color: var(--surface); color: var(--text); }
 
-html.light ::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
+/* Dark page/section backgrounds → brand off-white */
+html.light .bg-black        { background-color: var(--bg) !important; }
+html.light .bg-black\/70    { background-color: rgba(248, 250, 252, 0.70) !important; }
+html.light .bg-black\/95    { background-color: rgba(248, 250, 252, 0.97) !important; }
+html.light .bg-black\/95.backdrop-blur-xl { background-color: rgba(248, 250, 252, 0.97) !important; }
 
-html.light .glass {
-  background: rgba(255, 255, 255, 0.75);
-  border-color: rgba(0, 0, 0, 0.08);
-}
+/* Dark surfaces (modals, dropdowns, popovers) → white */
+html.light .bg-\[\#111\]    { background-color: var(--surface) !important; }
+html.light .bg-\[\#1a1a1a\] { background-color: var(--surface) !important; }
 
-html.light .glass-strong {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 0, 0, 0.10);
-}
+/* text-white ladder → navy / slate (accessible on light) */
+html.light [class*="text-white/"] { color: var(--text-secondary) !important; }
+html.light .text-white        { color: var(--text) !important; }
+html.light .text-white\/90    { color: rgba(15,23,42,0.92) !important; }
+html.light .text-white\/80    { color: rgba(15,23,42,0.85) !important; }
+html.light .text-white\/70    { color: rgba(15,23,42,0.75) !important; }
+html.light .text-white\/60    { color: #475569 !important; }
+html.light .text-white\/55    { color: var(--text-secondary) !important; }
+html.light .text-white\/50    { color: var(--text-secondary) !important; }
+html.light .text-white\/45    { color: var(--text-secondary) !important; }
+html.light .text-white\/40    { color: var(--text-secondary) !important; }
+html.light .text-white\/35    { color: var(--text-secondary) !important; }
+html.light .text-white\/30    { color: var(--text-secondary) !important; }
+html.light .text-white\/25    { color: #94A3B8 !important; }
+html.light .text-white\/20    { color: #94A3B8 !important; }
+html.light .text-white\/15    { color: #94A3B8 !important; }
+html.light .text-white\/10    { color: #CBD5E1 !important; }
 
-html.light .gradient-text {
-  background: linear-gradient(135deg, #0f172a 0%, #475569 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* Borders → light slate */
+html.light [class*="border-white"] { border-color: var(--border) !important; }
 
-html.light .section-tag {
-  background: rgba(59, 111, 240, 0.08);
-  border-color: rgba(59, 111, 240, 0.20);
-  color: #1e40af;
-}
-
-html.light .divider {
-  background: rgba(0, 0, 0, 0.08);
-}
-
-/* bg-black → light gray */
-html.light .bg-black {
-  background-color: #f1f5f9 !important;
-}
-html.light .bg-black\/70 {
-  background-color: rgba(241, 245, 249, 0.70) !important;
-}
-html.light .bg-black\/95 {
-  background-color: rgba(241, 245, 249, 0.97) !important;
-}
-
-/* TaskEditModal dark bg */
-html.light .bg-\[\#111\] {
-  background-color: #ffffff !important;
-}
-
-/* Dropdowns / popovers (overflow menu, assignee menus, workflow popover, tooltips) */
-html.light .bg-\[\#1a1a1a\] {
-  background-color: #ffffff !important;
-}
-
-/* Catch-all FALLBACK for any text-white/<opacity> (incl. odd values like /45,/55
-   and future ones). Listed BEFORE the precise ladder so the ladder wins for the
-   exact opacities it defines, and anything else still gets readable dark text.
-   Floor the alpha at 0.5 so muted body copy never drops to unreadable on light. */
-html.light [class*="text-white/"] { color: rgba(15,23,42,0.6) !important; }
-
-/* text-white opacity ladder → slate-900 */
-html.light .text-white        { color: #0f172a !important; }
-html.light .text-white\/90    { color: rgba(15,23,42,0.90) !important; }
-html.light .text-white\/80    { color: rgba(15,23,42,0.80) !important; }
-html.light .text-white\/70    { color: rgba(15,23,42,0.70) !important; }
-html.light .text-white\/60    { color: rgba(15,23,42,0.65) !important; }
-html.light .text-white\/55    { color: rgba(15,23,42,0.62) !important; }
-html.light .text-white\/50    { color: rgba(15,23,42,0.60) !important; }
-html.light .text-white\/45    { color: rgba(15,23,42,0.58) !important; }
-html.light .text-white\/40    { color: rgba(15,23,42,0.55) !important; }
-html.light .text-white\/35    { color: rgba(15,23,42,0.52) !important; }
-html.light .text-white\/30    { color: rgba(15,23,42,0.50) !important; }
-html.light .text-white\/25    { color: rgba(15,23,42,0.45) !important; }
-html.light .text-white\/20    { color: rgba(15,23,42,0.40) !important; }
-html.light .text-white\/15    { color: rgba(15,23,42,0.35) !important; }
-html.light .text-white\/10    { color: rgba(15,23,42,0.30) !important; }
-
-/* border-white/* → dark borders */
-html.light [class*="border-white"] {
-  border-color: rgba(0, 0, 0, 0.10) !important;
-}
-
-/* bg-white/[0.0x] subtle panel tints → very light dark tint.
-   NOTE: inside a CSS attribute-value string the characters / [ . are literal —
-   they must NOT be backslash-escaped (the old selector was escaped and never matched). */
-html.light [class*="bg-white/[0.0"] {
-  background-color: rgba(15, 23, 42, 0.04) !important;
-}
-
-/* ── White tint SURFACES (slash-number) → subtle dark tints in light mode ──
-   These were previously uncovered, so translucent-white panels, badges and
-   hover states were invisible on the light background. */
+/* White tint surfaces → subtle slate tints (visible on light bg) */
+html.light [class*="bg-white/[0.0"] { background-color: rgba(15, 23, 42, 0.04) !important; }
 html.light .bg-white\/5   { background-color: rgba(15, 23, 42, 0.04) !important; }
 html.light .bg-white\/10  { background-color: rgba(15, 23, 42, 0.06) !important; }
 html.light .bg-white\/20  { background-color: rgba(15, 23, 42, 0.10) !important; }
@@ -207,7 +162,6 @@ html.light .bg-white\/30  { background-color: rgba(15, 23, 42, 0.14) !important;
 html.light .bg-white\/40  { background-color: rgba(15, 23, 42, 0.18) !important; }
 html.light .bg-white\/60  { background-color: rgba(15, 23, 42, 0.28) !important; }
 
-/* Hover variants (only apply on :hover so resting state stays transparent) */
 html.light .hover\:bg-white\/5:hover         { background-color: rgba(15, 23, 42, 0.05) !important; }
 html.light .hover\:bg-white\/10:hover        { background-color: rgba(15, 23, 42, 0.08) !important; }
 html.light .hover\:bg-white\/15:hover        { background-color: rgba(15, 23, 42, 0.10) !important; }
@@ -216,39 +170,34 @@ html.light .hover\:bg-white\/\[0\.06\]:hover { background-color: rgba(15, 23, 42
 html.light .hover\:bg-white\/\[0\.07\]:hover { background-color: rgba(15, 23, 42, 0.07) !important; }
 html.light .hover\:bg-white\/\[0\.08\]:hover { background-color: rgba(15, 23, 42, 0.08) !important; }
 
-/* Near-solid white CTA hover (primary buttons are flipped to dark, so darken on hover too) */
-html.light .hover\:bg-white\/90:hover { background-color: #1e293b !important; }
-
-/* Input placeholders → readable on light inputs (were staying near-white) */
-html.light .placeholder-white\/20::placeholder,
-html.light .placeholder-white\/25::placeholder,
-html.light .placeholder-white\/30::placeholder { color: rgba(15, 23, 42, 0.45) !important; }
-
-/* Low-contrast accents that fail on a light background */
-html.light .text-yellow-400 { color: #b45309 !important; } /* amber-700 */
-html.light .text-yellow-400\/80 { color: rgba(180, 83, 9, 0.85) !important; }
-
-/* Form field prefix icons (Mail, Lock, Search) - absolute-positioned lucide icons */
-html.light svg.lucide.absolute {
-  color: rgba(15, 23, 42, 0.55) !important;
-}
-
-/* Sign Up button: bg-white text-black keeps contrast in both modes */
+/* Primary buttons: bg-white text-black → brand blue */
 html.light .bg-white.text-black {
-  background-color: #0f172a !important;
+  background-color: var(--brand-primary) !important;
   color: #ffffff !important;
 }
+html.light .hover\:bg-white\/90:hover { background-color: var(--brand-primary-dark) !important; }
 
-/* mobile menu overlay */
-html.light .bg-black\/95.backdrop-blur-xl {
-  background-color: rgba(241, 245, 249, 0.97) !important;
-}
+/* Input placeholders */
+html.light .placeholder-white\/20::placeholder,
+html.light .placeholder-white\/25::placeholder,
+html.light .placeholder-white\/30::placeholder { color: #94A3B8 !important; }
+
+/* Accent text colors → AA-safe, brand-aligned (400 shades are too light on white) */
+html.light .text-blue-400,   html.light .text-blue-400\/80   { color: var(--brand-primary) !important; }
+html.light .text-violet-400, html.light .text-purple-400     { color: var(--brand-accent) !important; }
+html.light .text-green-400,  html.light .text-green-400\/80  { color: var(--success) !important; }
+html.light .text-red-400,    html.light .text-red-400\/80    { color: var(--error) !important; }
+html.light .text-orange-400, html.light .text-orange-400\/80 { color: #D97706 !important; }
+html.light .text-yellow-400, html.light .text-yellow-400\/80 { color: #B45309 !important; }
+html.light .text-indigo-300  { color: #4f46e5 !important; }
+
+/* Form field prefix icons (Mail, Lock, Search) */
+html.light svg.lucide.absolute { color: var(--text-secondary) !important; }
 
 /* Print / Download-PDF styles for tool results & shareable pages */
 @media print {
   html, body { background: #fff !important; }
   .print\:hidden { display: none !important; }
-  /* Force readable dark text on white when printing tool results */
   .min-h-screen.bg-black, .bg-black { background: #fff !important; }
   .text-white, .text-white\/80, .text-white\/70, .text-white\/60, .text-white\/50, .text-white\/40 { color: #111 !important; }
   .glass, .glass-strong { background: #fff !important; border: 1px solid #e5e5e5 !important; box-shadow: none !important; }
