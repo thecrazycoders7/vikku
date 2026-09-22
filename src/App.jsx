@@ -29,6 +29,7 @@ const Dashboard             = lazy(() => import('./pages/Dashboard'))
 const CostEstimator         = lazy(() => import('./pages/CostEstimator'))
 const ProjectEstimator      = lazy(() => import('./pages/ProjectEstimator'))
 const ROICalculator         = lazy(() => import('./pages/ROICalculator'))
+const BusinessImpact        = lazy(() => import('./pages/BusinessImpact'))
 const TimelineCalculator    = lazy(() => import('./pages/TimelineCalculator'))
 const TechRecommender       = lazy(() => import('./pages/TechRecommender'))
 const MaintenanceCalculator = lazy(() => import('./pages/MaintenanceCalculator'))
@@ -117,6 +118,8 @@ export default function App() {
               <Route path="/dashboard/project-estimator"  element={<ProjectEstimator />} />
               <Route path="/tools/project-estimator"      element={<ProjectEstimator />} />
               <Route path="/dashboard/roi-calculator"      element={<ROICalculator />} />
+              <Route path="/dashboard/business-impact"     element={<BusinessImpact />} />
+              <Route path="/tools/business-impact"         element={<BusinessImpact />} />
               <Route path="/dashboard/timeline-calculator" element={<TimelineCalculator />} />
               <Route path="/dashboard/tech-recommender"         element={<TechRecommender />} />
               <Route path="/dashboard/maintenance-calculator" element={<MaintenanceCalculator />} />
