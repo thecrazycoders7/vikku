@@ -195,12 +195,15 @@ export default function Contact() {
             <div className="glass rounded-xl p-4">
               <p className="text-[10px] text-white uppercase tracking-wider mb-2">Prefer to talk first?</p>
               <p className="text-white/50 text-[10px] mb-3">Book a free 30-min discovery call - no commitment.</p>
-              <a
-                href="mailto:connect@vikku.in?subject=Book a Discovery Call&body=Hi, I'd like to book a free 30-min call to discuss my project."
+              <button
+                type="button"
+                data-cal-namespace="30min"
+                data-cal-link="harsha-vardhan-reddy-sanikommu-vikku/30min"
+                data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
                 className="block w-full text-center text-xs text-white glass rounded-lg py-2 hover:bg-white/10 transition-colors"
               >
                 Book a Free Call →
-              </a>
+              </button>
             </div>
           </div>
         </div>
