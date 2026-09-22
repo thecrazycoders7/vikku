@@ -5,9 +5,6 @@ export default function Hero() {
   const { theme } = useTheme()
   const scrollToServices = () =>
     document.querySelector('#services')?.scrollIntoView({ behavior: 'smooth' })
-  const scrollToContact = () =>
-    document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })
-
   return (
     <section
       id="hero"
@@ -71,7 +68,9 @@ export default function Hero() {
         {/* CTAs */}
         <div className="flex items-center justify-center gap-2 mb-8">
           <button
-            onClick={scrollToContact}
+            data-cal-namespace="30min"
+            data-cal-link="harsha-vardhan-reddy-sanikommu-vikku/30min"
+            data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
             className="relative inline-flex items-center gap-2 rounded-full font-semibold text-black text-xs transition-all duration-300 px-6 py-3 bg-white hover:bg-white/90 active:scale-95"
           >
             Start a Project <ArrowRight size={14} />
