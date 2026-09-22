@@ -1,19 +1,19 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useEffect } from 'react'
 
 const ThemeContext = createContext()
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
-
+  // Vikku brand is light-only. Force the `light` class and clear any stale
+  // 'dark' preference from returning users.
   useEffect(() => {
-    document.documentElement.classList.remove('dark', 'light')
-    document.documentElement.classList.add(theme)
-    localStorage.setItem('theme', theme)
-  }, [theme])
+    document.documentElement.classList.remove('dark')
+    document.documentElement.classList.add('light')
+    localStorage.setItem('theme', 'light')
+  }, [])
 
-  const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
+  const toggle = () => {} // no-op: theme toggle removed
 
-  return <ThemeContext.Provider value={{ theme, toggle }}>{children}</ThemeContext.Provider>
+  return <ThemeContext.Provider value={{ theme: 'light', toggle }}>{children}</ThemeContext.Provider>
 }
 
 export const useTheme = () => useContext(ThemeContext)
