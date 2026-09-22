@@ -255,7 +255,7 @@ export default function Dashboard() {
                   onClick={() => navigate(tool.path)}
                   className="glass rounded-2xl overflow-hidden group transition-all hover:border-white/20 cursor-pointer flex flex-col"
                 >
-                  <div className="h-28 w-full overflow-hidden">
+                  <div className="w-full aspect-[4/3] overflow-hidden bg-white">
                     {TOOL_IMG[tool.art]
                       ? <img src={TOOL_IMG[tool.art]} alt={tool.title} loading="lazy" className="w-full h-full object-cover" />
                       : <ToolArt art={tool.art} />}
