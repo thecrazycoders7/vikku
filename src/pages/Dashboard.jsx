@@ -196,7 +196,7 @@ export default function Dashboard() {
           onClick={() => navigate('/pm')}
           className="mb-8 glass rounded-2xl overflow-hidden cursor-pointer hover:border-white/20 transition-all group"
         >
-          <div className="h-32 sm:h-40 w-full overflow-hidden">
+          <div className="h-44 sm:h-52 w-full overflow-hidden">
             <img src={TOOL_IMG.pm} alt="Vikku PM" className="w-full h-full object-cover" />
           </div>
           <div className="p-6 sm:p-8">
