@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Check } from 'lucide-react'
 
 const stats = [
-  { value: '8+', label: 'Projects Delivered' },
+  { value: '9', label: 'Projects Delivered' },
   { value: '8+', label: 'Happy Clients' },
   { value: '1+',  label: 'Years Experience' },
   { value: '2',   label: 'Continents Served' },
