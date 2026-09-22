@@ -73,11 +73,11 @@ export default function Dashboard() {
       tools: [
         {
           icon: TrendingUp,
-          title: 'ROI Calculator',
-          description: 'See how much revenue you\'re losing without a website - and how fast it pays back',
-          useWhen: 'You\'re not sure a website or app is worth the money',
-          gives: 'Payback period + the monthly revenue you\'re leaving on the table',
-          art: 'roi', path: '/dashboard/roi-calculator',
+          title: 'Business Impact Calculator',
+          description: 'Build a 3-year financial model — TCO, ROI, NPV, payback, and value drivers',
+          useWhen: 'You\'re deciding whether an investment is worth it',
+          gives: 'A business case with risk adjustment and a live sensitivity simulator',
+          art: 'roi', path: '/dashboard/business-impact',
         },
         {
           icon: DollarSign,
