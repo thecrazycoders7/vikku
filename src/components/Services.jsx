@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { LayoutDashboard, ShoppingCart, Users, FileText, BarChart2, Settings } from 'lucide-react'
+import { LayoutDashboard, ShoppingCart, Users, FileText } from 'lucide-react'
 
 const webApps = [
   {
@@ -25,16 +25,6 @@ const webApps = [
     title: 'CRM & Client Portals',
     img: '/services/crm.png',
     desc: 'Client-facing portals and CRM systems to manage leads, contracts, communications, and project pipelines.',
-  },
-  {
-    icon: BarChart2,
-    title: 'Analytics & Reporting Tools',
-    desc: 'Data-rich web apps with interactive charts, custom reports, filters, and exportable insights for any industry.',
-  },
-  {
-    icon: Settings,
-    title: 'SaaS Platforms',
-    desc: 'Subscription-based web products with multi-tenancy, billing integrations, onboarding flows, and scalable APIs.',
   },
 ]
 
@@ -102,7 +92,7 @@ export default function Services() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {webApps.map((app, i) => (
             <AppCard key={app.title} app={app} index={i} />
           ))}
