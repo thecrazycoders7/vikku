@@ -133,7 +133,12 @@ export default function AIVisibilityScore() {
     }
   }
 
-  const dimensions = result ? deriveDimensions(result.signals) : []
+  // Prefer the model's real dimension scores; fall back to signal-derived ones.
+  const dimensions = result
+    ? (result.dimensions?.length
+        ? result.dimensions.map((d) => ({ label: d.label, value: d.score, note: d.note }))
+        : deriveDimensions(result.signals))
+    : []
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -279,16 +284,79 @@ export default function AIVisibilityScore() {
               <div className="glass rounded-2xl p-8 mb-6">
                 <h3 className="font-display font-semibold text-lg text-white mb-1">AI-readiness breakdown</h3>
                 <p className="text-white/50 text-xs mb-5">Derived from the on-page signals AI systems rely on.</p>
-                <div className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
                   {dimensions.map((d) => {
                     const color = d.value >= 70 ? '#4ade80' : d.value >= 40 ? '#facc15' : '#f87171'
                     return (
                       <div key={d.label}>
                         <div className="flex justify-between text-sm mb-1"><span className="text-white/70">{d.label}</span><span className="text-white font-medium">{d.value}</span></div>
                         <div className="h-1.5 rounded-full bg-white/[0.06]"><div className="h-full rounded-full" style={{ width: `${d.value}%`, background: color }} /></div>
+                        {d.note && <p className="text-[11px] text-white/40 mt-1">{d.note}</p>}
                       </div>
                     )
                   })}
+                </div>
+              </div>
+            )}
+
+            {/* What AI sees about you */}
+            {result.whatAiSees && (
+              <div className="glass rounded-2xl p-8 mb-6">
+                <h3 className="font-display font-semibold text-lg text-white mb-3">What AI sees about you</h3>
+                {result.whatAiSees.statement && (
+                  <p className="text-sm text-white/80 italic border-l-2 border-[var(--brand-primary)] pl-4 mb-5">“{result.whatAiSees.statement}”</p>
+                )}
+                <div className="grid sm:grid-cols-3 gap-4 text-sm">
+                  {[
+                    { title: 'AI correctly understands', items: result.whatAiSees.correct, icon: <Check size={13} className="text-emerald-400 mt-0.5 flex-shrink-0" /> },
+                    { title: 'AI is missing', items: result.whatAiSees.missing, icon: <AlertTriangle size={13} className="text-yellow-400 mt-0.5 flex-shrink-0" /> },
+                    { title: 'AI may misunderstand', items: result.whatAiSees.misunderstood, icon: <AlertTriangle size={13} className="text-red-400 mt-0.5 flex-shrink-0" /> },
+                  ].filter((c) => c.items?.length).map((c) => (
+                    <div key={c.title}>
+                      <p className="text-[11px] uppercase tracking-wider text-white/40 mb-2">{c.title}</p>
+                      <ul className="space-y-1.5">
+                        {c.items.map((it) => <li key={it} className="flex items-start gap-2 text-white/70">{c.icon}{it}</li>)}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Queries we tested */}
+            {result.testedQueries?.length > 0 && (
+              <div className="glass rounded-2xl p-8 mb-6">
+                <h3 className="font-display font-semibold text-lg text-white mb-1">Questions your customers might ask AI</h3>
+                <p className="text-white/50 text-xs mb-5">The AI’s estimate of whether you’d show up — based on your page and its own knowledge, not a live multi-engine test.</p>
+                <div className="space-y-3">
+                  {result.testedQueries.map((q, i) => (
+                    <div key={i} className="glass rounded-xl p-4">
+                      <p className="text-sm text-white mb-2">“{q.query}”</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className={`text-[11px] px-2 py-0.5 rounded-full ${q.mentioned ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>{q.mentioned ? '✓ Likely mentioned' : '✕ Unlikely to appear'}</span>
+                        <span className={`text-[11px] px-2 py-0.5 rounded-full ${q.cited ? 'bg-emerald-500/10 text-emerald-400' : 'bg-white/[0.06] text-white/50'}`}>{q.cited ? '✓ Site likely cited' : 'Site not cited'}</span>
+                        {q.note && <span className="text-[11px] text-white/40">{q.note}</span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Competitor visibility */}
+            {result.competitors?.length > 0 && (
+              <div className="glass rounded-2xl p-8 mb-6">
+                <h3 className="font-display font-semibold text-lg text-white mb-1">Your AI visibility vs competitors</h3>
+                <p className="text-white/50 text-xs mb-5">Estimated from the same set of questions — a directional comparison, not a live benchmark.</p>
+                <div className="space-y-3">
+                  {[{ name: 'Your brand', score: result.score, you: true }, ...result.competitors]
+                    .sort((x, y) => (y.score || 0) - (x.score || 0))
+                    .map((c, i) => (
+                      <div key={i}>
+                        <div className="flex justify-between text-sm mb-1"><span className={c.you ? 'text-[var(--brand-primary)] font-semibold' : 'text-white/70'}>{c.name}</span><span className="text-white/60">{c.score}</span></div>
+                        <div className="h-2 rounded-full bg-white/[0.06]"><div className="h-full rounded-full" style={{ width: `${c.score}%`, background: c.you ? 'var(--brand-gradient)' : 'rgba(148,163,184,0.5)' }} /></div>
+                      </div>
+                    ))}
                 </div>
               </div>
             )}
@@ -352,6 +420,26 @@ export default function AIVisibilityScore() {
                   <Signal label="Meta description" value={result.signals.metaDescriptionPresent ? 'Present' : 'Missing'} />
                   <Signal label="AI crawlers blocked" value={result.signals.aiCrawlersBlocked ? (result.signals.blockedCrawlers?.join(', ') || 'Yes') : 'No'} />
                   <Signal label="llms.txt" value={result.signals.llmsTxtPresent ? 'Found' : 'Not found'} />
+                </div>
+              </div>
+            )}
+
+            {/* 30-day action plan */}
+            {result.actionPlan?.length > 0 && (
+              <div className="glass rounded-2xl p-8 mb-6">
+                <h3 className="font-display font-semibold text-lg text-white mb-5">Your 30-day action plan</h3>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {result.actionPlan.map((w, i) => (
+                    <div key={i} className="glass rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--brand-primary)] bg-[var(--brand-primary)]/10 px-2 py-0.5 rounded-full">{w.week}</span>
+                        <span className="text-sm font-semibold text-white">{w.focus}</span>
+                      </div>
+                      <ul className="space-y-1.5">
+                        {(w.tasks || []).map((t) => <li key={t} className="flex items-start gap-2 text-xs text-white/60"><span className="w-1 h-1 rounded-full bg-white/30 mt-1.5 flex-shrink-0" />{t}</li>)}
+                      </ul>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

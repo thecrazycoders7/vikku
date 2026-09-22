@@ -231,33 +231,64 @@ serve(async (req) => {
     const signals = extractSignals(page.text)
     const crawlerAccess = await checkRobotsAndLlms(origin)
 
-    const prompt = `You are an AI-visibility / answer-engine-optimization analyst. A business owner submitted their website for analysis. Judge how likely AI assistants (ChatGPT, Perplexity, Gemini, Claude) are to find, understand, and recommend this business when a user asks a relevant question.
+    const prompt = `You are an AI-visibility / answer-engine-optimization (AEO) analyst. A business owner submitted their website. Assess how likely AI assistants (ChatGPT, Perplexity, Gemini, Claude) are to find, understand, mention, and recommend this business when someone asks a relevant question.
+
+IMPORTANT HONESTY RULES:
+- You are NOT querying live AI systems. Base every judgment on (a) the page content and technical signals below, and (b) your own general knowledge of this business/industry if you recognise it.
+- For "testedQueries" and "competitors": these are your EXPERT ESTIMATES of how this brand likely appears in AI answers, not live results. Be realistic and conservative. If you don't recognise the brand, assume low mention/citation likelihood.
+- Never invent specific statistics or fake competitor names you aren't reasonably confident about. If unsure of real competitors, describe the competitor type generically (e.g. "Established regional agency").
 
 URL analyzed: ${page.finalUrl}
 Page title: ${signals.title || '(missing)'}
 Meta description: ${signals.metaDesc || '(missing)'}
 Meta robots directive: ${signals.metaRobots || '(none - default indexable)'}
 Canonical link: ${signals.canonical || '(missing)'}
-Structured data (JSON-LD) present: ${signals.hasJsonLd} - types found: ${signals.jsonLdTypes.join(', ') || 'none'}
+Structured data (JSON-LD) present: ${signals.hasJsonLd} - types: ${signals.jsonLdTypes.join(', ') || 'none'}
 Heading counts: ${signals.h1Count} H1, ${signals.h2Count} H2
 Visible text length: ~${signals.wordCount} words
 Image alt-text coverage: ${signals.imgWithAlt}/${signals.imgTotal} images have alt text
 robots.txt found: ${crawlerAccess.robotsFound} - blocks known AI crawlers: ${crawlerAccess.blocksAnyAiCrawler} (${crawlerAccess.blockedBots.join(', ') || 'none blocked'})
 llms.txt found: ${crawlerAccess.llmsTxtFound}
 
-Visible page text (truncated, for judging clarity/trust/differentiation - not mechanical checks):
+Visible page text (truncated):
 """
 ${signals.visibleTextSample}
 """
 
+Compute the overall "score" (0-100) as the weighted average of the six dimensions using these weights:
+AI Mentions 30%, Brand Understanding 20%, Citation Visibility 15%, Content Coverage 15%, Entity Consistency 10%, External Authority 10%.
+
 Respond with this exact JSON:
 {
-  "score": number (0-100, overall AI-visibility score),
-  "verdict": "string, one short punchy line e.g. 'AI can find you but won't recommend you yet'",
-  "summary": "string, 2-3 sentences explaining the score in plain language",
-  "blockers": [{ "issue": "string", "severity": "high" | "medium" | "low", "why_it_matters": "string", "fix": "string, concrete actionable step" }],
-  "strengths": ["string", "string"],
-  "quickWins": ["string - fastest highest-impact fix", "string"],
+  "score": number,
+  "verdict": "one short punchy line, e.g. 'AI understands you but rarely cites you'",
+  "summary": "2-3 sentences in plain language explaining the score",
+  "dimensions": [
+    { "key": "ai_mentions",         "label": "AI Mentions",          "score": number, "note": "one short sentence" },
+    { "key": "brand_understanding", "label": "Brand Understanding",  "score": number, "note": "one short sentence" },
+    { "key": "citation",            "label": "Citation Visibility",  "score": number, "note": "one short sentence" },
+    { "key": "content",             "label": "Content Coverage",     "score": number, "note": "one short sentence" },
+    { "key": "entity",              "label": "Entity Consistency",   "score": number, "note": "one short sentence" },
+    { "key": "authority",           "label": "External Authority",   "score": number, "note": "one short sentence" }
+  ],
+  "whatAiSees": {
+    "statement": "one sentence describing what AI would understand this company does, in the AI's voice",
+    "correct": ["things AI correctly associates with this brand"],
+    "missing": ["positioning or services the site implies but AI would NOT strongly associate"],
+    "misunderstood": ["things AI might describe inaccurately"]
+  },
+  "testedQueries": [
+    { "query": "a realistic question a customer would ask an AI assistant", "mentioned": boolean, "cited": boolean, "note": "short reasoning for this estimate" }
+  ],
+  "competitors": [
+    { "name": "competitor or competitor-type", "score": number, "note": "short reason" }
+  ],
+  "blockers": [{ "issue": "string", "severity": "high" | "medium" | "low", "why_it_matters": "string", "fix": "concrete actionable step" }],
+  "strengths": ["string"],
+  "quickWins": ["fastest highest-impact fix"],
+  "actionPlan": [
+    { "week": "Week 1", "focus": "short focus", "tasks": ["string"] }
+  ],
   "signals": {
     "hasStructuredData": boolean,
     "structuredDataTypes": ["string"],
@@ -271,7 +302,7 @@ Respond with this exact JSON:
   }
 }
 
-Give 3-6 blockers ordered by severity (high first), 2-4 strengths, and 2-3 quickWins. Be specific and concrete - this is for a non-technical business owner deciding what to fix first.`
+Rules: 6 dimensions always. 4-6 testedQueries. 3-4 competitors (the brand itself is NOT in this list). 3-6 blockers ordered by severity (high first). 2-4 strengths. 2-3 quickWins. actionPlan = exactly 4 entries (Week 1-4) building from foundational fixes to authority-building. Be specific and concrete for a non-technical business owner.`
 
     const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -286,7 +317,7 @@ Give 3-6 blockers ordered by severity (high first), 2-4 strengths, and 2-3 quick
           { role: 'user', content: prompt },
         ],
         temperature: 0.5,
-        max_tokens: 1500,
+        max_tokens: 3200,
         response_format: { type: 'json_object' },
       }),
     })
