@@ -242,6 +242,12 @@ export default function Signup() {
             >
               {loading ? 'Creating account...' : 'Sign Up'}
             </button>
+
+            <p className="text-[11px] text-white/40 text-center leading-relaxed">
+              By creating an account you agree to our{' '}
+              <Link to="/terms" className="text-white/60 hover:text-white underline underline-offset-2">Terms</Link>{' '}and{' '}
+              <Link to="/privacy" className="text-white/60 hover:text-white underline underline-offset-2">Privacy Policy</Link>.
+            </p>
           </form>
 
           <div className="mt-6 text-center">
