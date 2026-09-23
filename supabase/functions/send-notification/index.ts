@@ -2,7 +2,7 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const RESEND_KEY = Deno.env.get('RESEND_API_KEY')!
-const FROM = 'Vikku PM <noreply@vikku.in>'
+const FROM = 'Vikku PM <connect@vikku.in>'
 
 function corsHeaders(req: Request) {
   const origin = req.headers.get('origin') ?? ''

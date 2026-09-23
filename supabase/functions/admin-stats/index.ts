@@ -137,7 +137,7 @@ serve(async (req) => {
             method: 'POST',
             headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              from: 'Vikku <hello@vikku.in>',
+              from: 'Vikku <info@vikku.in>',
               to: batch,
               subject: body.subject,
               html: body.body.includes('<') ? body.body : `<p>${body.body.replace(/\n/g, '<br>')}</p>`,

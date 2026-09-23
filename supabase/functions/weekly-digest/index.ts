@@ -158,7 +158,7 @@ serve(async (req) => {
         'Authorization': `Bearer ${resendKey}`,
       },
       body: JSON.stringify({
-        from: 'Vikku PM <noreply@vikku.in>',
+        from: 'Vikku PM <connect@vikku.in>',
         to: [userEmail],
         subject: `Your weekly project digest — ${summaries.length} active project${summaries.length !== 1 ? 's' : ''}`,
         html,

@@ -100,7 +100,7 @@ serve(async (req) => {
           Authorization: `Bearer ${resendKey}`,
         },
         body: JSON.stringify({
-          from: 'Vikku PM <noreply@vikku.in>',
+          from: 'Vikku PM <connect@vikku.in>',
           to: [email],
           subject: `Reminder: ${userTasks.length} task${userTasks.length !== 1 ? 's' : ''} due tomorrow`,
           html,
@@ -158,7 +158,7 @@ serve(async (req) => {
       const r = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
-        body: JSON.stringify({ from: 'Vikku PM <noreply@vikku.in>', to: [email], subject: `${items.length} milestone${items.length !== 1 ? 's' : ''} due soon`, html }),
+        body: JSON.stringify({ from: 'Vikku PM <connect@vikku.in>', to: [email], subject: `${items.length} milestone${items.length !== 1 ? 's' : ''} due soon`, html }),
       })
       const d = await r.json()
       results.push({ userId, email, type: 'milestone', sent: r.ok, id: d.id })
