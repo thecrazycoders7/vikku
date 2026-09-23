@@ -54,6 +54,7 @@ const PrivacyPolicy          = lazy(() => import('./pages/PrivacyPolicy'))
 const TermsOfService         = lazy(() => import('./pages/TermsOfService'))
 const CookiePolicy           = lazy(() => import('./pages/CookiePolicy'))
 const RefundPolicy           = lazy(() => import('./pages/RefundPolicy'))
+const NotificationPreferences = lazy(() => import('./pages/NotificationPreferences'))
 const NotFound               = lazy(() => import('./pages/NotFound'))
 const AdminDashboard         = lazy(() => import('./pages/admin/AdminDashboard'))
 const AdminUsers             = lazy(() => import('./pages/admin/AdminUsers'))
@@ -146,6 +147,7 @@ export default function App() {
               <Route path="/r/:shareId"                    element={<ShareableResult />} />
               <Route path="/r-view/:shareId"               element={<ShareableResult />} />
               <Route path="/dashboard/saved"               element={<SavedResults />} />
+              <Route path="/dashboard/notifications"       element={<NotificationPreferences />} />
               <Route path="/pm"                          element={<PMRedirect />} />
               <Route path="/pm/dashboard"               element={<PMDashboard />} />
               <Route path="/pm/projects/new"            element={<NewProject />} />

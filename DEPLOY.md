@@ -54,6 +54,17 @@ These have repo changes not yet pushed to Supabase:
   summary" button on the Estimator & Business Impact results. Deployed (its
   Supabase slug is `smooth-handler`; the frontend calls that slug). (PR #37)
 
+## ⚠️ Pending — Email preferences (PR #44)
+
+- [ ] **Migration** `supabase/migrations/add_email_preferences.sql` — creates
+  `pm_email_prefs` + the `get_email_pref()` function. Apply via the SQL editor.
+- [ ] **`send-notification`** — updated to skip `task_assigned` emails when the
+  recipient turned off "Task activity", and to link "Manage email preferences"
+  in the footer. Re-deploy the function.
+
+Until both are applied, the preferences page still saves (frontend), but emails
+won't yet respect the toggles.
+
 ## Verifying a deploy
 
 1. Open the live tool on https://www.vikku.in (must be the real origin — CORS

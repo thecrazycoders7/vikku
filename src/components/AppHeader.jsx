@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, ChevronRight, ChevronLeft, UserCircle, Menu, X as CloseIcon, Sun, Moon } from 'lucide-react'
+import { LogOut, ChevronRight, ChevronLeft, UserCircle, Menu, X as CloseIcon, Sun, Moon, Bell } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
 import NotificationBell from './pm/NotificationBell'
@@ -86,6 +86,14 @@ export default function AppHeader({ breadcrumbs = [], actions, badge }) {
             >
               <UserCircle size={15} />
               <span className="truncate max-w-[120px]">{displayName || user?.email?.split('@')[0]}</span>
+            </button>
+
+            <button
+              onClick={() => navigate('/dashboard/notifications')}
+              className="flex items-center gap-1.5 text-xs text-white/60 hover:text-white transition-colors"
+              title="Email preferences"
+            >
+              <Bell size={14} />
             </button>
 
             <button
