@@ -24,6 +24,21 @@ export function notifyTaskAssigned({ taskTitle, projectName, assigneeEmail, dueD
   callEdge('task_assigned', { taskTitle, projectName, assigneeEmail, dueDate })
 }
 
+export function notifyTaskComment({ taskTitle, projectName, comment, recipientEmails }) {
+  if (!recipientEmails?.length) return
+  callEdge('task_comment', { taskTitle, projectName, comment, recipientEmails })
+}
+
+export function notifyMemberJoined({ projectId, joinerName }) {
+  if (!projectId) return
+  callEdge('member_joined', { projectId, joinerName })
+}
+
+export function sendAiSummary({ projectName, summary }) {
+  if (!summary) return
+  return callEdge('ai_summary', { projectName, summary })
+}
+
 export function notifyClientComment({ shareToken, authorName, comment }) {
   callEdge('client_comment', { shareToken, authorName, comment }, false)
 }

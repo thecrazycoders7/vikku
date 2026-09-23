@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Sparkles, X, Check, Loader2, RotateCcw, Send } from 'lucide-react'
 import { planProject } from '../../lib/openaiService'
+import { sendAiSummary } from '../../lib/notificationService'
 import { bulkCreateTasks, bulkCreateMilestones } from '../../lib/pmService'
 import { useAuth } from '../../contexts/AuthContext'
 import UpgradeModal from './UpgradeModal'
@@ -14,6 +15,7 @@ export default function AIAssistant({ projectId, projectName, onDone, isPro, wor
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [adding, setAdding] = useState(false)
+  const [emailedIdx, setEmailedIdx] = useState(null)
   const [showUpgrade, setShowUpgrade] = useState(false)
   // history = [{role:'user'|'assistant', content: string | plan-object}]
   const [history, setHistory] = useState([])
@@ -192,13 +194,25 @@ export default function AIAssistant({ projectId, projectName, onDone, isPro, wor
                         </div>
                       </div>
 
-                      <button
-                        onClick={() => handleAddToProject(msg.content)}
-                        disabled={adding}
-                        className="flex items-center gap-2 bg-white text-black font-semibold text-xs px-5 py-2 rounded-xl hover:bg-white/90 transition-colors disabled:opacity-40"
-                      >
-                        {adding ? <><Loader2 size={13} className="animate-spin" /> Adding...</> : <><Check size={13} /> Add to project</>}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleAddToProject(msg.content)}
+                          disabled={adding}
+                          className="flex items-center gap-2 bg-white text-black font-semibold text-xs px-5 py-2 rounded-xl hover:bg-white/90 transition-colors disabled:opacity-40"
+                        >
+                          {adding ? <><Loader2 size={13} className="animate-spin" /> Adding...</> : <><Check size={13} /> Add to project</>}
+                        </button>
+                        <button
+                          onClick={() => {
+                            const summary = `${msg.content.summary || ''}\n\nTasks:\n${(msg.content.tasks || []).map((t) => `• ${t.title}`).join('\n')}`
+                            sendAiSummary({ projectName: '', summary })
+                            setEmailedIdx(i)
+                          }}
+                          className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white border border-white/10 px-4 py-2 rounded-xl transition-colors"
+                        >
+                          {emailedIdx === i ? <><Check size={13} className="text-emerald-400" /> Emailed</> : 'Email me this plan'}
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>

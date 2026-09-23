@@ -68,6 +68,32 @@ function taskAssignedHtml(d: { taskTitle: string; projectName: string; assignorN
   `)
 }
 
+function taskCommentHtml(d: { taskTitle: string; projectName: string; commenterName: string; comment: string }) {
+  return base(`
+    <h2>New comment on your task</h2>
+    <p><strong style="color:#fff">${escHtml(d.commenterName)}</strong> commented on <strong style="color:#fff">${escHtml(d.taskTitle)}</strong>${d.projectName ? ` in ${escHtml(d.projectName)}` : ''}:</p>
+    <blockquote>${escHtml(d.comment)}</blockquote>
+    <a href="https://vikku.in/pm/dashboard" class="cta">Open Project Manager</a>
+  `)
+}
+
+function memberJoinedHtml(d: { joinerName: string; projectName: string }) {
+  return base(`
+    <h2>Someone joined your project</h2>
+    <p><strong style="color:#fff">${escHtml(d.joinerName)}</strong> just joined <strong style="color:#fff">${escHtml(d.projectName)}</strong>.</p>
+    <a href="https://vikku.in/pm/dashboard" class="cta">View Project</a>
+  `)
+}
+
+function aiSummaryHtml(d: { projectName: string; summary: string }) {
+  return base(`
+    <h2>🤖 Your AI project plan</h2>
+    ${d.projectName ? `<p>For <strong style="color:#fff">${escHtml(d.projectName)}</strong>:</p>` : ''}
+    <blockquote>${escHtml(d.summary).replace(/\n/g, '<br>')}</blockquote>
+    <a href="https://vikku.in/pm/dashboard" class="cta">Open Project Manager</a>
+  `)
+}
+
 function clientCommentHtml(d: { projectName: string; authorName: string; comment: string; shareUrl: string }) {
   return base(`
     <h2>New client comment</h2>
@@ -144,6 +170,63 @@ serve(async (req) => {
           dueDate,
         }),
       )
+      return json(req, { ok: true })
+    }
+
+    // ── task_comment: notify a task's assignees of a new comment ───────────
+    if (type === 'task_comment') {
+      const authHeader = req.headers.get('Authorization') || ''
+      const userClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } })
+      const { data: { user } } = await userClient.auth.getUser()
+      if (!user) return json(req, { error: 'Unauthorized' }, 401)
+
+      const { taskTitle, projectName, comment } = body
+      const recipients: string[] = Array.isArray((body as Record<string, unknown>).recipientEmails)
+        ? (body as Record<string, string[]>).recipientEmails : []
+      if (!comment || comment.length > 2000) return json(req, { error: 'Invalid comment' }, 400)
+
+      const commenterName = user.email?.split('@')[0] || 'Someone'
+      for (const to of [...new Set(recipients)]) {
+        if (!to || to === user.email) continue
+        const { data: on } = await admin.rpc('get_email_pref', { p_email: to, p_category: 'tasks' })
+        if (on === false) continue
+        try { await send(to, `New comment: ${taskTitle}`, taskCommentHtml({ taskTitle, projectName, commenterName, comment })) } catch { /* best-effort */ }
+      }
+      return json(req, { ok: true })
+    }
+
+    // ── member_joined: notify the project owner ────────────────────────────
+    if (type === 'member_joined') {
+      const authHeader = req.headers.get('Authorization') || ''
+      const userClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } })
+      const { data: { user } } = await userClient.auth.getUser()
+      if (!user) return json(req, { error: 'Unauthorized' }, 401)
+
+      const { projectId, joinerName } = body
+      const { data: project } = await admin.from('pm_projects').select('user_id, name').eq('id', projectId).single()
+      if (!project) return json(req, { ok: true })
+      const { data: owner } = await admin.auth.admin.getUserById(project.user_id)
+      const ownerEmail = owner?.user?.email
+      if (!ownerEmail || ownerEmail === user.email) return json(req, { ok: true })
+
+      const { data: on } = await admin.rpc('get_email_pref', { p_email: ownerEmail, p_category: 'tasks' })
+      if (on === false) return json(req, { ok: true, skipped: 'pref_off' })
+      await send(ownerEmail, `${joinerName || 'Someone'} joined ${project.name}`, memberJoinedHtml({ joinerName: joinerName || user.email?.split('@')[0] || 'Someone', projectName: project.name }))
+      return json(req, { ok: true })
+    }
+
+    // ── ai_summary: email the requesting user their AI plan ────────────────
+    if (type === 'ai_summary') {
+      const authHeader = req.headers.get('Authorization') || ''
+      const userClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } })
+      const { data: { user } } = await userClient.auth.getUser()
+      if (!user?.email) return json(req, { error: 'Unauthorized' }, 401)
+
+      const { projectName, summary } = body
+      if (!summary || summary.length > 8000) return json(req, { error: 'Invalid summary' }, 400)
+      const { data: on } = await admin.rpc('get_email_pref', { p_email: user.email, p_category: 'ai' })
+      if (on === false) return json(req, { ok: true, skipped: 'pref_off' })
+      await send(user.email, `Your AI plan${projectName ? `: ${projectName}` : ''}`, aiSummaryHtml({ projectName, summary }))
       return json(req, { ok: true })
     }
 

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Search, AlertTriangle, CheckCircle, Users, Lock } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { getProject, getProjectMembers, joinProject, getProjectMemberLimit } from '../../lib/pmService'
+import { notifyMemberJoined } from '../../lib/notificationService'
 
 export default function JoinProject() {
   const { projectId } = useParams()
@@ -54,6 +55,7 @@ export default function JoinProject() {
 
       setStatus('joining')
       await joinProject(projectId, user.id, user.email)
+      notifyMemberJoined({ projectId, joinerName: user.email?.split('@')[0] })
       setStatus('done')
       setTimeout(() => navigate(`/pm/projects/${p.slug || p.id}`), 1500)
     } catch (err) {

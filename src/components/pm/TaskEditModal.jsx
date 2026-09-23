@@ -23,7 +23,7 @@ import { useTheme } from '../../contexts/ThemeContext'
 import useSubscription from '../../hooks/useSubscription'
 import TaskTimer from './TaskTimer'
 import UpgradeModal from './UpgradeModal'
-import { notifyTaskAssigned, insertPmNotification, getMemberUserId } from '../../lib/notificationService'
+import { notifyTaskAssigned, notifyTaskComment, insertPmNotification, getMemberUserId } from '../../lib/notificationService'
 
 const PRIORITIES = ['low', 'medium', 'high', 'urgent']
 
@@ -290,6 +290,13 @@ export default function TaskEditModal({ task, onClose, onUpdated, onDeleted }) {
       const saved = await createTaskComment({ task_id: task.id, user_id: user.id, user_email: user.email, content: tempComment.content })
       if (saved) {
         setComments((prev) => prev.map((c) => c.id === tempId ? saved : c))
+        // Email the task's assignees (except the commenter). Best-effort.
+        notifyTaskComment({
+          taskTitle: task.title,
+          projectName: task._projectName || '',
+          comment: tempComment.content,
+          recipientEmails: taskAssignees(task).filter((e) => e && e !== user.email),
+        })
       }
     } catch (err) {
       console.error('createTaskComment failed:', err)
