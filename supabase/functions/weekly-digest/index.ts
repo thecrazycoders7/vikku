@@ -10,6 +10,12 @@ function corsHeaders(req: Request) {
   }
 }
 
+function escHtml(s: unknown): string {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders(req) })
 
@@ -34,6 +40,14 @@ serve(async (req) => {
     const { data: userData } = await supabase.auth.admin.getUserById(userId)
     const userEmail = userData?.user?.email
     if (!userEmail) throw new Error('User not found')
+
+    // Respect the user's "Digests & summaries" preference (defaults on).
+    const { data: prefOn } = await supabase.rpc('get_email_pref', { p_email: userEmail, p_category: 'digests' })
+    if (prefOn === false) {
+      return new Response(JSON.stringify({ skipped: 'pref_off' }), {
+        headers: { ...corsHeaders(req), 'Content-Type': 'application/json' },
+      })
+    }
 
     // Get all user's projects
     const { data: projects } = await supabase
@@ -123,7 +137,7 @@ serve(async (req) => {
   <div class="body">
     ${summaries.map((s) => `
     <div class="project">
-      <p class="project-name">${s.name}</p>
+      <p class="project-name">${escHtml(s.name)}</p>
       <div class="progress-bar"><div class="progress-fill" style="width:${s.progress}%"></div></div>
       <div class="stats">
         <div class="stat"><strong>${s.progress}%</strong>Progress</div>
@@ -131,8 +145,8 @@ serve(async (req) => {
         ${s.overdueCount > 0 ? `<div class="stat"><strong style="color:#dc2626">${s.overdueCount}</strong>Overdue</div>` : ''}
       </div>
       ${s.overdueCount > 0 ? `<span class="tag overdue">${s.overdueCount} overdue task${s.overdueCount !== 1 ? 's' : ''}</span>` : ''}
-      ${s.dueSoonTasks.length > 0 ? `<span class="tag due-soon">Due this week: ${s.dueSoonTasks.join(', ')}</span>` : ''}
-      ${s.nextMilestone ? `<br><span class="tag milestone" style="margin-top:6px;">Next milestone: ${s.nextMilestone.title} · ${new Date(s.nextMilestone.due).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>` : ''}
+      ${s.dueSoonTasks.length > 0 ? `<span class="tag due-soon">Due this week: ${s.dueSoonTasks.map(escHtml).join(', ')}</span>` : ''}
+      ${s.nextMilestone ? `<br><span class="tag milestone" style="margin-top:6px;">Next milestone: ${escHtml(s.nextMilestone.title)} · ${new Date(s.nextMilestone.due).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>` : ''}
     </div>
     `).join('')}
   </div>
