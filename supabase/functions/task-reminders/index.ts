@@ -10,6 +10,13 @@ function corsHeaders(req: Request) {
   }
 }
 
+// Escape user-supplied text before putting it in email HTML (task/project titles).
+function escHtml(s: unknown): string {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders(req) })
 
@@ -58,7 +65,7 @@ serve(async (req) => {
       if (prefOn === false) { results.push({ userId, email, skipped: 'pref_off' }); continue }
 
       const taskList = userTasks
-        .map((t: any) => `<li style="margin-bottom:8px"><strong>${t.title}</strong> — ${t.pm_projects?.name}</li>`)
+        .map((t: any) => `<li style="margin-bottom:8px"><strong>${escHtml(t.title)}</strong> — ${escHtml(t.pm_projects?.name)}</li>`)
         .join('')
 
       const html = `<!DOCTYPE html>
@@ -138,7 +145,7 @@ serve(async (req) => {
       if (prefOn === false) { results.push({ userId, email, type: 'milestone', skipped: 'pref_off' }); continue }
 
       const list = items
-        .map((m: any) => `<li style="margin-bottom:8px"><strong>${m.title}</strong> — ${m.pm_projects?.name} · due ${m.due_date}</li>`)
+        .map((m: any) => `<li style="margin-bottom:8px"><strong>${escHtml(m.title)}</strong> — ${escHtml(m.pm_projects?.name)} · due ${escHtml(m.due_date)}</li>`)
         .join('')
       const html = `<!DOCTYPE html><html><head><style>
         body { font-family: system-ui, sans-serif; background: #f9f9f9; margin: 0; padding: 20px; color: #111; }
