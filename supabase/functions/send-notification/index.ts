@@ -54,7 +54,7 @@ function base(content: string) {
   </style></head><body><div class="wrap">
     <div class="logo">vikku</div>
     <div class="card">${content}</div>
-    <p class="meta">You're receiving this because you're part of a Vikku project. <a href="https://vikku.in" style="color:rgba(255,255,255,0.4)">vikku.in</a></p>
+    <p class="meta">You're receiving this because you're part of a Vikku project. <a href="https://vikku.in/dashboard/notifications" style="color:rgba(255,255,255,0.4)">Manage email preferences</a> · <a href="https://vikku.in" style="color:rgba(255,255,255,0.4)">vikku.in</a></p>
   </div></body></html>`
 }
 
@@ -129,6 +129,10 @@ serve(async (req) => {
 
       const { taskTitle, projectName, assigneeEmail, dueDate } = body
       if (!assigneeEmail || assigneeEmail === user.email) return json(req, { ok: true })
+
+      // Respect the recipient's email preferences (defaults to on).
+      const { data: prefOn } = await admin.rpc('get_email_pref', { p_email: assigneeEmail, p_category: 'tasks' })
+      if (prefOn === false) return json(req, { ok: true, skipped: 'pref_off' })
 
       await send(
         assigneeEmail,
