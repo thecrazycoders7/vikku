@@ -58,9 +58,11 @@ These have repo changes not yet pushed to Supabase:
 
 - [ ] **Migration** `supabase/migrations/add_email_preferences.sql` — creates
   `pm_email_prefs` + the `get_email_pref()` function. Apply via the SQL editor.
-- [ ] **`send-notification`** — updated to skip `task_assigned` emails when the
-  recipient turned off "Task activity", and to link "Manage email preferences"
-  in the footer. Re-deploy the function.
+- [ ] **`send-notification`** — updated to (a) skip `task_assigned` when the
+  recipient turned off "Task activity", (b) add three new pref-gated events —
+  `task_comment` (comment on a task), `member_joined` (someone joined your
+  project), `ai_summary` (email my AI plan) — and (c) link "Manage email
+  preferences" in the footer. Re-deploy the function.
 
 Until both are applied, the preferences page still saves (frontend), but emails
 won't yet respect the toggles.
