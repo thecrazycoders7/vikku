@@ -64,7 +64,11 @@ These have repo changes not yet pushed to Supabase:
   project), `ai_summary` (email my AI plan) — and (c) link "Manage email
   preferences" in the footer. Re-deploy the function.
 
-Until both are applied, the preferences page still saves (frontend), but emails
+- [ ] **`task-reminders`** — now also emails **milestones due within 3 days**
+  ("deadline approaching"), and both sections respect the owner's "Deadlines"
+  preference. Re-deploy the function. (No schedule change — same daily cron.)
+
+Until these are applied, the preferences page still saves (frontend), but emails
 won't yet respect the toggles.
 
 ## Verifying a deploy
