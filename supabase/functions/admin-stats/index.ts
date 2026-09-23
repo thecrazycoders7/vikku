@@ -1,8 +1,10 @@
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const ADMIN_EMAILS = (Deno.env.get('ADMIN_EMAILS') || 'sanikommuharshavardhanreddy6@gmail.com')
-  .split(',').map(e => e.trim()).filter(Boolean)
+// Always-admin base list, merged with any ADMIN_EMAILS secret override.
+const BASE_ADMINS = ['sanikommuharshavardhanreddy6@gmail.com', 'info@vikku.in']
+const ADMIN_EMAILS = [...BASE_ADMINS, ...(Deno.env.get('ADMIN_EMAILS') || '').split(',')]
+  .map(e => e.trim()).filter(Boolean)
 
 // Pre-GST base prices in ₹ (mirrors src/lib/razorpayService.js PLAN_PRICES)
 const PLAN_PRICE: Record<string, { monthly: number; annual: number }> = {
