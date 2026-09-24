@@ -79,7 +79,7 @@ export default function Packages() {
       <div className="max-w-6xl mx-auto">
         <div className="mb-10">
           <div className="section-tag">Fixed-Price Packages</div>
-          <h2 className="font-display font-extrabold text-white mb-3 leading-[1.05]" style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.4rem)' }}>
+          <h2 className="font-display font-extrabold text-white mb-3 leading-[1.05]" style={{ fontSize: 'var(--h2)' }}>
             Know exactly what you'll pay
           </h2>
           <p className="text-white/70 text-sm max-w-xl leading-relaxed">

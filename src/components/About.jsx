@@ -49,7 +49,7 @@ export default function About() {
           <div className="section-tag">Who We Are</div>
           <h2
             className="font-display font-extrabold text-white"
-            style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.4rem)' }}
+            style={{ fontSize: 'var(--h2)' }}
           >
             Technology Is Our Craft
           </h2>

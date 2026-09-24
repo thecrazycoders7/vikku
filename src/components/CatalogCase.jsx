@@ -145,7 +145,7 @@ export default function CatalogCase() {
           <div className="section-tag">Case Study</div>
           <h2
             className="font-display font-extrabold text-white mb-3"
-            style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.4rem)' }}
+            style={{ fontSize: 'var(--h2)' }}
           >
             Product Catalog + Admin Portal
           </h2>
