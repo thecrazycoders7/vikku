@@ -47,7 +47,7 @@ const clients = [
 
 function ClientCard({ name, domain, url, desc, img }) {
   return (
-    <div className="glass rounded-xl overflow-hidden flex flex-col hover:bg-white/[0.055] hover:border-white/[0.13] transition-all duration-300 group flex-shrink-0 w-56">
+    <div className="glass rounded-xl overflow-hidden flex flex-col hover:bg-white/[0.055] hover:border-white/[0.13] transition-all duration-300 group flex-shrink-0 w-[100px] sm:w-56">
       <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${name}`}>
         <img
           src={img}
@@ -88,11 +88,11 @@ export default function Clients() {
 
       {/* Fade edges */}
       <div
-        className="absolute inset-y-0 left-0 w-24 pointer-events-none z-10"
+        className="absolute inset-y-0 left-0 w-6 sm:w-24 pointer-events-none z-10"
         style={{ background: 'linear-gradient(to right, var(--page-bg) 20%, transparent)' }}
       />
       <div
-        className="absolute inset-y-0 right-0 w-24 pointer-events-none z-10"
+        className="absolute inset-y-0 right-0 w-6 sm:w-24 pointer-events-none z-10"
         style={{ background: 'linear-gradient(to left, var(--page-bg) 20%, transparent)' }}
       />
 
