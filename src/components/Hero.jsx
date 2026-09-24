@@ -43,7 +43,7 @@ export default function Hero() {
           }}
         >
           <div style={{ whiteSpace: 'nowrap' }}>
-            {['Harsha'].map((word, i) => (
+            {['We', 'Build', 'Digital', 'Products'].map((word, i) => (
               <span key={word} className="inline-block mr-[0.22em]"
                 style={{ animation: `heroWordIn 0.7s cubic-bezier(0.16,1,0.3,1) both`, animationDelay: `${i * 0.12}s` }}>
                 {word}
@@ -51,7 +51,7 @@ export default function Hero() {
             ))}
           </div>
           <div>
-            {['Sanikommu'].map((word, i) => (
+            {['That', 'Matter'].map((word, i) => (
               <span key={word} className="inline-block mr-[0.22em]"
                 style={{ animation: `heroWordIn 0.7s cubic-bezier(0.16,1,0.3,1) both`, animationDelay: `${(i + 4) * 0.12}s` }}>
                 {word}
