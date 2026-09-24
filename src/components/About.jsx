@@ -4,8 +4,10 @@ import { Check } from 'lucide-react'
 const stats = [
   { value: '9', label: 'Projects Delivered' },
   { value: '8+', label: 'Happy Clients' },
-  { value: '1+',  label: 'Years Experience' },
-  { value: '2',   label: 'Continents Served' },
+  { value: '4×', label: 'More leads — Rolex Ads' },
+  { value: '0→6', label: 'Paying clients — Media Manager 4U' },
+  { value: '1 app', label: 'Replaced Excel + WhatsApp — Jobly & Unisys' },
+  { value: '2', label: 'Continents Served' },
 ]
 
 const highlights = [
@@ -54,7 +56,7 @@ export default function About() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-10" data-reveal
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-10" data-reveal
              style={{ opacity: 0, transform: 'translateY(20px)', transition: 'all 0.5s ease 0.1s' }}>
           {stats.map(({ value, label }) => (
             <div key={label} className="glass rounded-xl p-4 text-center">
