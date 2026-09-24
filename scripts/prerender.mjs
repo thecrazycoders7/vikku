@@ -19,7 +19,18 @@ async function main() {
   const server = await preview({ preview: { port: 4173, strictPort: true } })
   const base = server.resolvedUrls.local[0]
 
-  const browser = await puppeteer.launch({ headless: 'new' })
+  // Locally use puppeteer's bundled Chromium; on Vercel its build image lacks
+  // the shared libs Chromium needs, so use @sparticuz/chromium's self-contained one.
+  let launchOpts = { headless: 'new' }
+  if (process.env.VERCEL) {
+    const chromium = (await import('@sparticuz/chromium')).default
+    launchOpts = {
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    }
+  }
+  const browser = await puppeteer.launch(launchOpts)
 
   try {
     for (const route of routes) {

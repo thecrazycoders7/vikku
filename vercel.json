@@ -1,5 +1,6 @@
 {
   "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "npm run build:prerender",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/r/:shareId", "destination": "/api/og/:shareId" },
