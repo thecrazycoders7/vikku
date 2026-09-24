@@ -16,6 +16,12 @@ async function main() {
   const originalIndexHtml = await readFile('dist/index.html', 'utf8')
   const expectedAssets = new Set(originalIndexHtml.match(ASSET_RE) ?? [])
 
+  // Keep the empty shell as app.html for the SPA fallback. index.html gets
+  // overwritten with the prerendered homepage below, but non-prerendered
+  // routes (dashboard, /pm/*) rewrite to app.html so they don't flash the
+  // homepage before React mounts.
+  await writeFile('dist/app.html', originalIndexHtml)
+
   const server = await preview({ preview: { port: 4173, strictPort: true } })
   const base = server.resolvedUrls.local[0]
 
