@@ -33,7 +33,7 @@ export default function Testimonials() {
           <div className="section-tag">What Clients Say</div>
           <h2
             className="font-display font-extrabold text-white"
-            style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.4rem)' }}
+            style={{ fontSize: 'var(--h2)' }}
           >
             Results that Speak for Themselves
           </h2>

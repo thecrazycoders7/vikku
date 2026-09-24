@@ -59,7 +59,7 @@ export default function Process() {
           <div className="section-tag">How We Work</div>
           <h2
             className="font-display font-extrabold text-white"
-            style={{ fontSize: 'clamp(1.6rem, 3.2vw, 2.4rem)' }}
+            style={{ fontSize: 'var(--h2)' }}
           >
             From Idea to Launch
           </h2>

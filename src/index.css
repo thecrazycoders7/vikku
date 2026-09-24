@@ -43,28 +43,21 @@
   --radius-md: 12px;
   --radius-lg: 16px;  /* cards, images     */
 
-  /* type scale (desktop) */
-  --text-sm: 14px;
-  --text-md: 16px;
-  --text-lg: 18px;
-  --h1: 64px;
-  --h2: 44px;
-  --h3: 28px;
+  /* type scale — clamp(mobile-min, fluid, desktop-max) so one value covers
+     both breakpoints per the Vikku typography system */
+  --h1: clamp(36px, 6vw, 72px);      /* Hero H1  · mobile 36–44 · desktop 56–72 · 700–800 */
+  --h2: clamp(30px, 4.2vw, 48px);    /* Section  · mobile 30–36 · desktop 40–48 · 700     */
+  --h3: clamp(24px, 2.6vw, 32px);    /* H3       · mobile 24–28 · desktop 28–32 · 600–700 */
+  --h4: clamp(18px, 2vw, 24px);      /* H4       · mobile 18–20 · desktop 20–24 · 600     */
+  --text-lg: clamp(16px, 1.4vw, 20px); /* Body large · mobile 16–18 · desktop 18–20      */
+  --text-md: 16px;                   /* Body                                              */
+  --text-sm: 14px;                   /* Small text                                        */
+  --caption: clamp(12px, 1vw, 13px); /* Caption / meta                                    */
 
   /* section rhythm + readable measure */
-  --section-y: 96px;       /* normal section     */
-  --section-y-major: 120px;/* major section/hero */
-  --measure: 650px;        /* paragraph max-width */
-}
-
-@media (max-width: 640px) {
-  :root {
-    --h1: 40px;
-    --h2: 32px;
-    --h3: 24px;
-    --section-y: 64px;
-    --section-y-major: 80px;
-  }
+  --section-y: clamp(64px, 8vw, 96px);        /* normal section     */
+  --section-y-major: clamp(80px, 10vw, 120px);/* major section/hero */
+  --measure: 650px;                            /* paragraph max-width */
 }
 
 select option {

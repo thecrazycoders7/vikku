@@ -107,7 +107,7 @@ export default function FounderTools() {
             <Sparkles size={12} className="text-violet-400" />
             <span className="text-[11px] font-semibold text-white/50 tracking-wide uppercase">Free Tools for Founders</span>
           </div>
-          <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-white leading-tight mb-4">
+          <h2 className="font-display font-extrabold text-white leading-tight mb-4" style={{ fontSize: 'var(--h2)' }}>
             Still figuring out what to build?<br />
             <span className="text-white/40">We made tools for exactly that.</span>
           </h2>
