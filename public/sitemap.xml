@@ -4,7 +4,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://www.vikku.in/</loc>
-    <lastmod>2025-06-23</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -12,100 +12,71 @@
   <!-- AI Tools — highest priority for SEO -->
   <url>
     <loc>https://www.vikku.in/tools/ai-visibility-score</loc>
-    <lastmod>2026-07-03</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
 
   <url>
-    <loc>https://www.vikku.in/tools/cost-estimator</loc>
-    <lastmod>2025-06-23</lastmod>
+    <loc>https://www.vikku.in/tools/project-estimator</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
 
   <url>
-    <loc>https://www.vikku.in/tools/roi-calculator</loc>
-    <lastmod>2025-06-23</lastmod>
+    <loc>https://www.vikku.in/tools/business-impact</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
 
   <url>
-    <loc>https://www.vikku.in/tools/timeline-calculator</loc>
-    <lastmod>2025-06-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-  </url>
-
-  <url>
-    <loc>https://www.vikku.in/tools/tech-recommender</loc>
-    <lastmod>2025-06-23</lastmod>
+    <loc>https://www.vikku.in/tools/timeline</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://www.vikku.in/tools/maintenance-calculator</loc>
-    <lastmod>2025-06-23</lastmod>
+    <loc>https://www.vikku.in/tools/stack-recommender</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Case studies -->
   <url>
-    <loc>https://www.vikku.in/work/staffing-platform</loc>
-    <lastmod>2025-06-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
+    <loc>https://www.vikku.in/tools/maintenance</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 
-  <url>
-    <loc>https://www.vikku.in/work/hso-cctv</loc>
-    <lastmod>2025-06-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-
-  <url>
-    <loc>https://www.vikku.in/work/rolex-ads</loc>
-    <lastmod>2025-06-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-
-  <url>
-    <loc>https://www.vikku.in/work/media-manager</loc>
-    <lastmod>2025-06-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-
-  <!-- Auth & legal -->
-  <url>
-    <loc>https://www.vikku.in/login</loc>
-    <lastmod>2025-06-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://www.vikku.in/signup</loc>
-    <lastmod>2025-06-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
+  <!-- Legal -->
   <url>
     <loc>https://www.vikku.in/privacy</loc>
-    <lastmod>2025-06-01</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <url>
     <loc>https://www.vikku.in/terms</loc>
-    <lastmod>2025-06-01</lastmod>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://www.vikku.in/cookies</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://www.vikku.in/refunds</loc>
+    <lastmod>2026-09-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
