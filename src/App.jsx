@@ -20,6 +20,7 @@ import RouteTracker        from './components/RouteTracker'
 import ErrorBoundary       from './components/ErrorBoundary'
 import CookieConsent       from './components/CookieConsent'
 import SplashScreen        from './components/SplashScreen'
+import Reveal              from './components/Reveal'
 import usePageMeta         from './hooks/usePageMeta'
 
 const Login                 = lazy(() => import('./pages/Login'))
@@ -92,13 +93,13 @@ function Home() {
       <main>
         <Hero />
         <Clients />
-        <Services />
-        <FounderTools />
-        <Process />
-        <TechStack />
+        <Reveal><Services /></Reveal>
+        <Reveal><FounderTools /></Reveal>
+        <Reveal><Process /></Reveal>
+        <Reveal><TechStack /></Reveal>
         <About />
-        <Testimonials />
-        <FAQ />
+        <Reveal><Testimonials /></Reveal>
+        <Reveal><FAQ /></Reveal>
       </main>
       <Footer />
       <ScrollToTop />
