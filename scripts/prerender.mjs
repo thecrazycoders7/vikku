@@ -44,7 +44,17 @@ async function main() {
       try {
         await page.goto(base + route.slice(1), { waitUntil: 'networkidle0' })
         await page.waitForSelector('html[data-seo-ready="true"]', { timeout: 10000 })
-        const html = await page.content()
+        let html = await page.content()
+
+        // Cal's loader injects <script src=embed.js> at runtime. Prerender
+        // captures it, so on the client embed.js loads twice (baked tag + the
+        // inline init loader) — which throws "cal-modal-box already defined"
+        // and breaks the booking modal. Strip the injected tag; the inline
+        // init in index.html loads embed.js exactly once on the client.
+        html = html.replace(
+          /<script\b[^>]*\bsrc="https:\/\/app\.cal\.com\/embed\/embed\.js"[^>]*><\/script>/gi,
+          '',
+        )
 
         const missing = [...expectedAssets].filter((asset) => !html.includes(asset))
         if (missing.length) {
