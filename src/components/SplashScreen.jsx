@@ -17,11 +17,13 @@ export default function SplashScreen() {
     if (phase !== 'in' || started) return
     started = true
     try { sessionStorage.setItem('vikku_splash', '1') } catch {}
-    document.body.style.overflow = 'hidden'
+    // Note: intentionally does NOT lock body scroll — the opaque overlay
+    // already covers the page for ~2s, and touching body.style.overflow
+    // races with the modal scroll-lock and could leave scrolling stuck.
     // No cleanup that clears these — StrictMode's simulated unmount would
     // otherwise cancel the only timers and freeze the splash on screen.
     setTimeout(() => setPhase('leaving'), 1500)
-    setTimeout(() => { setPhase('done'); document.body.style.overflow = '' }, 2150)
+    setTimeout(() => setPhase('done'), 2150)
   }, [phase])
 
   if (phase === 'done') return null
