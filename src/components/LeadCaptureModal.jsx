@@ -3,6 +3,7 @@ import { X, Mail, ArrowRight, CheckCircle, Calendar } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
 import { emailToolResult } from '../lib/toolResultsService'
 import useLockBodyScroll from '../hooks/useLockBodyScroll'
+import { CAL_ATTRS } from '../lib/cal'
 
 const SOURCE_LABELS = {
   roi_calculator: 'ROI Calculator',
@@ -81,9 +82,7 @@ export default function LeadCaptureModal({ open, onClose, source, shareId, onUnl
             <div className="space-y-3">
               <button
                 type="button"
-                data-cal-namespace="30min"
-                data-cal-link="harsha-vardhan-reddy-sanikommu-vikku/30min"
-                data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+                {...CAL_ATTRS}
                 className="w-full flex items-center justify-between glass rounded-xl px-4 py-3 text-sm text-white hover:border-white/20 transition-all group"
               >
                 <span>Book a free consultation</span>

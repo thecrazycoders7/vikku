@@ -1,5 +1,6 @@
 import { ArrowRight, ChevronDown } from 'lucide-react'
 import { useTheme } from '../contexts/ThemeContext'
+import { CAL_ATTRS } from '../lib/cal'
 
 export default function Hero() {
   const { theme } = useTheme()
@@ -73,9 +74,7 @@ export default function Hero() {
         {/* CTAs */}
         <div className="flex items-center justify-center gap-2 mb-8">
           <button
-            data-cal-namespace="30min"
-            data-cal-link="harsha-vardhan-reddy-sanikommu-vikku/30min"
-            data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+            {...CAL_ATTRS}
             className="relative inline-flex items-center gap-2 rounded-full font-semibold text-black text-xs transition-all duration-300 px-6 py-3 bg-white hover:bg-white/90 active:scale-95"
           >
             Book a Call <ArrowRight size={14} />
