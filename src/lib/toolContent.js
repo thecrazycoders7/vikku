@@ -118,4 +118,51 @@ export const TOOL_FAQ = {
       { q: 'Does this check if AI crawlers can access my site?', a: 'Yes - we check your robots.txt for blocks on GPTBot, ClaudeBot, PerplexityBot and other known AI crawlers.' },
     ],
   },
+  project_estimator: {
+    heading: 'How much does it cost to build custom software?',
+    intro: 'A real estimate depends on scope, platforms, features, integrations, and the level of design and security you need. This estimator turns your answers into an itemised cost and effort range in minutes - no sales call.',
+    faqs: [
+      { q: 'How accurate is the estimate?', a: 'It maps your selected scope - features, platforms, integrations, AI, design and security - to current build effort and market rates, producing a conservative range. Use it as a planning ballpark; a scoping call firms it into a fixed proposal.' },
+      { q: 'What drives the price the most?', a: 'The number and complexity of features, third-party and AI integrations, whether you need web plus mobile, custom design, and security or compliance needs. The breakdown shows where each rupee goes.' },
+      { q: 'What do I get at the end?', a: 'A costed scope with an effort range, the biggest cost drivers and risks, an AI executive summary, and a recommended next step - plus the option to turn it into a fixed-price proposal on a free call.' },
+      { q: 'Is it free?', a: 'Yes - run as many estimates as you like, generate the AI summary, and email the report to yourself for free.' },
+    ],
+  },
+  business_impact: {
+    heading: 'What is the business impact of building this software?',
+    intro: 'Beyond cost, what will this project actually return? This tool builds a simple financial model - revenue gained or saved, payback period, and multi-year value - so you can decide with numbers, not gut feel.',
+    faqs: [
+      { q: 'How is the impact calculated?', a: 'It models your inputs - current volumes, conversion, average value, time saved - against the improvement the software is expected to deliver, then projects payback period and multi-year return.' },
+      { q: 'Is this a guaranteed return?', a: 'No - it is a scenario model built from your assumptions. Adjust the inputs to see best and worst cases; the report explains which levers move the numbers most.' },
+      { q: 'Who is this for?', a: 'Founders and teams deciding whether a build is worth it, or who need a credible business case to justify the investment internally.' },
+    ],
+  },
+  timeline: {
+    heading: 'How long does it take to build software?',
+    intro: 'Get a realistic, phase-by-phase timeline for your project - discovery, design, development, testing and launch - based on your actual scope, not a generic guess.',
+    faqs: [
+      { q: 'How is the timeline estimated?', a: 'Your scope is broken into standard delivery phases with realistic durations based on complexity, so you see a start-to-launch schedule rather than a single number.' },
+      { q: 'Can the timeline be compressed?', a: 'Often yes - with a larger team or a tighter initial scope. The phase breakdown shows where the time goes so you can decide what ships first.' },
+      { q: 'Does it account for testing and launch?', a: 'Yes - QA, revisions, and launch or handover are their own phases, since skipping them is the most common cause of blown deadlines.' },
+    ],
+  },
+  stack_recommender: {
+    heading: 'Which tech stack should I use for my project?',
+    intro: 'Describe your product, scale, and constraints and get an opinionated, modern tech stack - frontend, backend, database, and hosting - with the reasoning behind each pick.',
+    faqs: [
+      { q: 'Why trust the recommendation?', a: 'It favours proven, well-supported technologies matched to your scale, team size, and budget - not whatever is trending.' },
+      { q: 'Does it consider cost and scale?', a: 'Yes - it weighs hosting cost, how well each choice scales, and how easy it is to hire for, not just technical fit.' },
+      { q: 'Can I change it later?', a: "Yes - it's a strong default, and the reasoning helps you adapt it to your team's existing strengths." },
+    ],
+  },
+  maintenance: {
+    heading: 'How much does it cost to maintain software?',
+    intro: "Building is only the start. Hosting, monitoring, security patches, bug fixes and support add up every month. This calculator breaks it down so you can budget a realistic retainer - or just know what you're in for.",
+    faqs: [
+      { q: "What's typically included in maintenance?", a: 'Hosting and infrastructure, uptime monitoring, security updates, bug fixes, minor feature tweaks, and support hours depending on your SLA.' },
+      { q: 'Why does scale affect maintenance cost?', a: 'More users means higher server costs, more support tickets, stricter uptime requirements, and greater risk from downtime - all of which raise the budget.' },
+      { q: 'Is this the same as a retainer?', a: 'A maintenance retainer covers most of this. The estimate shows what a realistic retainer should cost for your product type and scale.' },
+      { q: 'What happens if I skip maintenance?', a: 'Security holes accumulate, performance degrades, integrations break, and tech debt compounds - usually costing far more to fix later.' },
+    ],
+  },
 }

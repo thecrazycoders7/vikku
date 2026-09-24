@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, RotateCcw, Sparkles, Check, Layers } from 'lucide-react'
 import Seo from '../components/Seo'
+import ToolFAQ from '../components/tools/ToolFAQ'
+import { TOOL_FAQ, faqJsonLd } from '../lib/toolContent'
 import { CAL_ATTRS } from '../lib/cal'
 import { useAuth } from '../contexts/AuthContext'
 import { Q, Q_ORDER, recommend } from '../lib/techStack'
@@ -35,7 +37,7 @@ export default function StackRecommender() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Tech Stack Recommender — Vikku" description="Answer a few questions and get an opinionated, reasoned tech stack for your project — frontend, backend, database, hosting and more." url="https://vikku.in/tools/tech-recommender" />
+      <Seo title="Tech Stack Recommender — Vikku" description="Answer a few questions and get an opinionated, reasoned tech stack for your project — frontend, backend, database, hosting and more." canonical="/tools/stack-recommender" jsonLd={faqJsonLd('stack_recommender')} />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <button onClick={() => navigate(homePath)} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> {user ? 'Dashboard' : 'Back'}</button>
@@ -80,6 +82,8 @@ export default function StackRecommender() {
             {step === total - 1 ? 'See my stack' : 'Continue'} <ArrowRight size={15} />
           </button>
         </div>
+
+        {step === 0 && <ToolFAQ content={TOOL_FAQ.stack_recommender} />}
       </div>
       <style>{`@keyframes stkIn { from { opacity:0; transform: translateY(12px) } to { opacity:1; transform:none } }`}</style>
     </div>
@@ -89,7 +93,7 @@ export default function StackRecommender() {
 function Result({ rec, navigate, onEdit, onRestart }) {
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Your Recommended Stack — Vikku" description="Your recommended tech stack." url="https://vikku.in/tools/tech-recommender" />
+      <Seo title="Your Recommended Stack — Vikku" description="Your recommended tech stack." canonical="/tools/stack-recommender" />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05] px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button onClick={onEdit} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> Edit answers</button>
