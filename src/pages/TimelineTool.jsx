@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, RotateCcw, Sparkles, Check, Flag } from 'lucide-react'
 import Seo from '../components/Seo'
+import ToolFAQ from '../components/tools/ToolFAQ'
+import { TOOL_FAQ, faqJsonLd } from '../lib/toolContent'
 import { CAL_ATTRS } from '../lib/cal'
 import { useAuth } from '../contexts/AuthContext'
 import { TYPES, SIZE, PLATFORMS, TEAM, DESIGN, COMPLEXITY, estimateTimeline, weekDate } from '../lib/timelineModel'
@@ -43,7 +45,7 @@ export default function TimelineTool() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Project Timeline Calculator — Vikku" description="Get a realistic, phase-by-phase project timeline with milestones and dates." url="https://vikku.in/tools/timeline" />
+      <Seo title="Project Timeline Calculator — Vikku" description="Get a realistic, phase-by-phase project timeline with milestones and dates." canonical="/tools/timeline" jsonLd={faqJsonLd('timeline')} />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <button onClick={() => navigate(homePath)} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> {user ? 'Dashboard' : 'Back'}</button>
@@ -87,6 +89,8 @@ export default function TimelineTool() {
             {step === total - 1 ? 'See my timeline' : 'Continue'} <ArrowRight size={15} />
           </button>
         </div>
+
+        {step === 0 && <ToolFAQ content={TOOL_FAQ.timeline} />}
       </div>
       <style>{`@keyframes tlIn { from { opacity:0; transform: translateY(12px) } to { opacity:1; transform:none } }`}</style>
     </div>
@@ -97,7 +101,7 @@ function Result({ r, navigate, onEdit, onRestart }) {
   useEffect(() => { window.scrollTo(0, 0) }, [])
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Your Project Timeline — Vikku" description="Your project timeline." url="https://vikku.in/tools/timeline" />
+      <Seo title="Your Project Timeline — Vikku" description="Your project timeline." canonical="/tools/timeline" />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05] px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button onClick={onEdit} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> Edit answers</button>

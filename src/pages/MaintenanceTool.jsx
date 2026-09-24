@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, RotateCcw, Sparkles, Check } from 'lucide-react'
 import Seo from '../components/Seo'
+import ToolFAQ from '../components/tools/ToolFAQ'
+import { TOOL_FAQ, faqJsonLd } from '../lib/toolContent'
 import { CAL_ATTRS } from '../lib/cal'
 import { useAuth } from '../contexts/AuthContext'
 import { TYPES, SCALE, SUPPORT, AI, SERVICES, estimateMaintenance, inr, inrShort } from '../lib/maintenanceModel'
@@ -41,7 +43,7 @@ export default function MaintenanceTool() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Maintenance Cost Calculator — Vikku" description="Estimate the monthly cost to run and maintain your software — hosting, support, security and more." url="https://vikku.in/tools/maintenance" />
+      <Seo title="Maintenance Cost Calculator — Vikku" description="Estimate the monthly cost to run and maintain your software — hosting, support, security and more." canonical="/tools/maintenance" jsonLd={faqJsonLd('maintenance')} />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <button onClick={() => navigate(homePath)} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> {user ? 'Dashboard' : 'Back'}</button>
@@ -85,6 +87,8 @@ export default function MaintenanceTool() {
             {step === total - 1 ? 'See my cost' : 'Continue'} <ArrowRight size={15} />
           </button>
         </div>
+
+        {step === 0 && <ToolFAQ content={TOOL_FAQ.maintenance} />}
       </div>
       <style>{`@keyframes mtIn { from { opacity:0; transform: translateY(12px) } to { opacity:1; transform:none } }`}</style>
     </div>
@@ -96,7 +100,7 @@ function Result({ r, navigate, onEdit, onRestart }) {
   const maxItem = Math.max(...r.items.map((i) => i.amount), 1)
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Your Maintenance Cost — Vikku" description="Your monthly maintenance estimate." url="https://vikku.in/tools/maintenance" />
+      <Seo title="Your Maintenance Cost — Vikku" description="Your monthly maintenance estimate." canonical="/tools/maintenance" />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05] px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button onClick={onEdit} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> Edit answers</button>

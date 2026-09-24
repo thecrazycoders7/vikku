@@ -4,6 +4,8 @@ import { ArrowLeft, ArrowRight, Check, RotateCcw, Sparkles } from 'lucide-react'
 import Seo from '../components/Seo'
 import { CAL_ATTRS } from '../lib/cal'
 import AISummary from '../components/tools/AISummary'
+import ToolFAQ from '../components/tools/ToolFAQ'
+import { TOOL_FAQ, faqJsonLd } from '../lib/toolContent'
 import { useAuth } from '../contexts/AuthContext'
 import {
   PROJECT_TYPES, PLATFORMS, ROLES, FEATURE_GROUPS, INTEGRATIONS, AI_CAPS,
@@ -62,7 +64,7 @@ export default function ProjectEstimator() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="AI Project Estimator — Vikku" description="Answer a few quick questions and get a professional software project estimate in minutes." url="https://vikku.in/tools/project-estimator" />
+      <Seo title="AI Project Estimator — Vikku" description="Answer a few quick questions and get a professional software project estimate in minutes." canonical="/tools/project-estimator" jsonLd={faqJsonLd('project_estimator')} />
 
       {/* Header + progress */}
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05]">
@@ -101,6 +103,8 @@ export default function ProjectEstimator() {
             {current.id === 'review' ? 'Get my estimate' : 'Continue'} <ArrowRight size={15} />
           </button>
         </div>
+
+        {step === 0 && <ToolFAQ content={TOOL_FAQ.project_estimator} />}
       </div>
 
       <style>{`@keyframes estIn { from { opacity:0; transform: translateY(12px) } to { opacity:1; transform:none } }`}</style>
@@ -303,7 +307,7 @@ function Result({ a, r, navigate, onEdit, onRestart }) {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Your Project Estimate — Vikku" description="Your software project estimate." url="https://vikku.in/tools/project-estimator" />
+      <Seo title="Your Project Estimate — Vikku" description="Your software project estimate." canonical="/tools/project-estimator" />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05] px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button onClick={onEdit} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> Edit answers</button>

@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, RotateCcw, Sparkles, TrendingUp, ShieldCheck, HelpCircle } from 'lucide-react'
 import Seo from '../components/Seo'
+import ToolFAQ from '../components/tools/ToolFAQ'
+import { TOOL_FAQ, faqJsonLd } from '../lib/toolContent'
 import { CAL_ATTRS } from '../lib/cal'
 import AISummary from '../components/tools/AISummary'
 import { useAuth } from '../contexts/AuthContext'
@@ -52,6 +54,7 @@ export default function BusinessImpact() {
             </button>
           ))}
         </div>
+        <ToolFAQ content={TOOL_FAQ.business_impact} />
       </Shell>
     )
   }
@@ -135,7 +138,7 @@ export default function BusinessImpact() {
 function Shell({ children, navigate, onBack, home = '/' }) {
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Business Impact Calculator — Vikku" description="Model the financial impact of automation, software, or marketing on your business — TCO, ROI, NPV, payback, and a full business case." url="https://vikku.in/tools/business-impact" />
+      <Seo title="Business Impact Calculator — Vikku" description="Model the financial impact of automation, software, or marketing on your business — TCO, ROI, NPV, payback, and a full business case." canonical="/tools/business-impact" jsonLd={faqJsonLd('business_impact')} />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05] px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <button onClick={() => (onBack ? onBack() : navigate(home))} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> {!onBack && home !== '/' ? 'Dashboard' : 'Back'}</button>
@@ -175,7 +178,7 @@ function Result({ navigate, category, model, values, setValues, fields, opts, se
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Your Business Case — Vikku" description="Your financial model." url="https://vikku.in/tools/business-impact" />
+      <Seo title="Your Business Case — Vikku" description="Your financial model." canonical="/tools/business-impact" />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05] px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button onClick={onEdit} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> Edit inputs</button>
