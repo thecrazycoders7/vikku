@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getConsent, setConsent, loadAnalytics } from '../lib/analyticsLoader'
 
-// Privacy-first cookie banner. Analytics load ONLY after "Accept".
+// Privacy-first cookie banner. Analytics load ONLY after "Accept all".
 export default function CookieConsent() {
   const [choice, setChoice] = useState(() => getConsent())
 
@@ -15,15 +15,41 @@ export default function CookieConsent() {
   const decline = () => { setConsent('declined'); setChoice('declined') }
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-[100] p-4 sm:p-5" role="dialog" aria-label="Cookie consent">
-      <div className="glass-strong max-w-3xl mx-auto rounded-2xl p-5 border border-white/10 flex flex-col sm:flex-row sm:items-center gap-4">
-        <p className="text-sm text-white/70 flex-1 leading-relaxed">
-          We use essential cookies to run the site and, with your consent, analytics cookies to understand usage.{' '}
-          <Link to="/cookies" className="text-[var(--brand-primary)] hover:underline">Cookie Policy</Link>
-        </p>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <button onClick={decline} className="px-4 py-2 rounded-xl text-sm border border-white/15 text-white/70 hover:text-white hover:bg-white/5 transition-colors">Decline</button>
-          <button onClick={accept} className="btn-primary px-5 py-2 rounded-xl text-sm">Accept</button>
+    <div
+      className="fixed bottom-4 left-4 right-4 sm:right-auto sm:max-w-md z-[100]"
+      role="dialog"
+      aria-label="Cookie consent"
+    >
+      <div className="glass-strong rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+        <div className="p-6">
+          <h2 className="font-display font-bold text-xl text-white mb-3">🍪 We value your privacy!</h2>
+          <p className="text-sm text-white/60 leading-relaxed">
+            Our website uses tracking cookies to understand how you interact with it. The
+            tracking will be enabled only if you accept.{' '}
+            <Link to="/cookies" className="text-[var(--brand-primary)] hover:underline">Manage preferences</Link>
+          </p>
+        </div>
+
+        <div className="px-6 pb-5 pt-1 border-t border-white/[0.06] grid grid-cols-2 gap-3">
+          <button
+            onClick={accept}
+            className="rounded-xl py-3 text-sm font-semibold text-[#fff] transition-transform active:scale-95"
+            style={{ background: '#0F172A' }}
+          >
+            Accept all
+          </button>
+          <button
+            onClick={decline}
+            className="rounded-xl py-3 text-sm font-semibold text-[#fff] transition-transform active:scale-95"
+            style={{ background: '#0F172A' }}
+          >
+            Reject all
+          </button>
+        </div>
+
+        <div className="px-6 py-4 border-t border-white/[0.06] flex items-center gap-6 text-xs">
+          <Link to="/privacy" className="text-white/60 hover:text-white transition-colors">Privacy Policy</Link>
+          <Link to="/terms" className="text-white/60 hover:text-white transition-colors">Terms of Service</Link>
         </div>
       </div>
     </div>
