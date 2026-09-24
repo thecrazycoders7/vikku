@@ -19,6 +19,7 @@ import CursorGlow          from './components/CursorGlow'
 import RouteTracker        from './components/RouteTracker'
 import ErrorBoundary       from './components/ErrorBoundary'
 import CookieConsent       from './components/CookieConsent'
+import SplashScreen        from './components/SplashScreen'
 import usePageMeta         from './hooks/usePageMeta'
 
 const Login                 = lazy(() => import('./pages/Login'))
@@ -112,6 +113,7 @@ export default function App() {
       <AuthProvider>
         <RouteTracker />
         <CookieConsent />
+        <SplashScreen />
         <ErrorBoundary>
           <Suspense fallback={<div className="min-h-screen bg-black" />}>
             <Routes>
