@@ -52,28 +52,58 @@ export async function getProject(idOrSlug) {
   }
 }
 
+// Public client-share reads go through SECURITY DEFINER RPCs (get_shared_*),
+// because the pm_* tables are locked to owner/members by RLS. The RPCs only
+// ever return rows for the project matching the share token.
 export async function getProjectByToken(token) {
   if (!supabase) return null
   try {
-    const { data, error } = await supabase
-      .from('pm_projects')
-      .select('*')
-      .eq('share_token', token)
-      .single()
-    if (error) {
-      // PGRST116 = no matching row, 22P02 = token isn't a valid uuid; both just mean "bad link"
-      if (error.code !== 'PGRST116' && error.code !== '22P02') {
-        console.error('Error fetching project by token:', error.message)
-      }
-      return null
-    }
-    // Strip PIN from client response; expose only whether one is set
-    const { share_pin, ...rest } = data
-    return { ...rest, has_share_pin: !!share_pin }
+    const { data, error } = await supabase.rpc('get_shared_project', { p_token: token })
+    if (error || !data) return null
+    return data // already { ...project (no share_pin), has_share_pin }
   } catch (err) {
     console.error('Failed to fetch project by token:', err)
     return null
   }
+}
+
+export async function getSharedTasks(token) {
+  if (!supabase) return []
+  const { data, error } = await supabase.rpc('get_shared_tasks', { p_token: token })
+  if (error) { console.error('getSharedTasks:', error.message); return [] }
+  return data || []
+}
+
+export async function getSharedMilestones(token) {
+  if (!supabase) return []
+  const { data, error } = await supabase.rpc('get_shared_milestones', { p_token: token })
+  if (error) { console.error('getSharedMilestones:', error.message); return [] }
+  return data || []
+}
+
+export async function getSharedComments(token) {
+  if (!supabase) return []
+  const { data, error } = await supabase.rpc('get_shared_comments', { p_token: token })
+  if (error) { console.error('getSharedComments:', error.message); return [] }
+  return data || []
+}
+
+export async function addSharedComment(token, authorName, content) {
+  if (!supabase) throw new Error('Database not configured')
+  const { data, error } = await supabase.rpc('add_shared_comment', {
+    p_token: token, p_author: authorName, p_content: content,
+  })
+  if (error) throw error
+  return data
+}
+
+export async function approveMilestoneAsClient(milestoneId, token, status, note = null) {
+  if (!supabase) throw new Error('Database not configured')
+  const { data, error } = await supabase.rpc('approve_milestone_client', {
+    p_milestone_id: milestoneId, p_token: token, p_status: status, p_note: note,
+  })
+  if (error) throw error
+  return data
 }
 
 export async function createProject(fields) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CheckCircle2, Circle, Clock, Flag, ThumbsUp, ThumbsDown, MessageSquare, Send, Loader2, Lock, Paperclip, Download, File, FileImage, FileText } from 'lucide-react'
-import { getProjectByToken, getTasks, getMilestones, updateMilestone, getClientComments, createClientComment, verifySharePin, approveTaskAsClient } from '../../lib/pmService'
+import { getProjectByToken, getSharedTasks, getSharedMilestones, approveMilestoneAsClient, getSharedComments, addSharedComment, verifySharePin, approveTaskAsClient } from '../../lib/pmService'
 import { notifyClientComment, notifyClientApproval, notifyMilestoneApproval, insertPmNotification } from '../../lib/notificationService'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
@@ -107,10 +107,7 @@ function MilestoneApproval({ milestones, onUpdate, token, ownerUserId }) {
 
   const handleApprove = async (m, status) => {
     setApproving((prev) => ({ ...prev, [m.id]: true }))
-    const updated = await updateMilestone(m.id, {
-      approval_status: status,
-      client_note: notes[m.id] || null,
-    })
+    const updated = await approveMilestoneAsClient(m.id, token, status, notes[m.id] || null)
     onUpdate(updated)
     setApproving((prev) => ({ ...prev, [m.id]: false }))
     setShowNote((prev) => ({ ...prev, [m.id]: false }))
@@ -212,7 +209,7 @@ function ClientComments({ projectId, shareToken }) {
   const [loadingComments, setLoadingComments] = useState(true)
 
   useEffect(() => {
-    getClientComments(shareToken).then((data) => {
+    getSharedComments(shareToken).then((data) => {
       setComments(data)
       setLoadingComments(false)
     })
@@ -222,12 +219,7 @@ function ClientComments({ projectId, shareToken }) {
     if (!name.trim() || !content.trim()) return
     setPosting(true)
     try {
-      const comment = await createClientComment({
-        project_id: projectId,
-        share_token: shareToken,
-        author_name: name.trim(),
-        content: content.trim(),
-      })
+      const comment = await addSharedComment(shareToken, name.trim(), content.trim())
       setComments((prev) => [...prev, comment])
       setContent('')
       notifyClientComment({ shareToken, authorName: name.trim(), comment: content.trim() })
@@ -408,7 +400,7 @@ export default function ClientView() {
   const [pinChecking, setPinChecking] = useState(false)
 
   async function loadProjectData(projectId) {
-    const [t, m] = await Promise.all([getTasks(projectId), getMilestones(projectId)])
+    const [t, m] = await Promise.all([getSharedTasks(token), getSharedMilestones(token)])
     setTasks(t)
     setMilestones(m.sort((a, b) => new Date(a.due_date) - new Date(b.due_date)))
   }
