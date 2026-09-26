@@ -16,38 +16,37 @@ export default function CookieConsent() {
 
   return (
     <div
-      className="fixed bottom-4 left-4 right-4 sm:right-auto sm:max-w-md z-[100]"
+      className="fixed bottom-4 left-4 right-4 sm:left-auto sm:max-w-xs z-[100]"
       role="dialog"
       aria-label="Cookie consent"
     >
       <div className="glass-strong rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
-        <div className="p-6">
-          <h2 className="font-display font-bold text-xl text-white mb-3">🍪 We value your privacy!</h2>
-          <p className="text-sm text-white/60 leading-relaxed">
-            Our website uses tracking cookies to understand how you interact with it. The
-            tracking will be enabled only if you accept.{' '}
+        <div className="p-4">
+          <h2 className="font-display font-bold text-base text-white mb-1.5">🍪 We value your privacy!</h2>
+          <p className="text-xs text-white/60 leading-relaxed">
+            We use tracking cookies to understand how you use the site — only if you accept.{' '}
             <Link to="/cookies" className="text-[var(--brand-primary)] hover:underline">Manage preferences</Link>
           </p>
         </div>
 
-        <div className="px-6 pb-5 pt-1 border-t border-white/[0.06] grid grid-cols-2 gap-3">
+        <div className="px-4 pb-3.5 grid grid-cols-2 gap-2.5">
           <button
             onClick={accept}
-            className="rounded-xl py-3 text-sm font-semibold text-[#fff] transition-transform active:scale-95"
+            className="rounded-lg py-2.5 text-[13px] font-semibold text-[#fff] transition-transform active:scale-95"
             style={{ background: '#0F172A' }}
           >
             Accept all
           </button>
           <button
             onClick={decline}
-            className="rounded-xl py-3 text-sm font-semibold text-[#fff] transition-transform active:scale-95"
+            className="rounded-lg py-2.5 text-[13px] font-semibold text-[#fff] transition-transform active:scale-95"
             style={{ background: '#0F172A' }}
           >
             Reject all
           </button>
         </div>
 
-        <div className="px-6 py-4 border-t border-white/[0.06] flex items-center gap-6 text-xs">
+        <div className="px-4 py-3 border-t border-white/[0.06] flex items-center gap-4 text-[11px]">
           <Link to="/privacy" className="text-white/60 hover:text-white transition-colors">Privacy Policy</Link>
           <Link to="/terms" className="text-white/60 hover:text-white transition-colors">Terms of Service</Link>
         </div>
