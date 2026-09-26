@@ -83,7 +83,8 @@ $$;
 
 create or replace function get_shared_comments(p_token uuid)
 returns setof pm_client_comments language sql stable security definer set search_path = public as $$
-  select c.* from pm_client_comments c where c.share_token = p_token order by c.created_at asc;
+  -- pm_client_comments.share_token is text, not uuid
+  select c.* from pm_client_comments c where c.share_token = p_token::text order by c.created_at asc;
 $$;
 
 create or replace function add_shared_comment(p_token uuid, p_author text, p_content text)
@@ -93,7 +94,7 @@ begin
   select id into v_project from pm_projects where share_token = p_token;
   if v_project is null then raise exception 'invalid share token'; end if;
   insert into pm_client_comments (project_id, share_token, author_name, content)
-  values (v_project, p_token, left(coalesce(p_author,''),120), left(coalesce(p_content,''),4000))
+  values (v_project, p_token::text, left(coalesce(p_author,''),120), left(coalesce(p_content,''),4000))
   returning * into v_row;
   return v_row;
 end $$;
