@@ -9,11 +9,7 @@ import usePageMeta from '../hooks/usePageMeta'
 import './home3d.css'
 
 const sections = [
-  { id: 'services',   label: 'AI Solutions' },
-  { id: 'industries', label: 'Industries' },
-  { id: 'work',       label: 'Work' },
-  { id: 'process',    label: 'Process' },
-  { id: 'about',      label: 'About' },
+  { id: 'about', label: 'About' },
 ]
 const rooms = ['Entrance', 'Lobby', 'AI lab', 'Industries', 'Process wall', 'Client lounge', "Founder's office"]
 const roomIds = ['top', 'about', 'services', 'industries', 'process', 'work', 'contact']
@@ -50,12 +46,12 @@ function HomeNav() {
   const auth = user ? (
     <div className="auth">
       <button type="button" className="nav-link" onClick={() => go('/dashboard')}>Dashboard</button>
-      <button type="button" className="btn btn-ghost btn-sm" onClick={async () => { await signOut(); setMenuOpen(false) }}>Sign out</button>
+      <button type="button" className="nav-link" onClick={async () => { await signOut(); setMenuOpen(false) }}>Sign out</button>
     </div>
   ) : (
     <div className="auth">
       <button type="button" className="nav-link" onClick={() => go('/login')}>Sign in</button>
-      <button type="button" className="btn btn-ghost btn-sm" onClick={() => go('/signup')}>Sign up</button>
+      <button type="button" className="nav-link" onClick={() => go('/signup')}>Sign up</button>
     </div>
   )
 
@@ -95,92 +91,6 @@ function HomeNav() {
           <p className="label">Free tools</p>
           {toolLinks.map(({ label, path }) => <button key={path} type="button" className="menu-item" onClick={() => go(path)}>{label}</button>)}
           {auth}
-        </div>
-      )}
-    </>
-  )
-}
-
-function InquiryForm() {
-  const [status, setStatus] = useState('idle') // idle | sending | sent | error
-  const [invalid, setInvalid] = useState(false)
-  const [summary, setSummary] = useState('')
-  const formRef = useRef(null)
-  const summaryRef = useRef(null)
-
-  const submit = async (e) => {
-    e.preventDefault()
-    const f = Object.fromEntries(new FormData(formRef.current))
-    const email = formRef.current.elements.email
-    if (!f.name.trim() || !f.challenge.trim() || !email.value.trim() || !email.checkValidity()) { setInvalid(true); return }
-    setInvalid(false)
-    setSummary([
-      'AI discovery call request',
-      `Name: ${f.name.trim()}`, `Email: ${f.email.trim()}`, `Company: ${f.company.trim() || 'Not provided'}`,
-      `Solution: ${f.type}`, `Timeline: ${f.timeline}`, '', 'Business challenge:', f.challenge.trim(),
-    ].join('\n'))
-    setStatus('sending')
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: f.name.trim(), email: f.email.trim(), company: f.company.trim(),
-          service: f.type, projectType: 'AI discovery call', timeline: f.timeline,
-          message: f.challenge.trim(), website: f.website,
-        }),
-      })
-      if (!res.ok) throw new Error(String(res.status))
-      setStatus('sent')
-      formRef.current.reset()
-    } catch {
-      setStatus('error')
-    }
-  }
-
-  if (status === 'sent') {
-    return (
-      <div className="inquiry">
-        <p><strong>Thanks, your message is on its way.</strong> It went to connect@vikku.in, and we'll reply by email. You can also pick a time for a call right now.</p>
-        <div className="ctas"><BookButton /></div>
-      </div>
-    )
-  }
-
-  return (
-    <>
-      <form className="form" ref={formRef} onSubmit={submit} noValidate>
-        <label>Name<input name="name" autoComplete="name" required /></label>
-        <label>Business email<input name="email" type="email" autoComplete="email" required /></label>
-        <label className="full">Company<input name="company" autoComplete="organization" /></label>
-        <label className="full">Business challenge
-          <textarea name="challenge" required maxLength={4000} placeholder="Which manual process or problem do you want to fix? Which systems are involved, and what outcome do you want?" />
-        </label>
-        <label>Type of solution
-          <select name="type" defaultValue="Not sure yet">
-            {['Not sure yet', 'AI agent', 'Business automation', 'AI-powered software', 'Voice or chat assistant', 'AI integration', 'Custom software', 'AI product consulting'].map(o => <option key={o}>{o}</option>)}
-          </select>
-        </label>
-        <label>Expected timeline
-          <select name="timeline" defaultValue="Exploring for now">
-            {['Exploring for now', 'As soon as possible', 'Within 1–3 months', 'Within 3–6 months'].map(o => <option key={o}>{o}</option>)}
-          </select>
-        </label>
-        {/* Honeypot: humans never see or fill this; the API drops submissions that do. */}
-        <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1 }} />
-        {invalid && <p className="form-error full">Add your name, a valid business email and your business challenge.</p>}
-        <button className="btn btn-primary full" type="submit" disabled={status === 'sending'}>
-          {status === 'sending' ? 'Sending…' : 'Send my inquiry'}
-        </button>
-      </form>
-      {status === 'error' && (
-        <div className="inquiry">
-          <p><strong>We couldn't send that just now.</strong> Copy your inquiry and email it to connect@vikku.in, or book a call directly.</p>
-          <pre ref={summaryRef}>{summary}</pre>
-          <div className="ctas">
-            <button type="button" className="btn btn-ghost" onClick={(e) => copyText(summary, summaryRef.current, e.currentTarget, 'Copy inquiry')}>Copy inquiry</button>
-            <BookButton />
-          </div>
         </div>
       )}
     </>
@@ -374,10 +284,6 @@ export default function Home3D() {
 
           <section className="stop contact" id="contact">
             <div className="panel">
-              <p className="eyebrow">Founder's office · AI discovery call</p>
-              <h2>Tell us what you want <em>AI to do.</em></h2>
-              <p>We'll tell you honestly whether AI is the right fit, and what the practical next step is. Not every problem needs AI.</p>
-              <InquiryForm />
               <p className="contact-line">
                 <span className="label">Email</span>
                 <span className="email" ref={emailRef}>connect@vikku.in</span>
