@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ChevronDown, Menu, X } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { CAL_ATTRS } from '../lib/cal'
@@ -136,22 +136,33 @@ export default function Home3D() {
     }
   }, [story])
 
-  // The 3D scene loads in its own chunk; skipped during the build's headless prerender.
+  // The 3D scene loads in its own chunk once the page is idle, and fades in over the poster when ready.
+  // Skipped during the build's headless prerender and on data-saver, 2G or low-memory devices,
+  // where the poster image stays as the backdrop. (Not 3G: Chrome's estimate often says 3G on fine desktop links.)
+  const [ready, setReady] = useState(false)
   useEffect(() => {
-    if (navigator.webdriver) { loadingRef.current.hidden = true; return }
+    const net = navigator.connection
+    const lite = net?.saveData || /2g/.test(net?.effectiveType || '') || (navigator.deviceMemory || 8) <= 2
+    if (navigator.webdriver || lite) { loadingRef.current.hidden = true; return }
     let dispose = null
     let cancelled = false
-    import('../lib/studioScene').then(({ createStudio }) =>
-      createStudio({ canvas: canvasRef.current, loadingEl: loadingRef.current, story }))
+    const start = () => import('../lib/studioScene').then(({ createStudio }) =>
+      createStudio({ canvas: canvasRef.current, loadingEl: loadingRef.current, story, onReady: () => setReady(true) }))
       .then(d => { if (cancelled) d(); else dispose = d })
       .catch(() => { if (loadingRef.current) loadingRef.current.hidden = true })
-    return () => { cancelled = true; dispose?.() }
+    const idle = window.requestIdleCallback ? requestIdleCallback(start, { timeout: 1500 }) : setTimeout(start, 300)
+    return () => {
+      cancelled = true
+      window.cancelIdleCallback ? cancelIdleCallback(idle) : clearTimeout(idle)
+      dispose?.()
+    }
   }, [story])
 
   return (
     <>
       <div className="v3d">
         <canvas id="scene" ref={canvasRef} aria-hidden="true" />
+        <div className={`poster${ready ? ' gone' : ''}`} aria-hidden="true" />
         <HomeNav />
 
         <div className="rooms">
@@ -251,7 +262,16 @@ export default function Home3D() {
           <section className="stop" id="work">
             <div className="panel wide">
               <p className="eyebrow">Client lounge · Work</p>
-              <h2>Engineering that <em>delivered</em></h2>
+              <h2>Work you can <em>try today</em></h2>
+              <h3>AI we've shipped</h3>
+              <p>Vikku's own AI products, running GPT-4o in production behind rate-limited server functions. Try any of them free.</p>
+              <ul className="cards">
+                <li><strong>AI Project Planner</strong><span>Describe a project in Vikku PM and the AI drafts a realistic task and milestone plan.</span><Link className="try" to="/pm">Try it</Link></li>
+                <li><strong>AI Visibility Score</strong><span>Checks whether AI assistants like ChatGPT can find and read your website, then scores it and lists the fixes.</span><Link className="try" to="/tools/ai-visibility-score">Try it</Link></li>
+                <li><strong>AI summaries with guardrails</strong><span>In the Project Estimator and Business Impact tools, our models do the maths and the AI explains the result. It is not allowed to change the numbers.</span><Link className="try" to="/tools/project-estimator">Try it</Link></li>
+                <li><strong>AI Maintenance Calculator</strong><span>Breaks down the monthly cost of running a product: hosting, monitoring, security, fixes and support.</span><Link className="try" to="/tools/maintenance">Try it</Link></li>
+              </ul>
+              <h3>Client engineering</h3>
               <p>Software we built for real businesses. These were not AI projects; they show the engineering foundation behind our AI work.</p>
               <ul className="cards">
                 <li><strong><a href="https://www.tapbywisein.com/" target="_blank" rel="noopener noreferrer">TapByWisein</a></strong><span>NFC networking platform</span></li>

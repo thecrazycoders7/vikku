@@ -13,7 +13,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const BASE = '/home3d/';
 
-export async function createStudio({ canvas, loadingEl, story }) {
+export async function createStudio({ canvas, loadingEl, story, onReady }) {
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const narrow = innerWidth < 720;
@@ -48,7 +48,7 @@ export async function createStudio({ canvas, loadingEl, story }) {
 
   const manager = new THREE.LoadingManager();
   manager.onProgress = (url, done, total) => { loadingEl.textContent = `Furnishing the studio… ${Math.round(done / total * 100)}%`; };
-  manager.onLoad = () => { loadingEl.hidden = true; };
+  manager.onLoad = () => { loadingEl.hidden = true; onReady?.(); };
   const texLoader = new THREE.TextureLoader(manager);
   const gltfLoader = new GLTFLoader(manager);
   const aniso = renderer.capabilities.getMaxAnisotropy();
@@ -64,9 +64,9 @@ export async function createStudio({ canvas, loadingEl, story }) {
   // A Poly Haven texture set as a PBR material; `tint` replaces the photo colour (plaster is painted white).
   function pbr(name, o = {}, tint) {
     const m = new THREE.MeshStandardMaterial(Object.assign({ roughness: 1 }, o));
-    if (!tint) m.map = T(name + '_Diffuse.jpg', true); else m.color.set(tint);
-    m.normalMap = T(name + '_nor_gl.jpg');
-    m.roughnessMap = T(name + '_Rough.jpg');
+    if (!tint) m.map = T(name + '_Diffuse.webp', true); else m.color.set(tint);
+    m.normalMap = T(name + '_nor_gl.webp');
+    m.roughnessMap = T(name + '_Rough.webp');
     return m;
   }
   const mat = {
@@ -260,7 +260,7 @@ export async function createStudio({ canvas, loadingEl, story }) {
   mat.rug.map = rugTex;
 
   // ---------- the street ----------
-  texLoader.load(BASE + 'tex/modern_buildings.jpg', t => {
+  texLoader.load(BASE + 'tex/modern_buildings.webp', t => {
     t.mapping = THREE.EquirectangularReflectionMapping;
     t.colorSpace = THREE.SRGBColorSpace;
     scene.background = t;
@@ -432,10 +432,9 @@ export async function createStudio({ canvas, loadingEl, story }) {
   [-5, -1.67, 1.67, 5].forEach(x => box(.06, 3.45, .08, mat.steel, x, 2.17, -60.02, { cast: false }));
   box(10, .06, .08, mat.steel, 0, .47, -60.02, { cast: false });
   box(10, .06, .08, mat.steel, 0, 3.88, -60.02, { cast: false });
-  const view = T('the_sky_is_on_fire.jpg', true);
+  const view = T('the_sky_is_on_fire.webp', true);
+  // The file is pre-cropped to the window's view of the panorama (u .52–.80, v .44–.70); the horizon sits at eye height.
   view.wrapS = view.wrapT = THREE.ClampToEdgeWrapping;
-  // Crop of the panorama around the sun; v = .5 (the horizon) lands at eye height.
-  view.repeat.set(.28, .26); view.offset.set(.52, .44);
   const viewMesh = new THREE.Mesh(new THREE.PlaneGeometry(26, 11.3), new THREE.MeshBasicMaterial({ map: view, toneMapped: false }));
   viewMesh.position.set(0, 4.21, -68); scene.add(viewMesh);
 
