@@ -1,34 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { ChevronDown, Menu, MessageCircle, X } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
-import { CAL_ATTRS } from '../lib/cal'
-import { toolLinks } from '../components/Navbar'
+import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
+import SiteNav, { BookButton, WhatsAppButton } from '../components/SiteNav'
 import usePageMeta from '../hooks/usePageMeta'
 import { trackEvent } from '../utils/analytics'
 import './home3d.css'
 
-const sections = [
-  { id: 'about', label: 'About' },
-]
 const rooms = ['Entrance', 'Lobby', 'AI lab', 'Industries', 'Process wall', 'Client lounge', "Founder's office"]
 const roomIds = ['top', 'about', 'services', 'industries', 'process', 'work', 'contact']
 
-// WhatsApp business number in international format, digits only (e.g. 91XXXXXXXXXX).
-// The floating chat button stays hidden while this is empty.
-const WHATSAPP_NUMBER = '919393979892'
-const WHATSAPP_TEXT = "Hi Vikku, I'd like to talk about automating part of my business."
-
-function BookButton({ className = '', short = 'Book a call', location }) {
-  return (
-    <button type="button" {...CAL_ATTRS} className={`btn btn-primary ${className}`}
-      onClick={() => trackEvent('book_call_click', { event_category: 'conversion', location })}>
-      <span className="cta-long">Book an AI Discovery Call</span>
-      <span className="cta-short">{short}</span>
-    </button>
-  )
-}
+// Founder's LinkedIn profile URL; the link under the photo stays hidden while this is empty.
+const FOUNDER_LINKEDIN = ''
 
 // Copy to clipboard where allowed, otherwise select the text for a manual copy.
 async function copyText(text, el, button, label) {
@@ -37,78 +19,11 @@ async function copyText(text, el, button, label) {
   setTimeout(() => { button.textContent = label }, 1800)
 }
 
-function HomeNav() {
-  const navigate = useNavigate()
-  const { user, signOut } = useAuth()
-  const [toolsOpen, setToolsOpen] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') { setToolsOpen(false); setMenuOpen(false) } }
-    addEventListener('keydown', onKey)
-    return () => removeEventListener('keydown', onKey)
-  }, [])
-
-  const go = (path) => { setToolsOpen(false); setMenuOpen(false); navigate(path) }
-  const auth = user ? (
-    <div className="auth">
-      <button type="button" className="nav-link" onClick={() => go('/dashboard')}>Dashboard</button>
-      <button type="button" className="nav-link" onClick={async () => { await signOut(); setMenuOpen(false) }}>Sign out</button>
-    </div>
-  ) : (
-    <div className="auth">
-      <button type="button" className="nav-link" onClick={() => go('/login')}>Sign in</button>
-      <button type="button" className="nav-link" onClick={() => go('/signup')}>Sign up</button>
-    </div>
-  )
-
-  return (
-    <>
-    <header className="top">
-      <div className="top-inner">
-        <a className="logo" href="#top" onClick={() => setMenuOpen(false)}><img className="logo-mark" src="/logo.png" alt="" />Vikku</a>
-        <nav className="nav" aria-label="Main">
-          <div className="nav-links">
-            {sections.map(({ id, label }) => <a key={id} className="nav-link" href={`#${id}`}>{label}</a>)}
-            <div className="tools" onMouseEnter={() => setToolsOpen(true)} onMouseLeave={() => setToolsOpen(false)}>
-              <button type="button" className="nav-link" aria-expanded={toolsOpen} onClick={() => setToolsOpen(!toolsOpen)}>
-                Free tools <ChevronDown size={14} />
-              </button>
-              {toolsOpen && (
-                <div className="tools-menu">
-                  <div>{toolLinks.map(({ label, path }) => <button key={path} type="button" className="menu-item" onClick={() => go(path)}>{label}</button>)}</div>
-                </div>
-              )}
-            </div>
-          </div>
-          {auth}
-          <BookButton className="btn-sm" location="nav" />
-          <button type="button" className="menu-btn" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </nav>
-      </div>
-      <div className="progress" id="progress" />
-    </header>
-      {/* Outside the header: its backdrop-filter would trap a fixed child inside the 64px bar. */}
-      {menuOpen && (
-        <div className="mobile-menu">
-          {sections.map(({ id, label }) => <a key={id} className="menu-item" href={`#${id}`} onClick={() => setMenuOpen(false)}>{label}</a>)}
-          <a className="menu-item" href="#contact" onClick={() => setMenuOpen(false)}>Contact</a>
-          <p className="label">Free tools</p>
-          {toolLinks.map(({ label, path }) => <button key={path} type="button" className="menu-item" onClick={() => go(path)}>{label}</button>)}
-          {auth}
-        </div>
-      )}
-    </>
-  )
-}
-
 export default function Home3D() {
   usePageMeta({
     title:       'Vikku | AI Agency for AI Agents, Business Automation & AI Software',
     description: 'Vikku is an AI agency that builds AI agents, business automation and AI-powered software for companies in India and the USA. Book an AI discovery call.',
-    url:         'https://vikku.in/',
+    url:         'https://www.vikku.in/',
   })
 
   const canvasRef = useRef(null)
@@ -174,13 +89,8 @@ export default function Home3D() {
       <div className="v3d">
         <canvas id="scene" ref={canvasRef} aria-hidden="true" />
         <div className={`poster${ready ? ' gone' : ''}`} aria-hidden="true" />
-        <HomeNav />
-        {WHATSAPP_NUMBER && (
-          <a className="wa" href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_TEXT)}`} target="_blank" rel="noopener noreferrer"
-            aria-label="Chat with Vikku on WhatsApp" onClick={() => trackEvent('whatsapp_click', { event_category: 'conversion' })}>
-            <MessageCircle size={20} /><span>Chat on WhatsApp</span>
-          </a>
-        )}
+        <SiteNav />
+        <WhatsAppButton />
 
         <div className="rooms">
           <p className="loading" ref={loadingRef}>Loading the studio…</p>
@@ -229,11 +139,11 @@ export default function Home3D() {
               <p className="eyebrow">AI lab · AI solutions</p>
               <h2>Seven ways we put AI <em>to work</em></h2>
               <ul className="cards">
-                <li><strong>AI agents</strong><span>Agents that handle inquiries, qualify leads, answer from internal knowledge, process documents and update your CRM, within the permissions and safeguards you set.</span></li>
-                <li><strong>AI business automation</strong><span>Less manual work in lead management, onboarding, data entry, reporting and follow-ups. Where plain automation is more reliable than AI, we use it.</span></li>
-                <li><strong>AI-powered software</strong><span>SaaS platforms, intelligent dashboards, document intelligence, search and AI-assisted portals with AI in the core workflow.</span></li>
-                <li><strong>AI voice and conversation</strong><span>Inquiry handling, scheduling, FAQs and follow-ups by voice or chat, with verification and human escalation for sensitive actions.</span></li>
-                <li><strong>AI integration</strong><span>LLM APIs, retrieval (RAG), document Q&amp;A, structured data extraction and model evaluation inside the apps you already run.</span></li>
+                <li><strong>AI agents</strong><span>Agents that handle inquiries, qualify leads, answer from internal knowledge, process documents and update your CRM, within the permissions and safeguards you set.</span><Link className="try" to="/ai-agents">Learn more</Link></li>
+                <li><strong>AI business automation</strong><span>Less manual work in lead management, onboarding, data entry, reporting and follow-ups. Where plain automation is more reliable than AI, we use it.</span><Link className="try" to="/ai-automation">Learn more</Link></li>
+                <li><strong>AI-powered software</strong><span>SaaS platforms, intelligent dashboards, document intelligence, search and AI-assisted portals with AI in the core workflow.</span><Link className="try" to="/ai-software-development">Learn more</Link></li>
+                <li><strong>AI voice and conversation</strong><span>Inquiry handling, scheduling, FAQs and follow-ups by voice or chat, with verification and human escalation for sensitive actions.</span><Link className="try" to="/ai-voice-agents">Learn more</Link></li>
+                <li><strong>AI integration</strong><span>LLM APIs, retrieval (RAG), document Q&amp;A, structured data extraction and model evaluation inside the apps you already run.</span><Link className="try" to="/ai-integration">Learn more</Link></li>
                 <li><strong>Custom software</strong><span>Web apps, dashboards, CRM, HR and staffing platforms, e-commerce, portals, mobile apps, APIs and cloud deployment: the foundation that makes AI reliable.</span></li>
                 <li className="full"><strong>AI product consulting</strong><span>Opportunity assessment, workflow analysis, feasibility, proof of concept, MVP planning, architecture and roadmaps. We understand your requirements before we promise anything.</span></li>
               </ul>
@@ -327,6 +237,7 @@ export default function Home3D() {
                 <div>
                   <strong>Harsha Vardhan Reddy Sanikommu</strong>
                   <span>Founder, Vikku</span>
+                  {FOUNDER_LINKEDIN && <a className="founder-link" href={FOUNDER_LINKEDIN} target="_blank" rel="noopener noreferrer">LinkedIn</a>}
                 </div>
               </div>
               <h2>Turning business challenges into <em>AI-powered solutions.</em></h2>
