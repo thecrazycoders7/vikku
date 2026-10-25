@@ -10,7 +10,7 @@ const rooms = ['Entrance', 'Lobby', 'AI lab', 'Industries', 'Process wall', 'Cli
 const roomIds = ['top', 'about', 'services', 'industries', 'process', 'work', 'contact']
 
 // Founder's LinkedIn profile URL; the link under the photo stays hidden while this is empty.
-const FOUNDER_LINKEDIN = ''
+const FOUNDER_LINKEDIN = 'https://www.linkedin.com/in/harsha-vardhan-reddy-sanikommu/'
 
 // Copy to clipboard where allowed, otherwise select the text for a manual copy.
 async function copyText(text, el, button, label) {
