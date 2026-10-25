@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Mail, Instagram } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
 import { CAL_ATTRS } from '../lib/cal'
+import { servicePages } from '../data/servicePages'
 
 const company = [
   { label: 'About',    href: '#about' },
@@ -50,7 +51,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-white/[0.05] pt-12 pb-8 px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <img src="/logo.png" alt="Vikku" className="h-6 w-auto object-contain mb-2.5" />
@@ -90,6 +91,18 @@ export default function Footer() {
                   ) : (
                     <a href={href} className="text-white text-xs hover:text-white/70 transition-colors">{label}</a>
                   )}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* AI services */}
+          <div>
+            <h4 className="text-[10px] text-white uppercase tracking-widest mb-4">AI Services</h4>
+            <ul className="space-y-3">
+              {servicePages.map(({ slug, navLabel }) => (
+                <li key={slug}>
+                  <a href={`/${slug}`} className="text-white text-xs hover:text-white/70 transition-colors">{navLabel}</a>
                 </li>
               ))}
             </ul>

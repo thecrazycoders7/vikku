@@ -44,6 +44,7 @@ const CookiePolicy           = lazy(() => import('./pages/CookiePolicy'))
 const RefundPolicy           = lazy(() => import('./pages/RefundPolicy'))
 const NotificationPreferences = lazy(() => import('./pages/NotificationPreferences'))
 const NotFound               = lazy(() => import('./pages/NotFound'))
+const ServicePage            = lazy(() => import('./pages/ServicePage'))
 const AdminDashboard         = lazy(() => import('./pages/admin/AdminDashboard'))
 const AdminUsers             = lazy(() => import('./pages/admin/AdminUsers'))
 const AdminBilling           = lazy(() => import('./pages/admin/AdminBilling'))
@@ -77,6 +78,11 @@ export default function App() {
           <Suspense fallback={<div className="min-h-screen bg-black" />}>
             <Routes>
               <Route path="/"                        element={<Home3D />} />
+              <Route path="/ai-agents"               element={<ServicePage slug="ai-agents" />} />
+              <Route path="/ai-automation"           element={<ServicePage slug="ai-automation" />} />
+              <Route path="/ai-integration"          element={<ServicePage slug="ai-integration" />} />
+              <Route path="/ai-software-development" element={<ServicePage slug="ai-software-development" />} />
+              <Route path="/ai-voice-agents"         element={<ServicePage slug="ai-voice-agents" />} />
               <Route path="/login"                   element={<Login />} />
               <Route path="/signup"                  element={<Signup />} />
               <Route path="/forgot-password"         element={<ForgotPassword />} />
