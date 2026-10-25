@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 const SITE = 'https://www.vikku.in'
-const DEFAULT_OG = `${SITE}/og-image.png`
+const DEFAULT_OG = `${SITE}/og-vikku-ai.jpg`
 
 function setMeta(attr, key, content) {
   if (!content) return null

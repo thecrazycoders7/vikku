@@ -80,7 +80,7 @@ export default async function handler(req, res) {
   } catch { /* fall through to defaults */ }
 
   const pageUrl = `${SITE}/r/${shareId}`
-  const ogImage = `${SITE}/og-image.png`
+  const ogImage = `${SITE}/og-vikku-ai.jpg`
   const ua = req.headers['user-agent'] || ''
   const isBot = /facebookexternalhit|twitterbot|linkedinbot|whatsapp|slackbot|discordbot|telegrambot|googlebot|bingbot|applebot/i.test(ua)
 

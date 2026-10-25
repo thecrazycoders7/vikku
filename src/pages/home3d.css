@@ -160,3 +160,8 @@
 .v3d .contact-line a,.v3d .cards a{text-decoration:underline}
 /* The site's shared footer sits above the fixed 3D canvas. */
 .v3d-footer{position:relative;z-index:1;background:var(--page-bg)}
+
+/* Floating WhatsApp chat button (bottom right; the room guide sits bottom left). */
+.v3d .wa{position:fixed;z-index:15;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:#25d366;color:#fff;font-weight:700;font-size:15px;text-decoration:none;box-shadow:0 8px 24px rgba(26,22,18,.18);transition:background .2s}
+.v3d .wa:hover{background:#1ebe5b}
+@media (max-width:720px){.v3d .wa{padding:14px}.v3d .wa span{display:none}}
