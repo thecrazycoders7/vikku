@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ChevronDown, Menu, X } from 'lucide-react'
+import { ChevronDown, Menu, MessageCircle, X } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { CAL_ATTRS } from '../lib/cal'
 import { toolLinks } from '../components/Navbar'
 import Footer from '../components/Footer'
 import usePageMeta from '../hooks/usePageMeta'
+import { trackEvent } from '../utils/analytics'
 import './home3d.css'
 
 const sections = [
@@ -14,9 +15,15 @@ const sections = [
 const rooms = ['Entrance', 'Lobby', 'AI lab', 'Industries', 'Process wall', 'Client lounge', "Founder's office"]
 const roomIds = ['top', 'about', 'services', 'industries', 'process', 'work', 'contact']
 
-function BookButton({ className = '', short = 'Book a call' }) {
+// WhatsApp business number in international format, digits only (e.g. 91XXXXXXXXXX).
+// The floating chat button stays hidden while this is empty.
+const WHATSAPP_NUMBER = '919393979892'
+const WHATSAPP_TEXT = "Hi Vikku, I'd like to talk about automating part of my business."
+
+function BookButton({ className = '', short = 'Book a call', location }) {
   return (
-    <button type="button" {...CAL_ATTRS} className={`btn btn-primary ${className}`}>
+    <button type="button" {...CAL_ATTRS} className={`btn btn-primary ${className}`}
+      onClick={() => trackEvent('book_call_click', { event_category: 'conversion', location })}>
       <span className="cta-long">Book an AI Discovery Call</span>
       <span className="cta-short">{short}</span>
     </button>
@@ -75,7 +82,7 @@ function HomeNav() {
             </div>
           </div>
           {auth}
-          <BookButton className="btn-sm" />
+          <BookButton className="btn-sm" location="nav" />
           <button type="button" className="menu-btn" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -114,6 +121,7 @@ export default function Home3D() {
   useEffect(() => {
     const bar = document.getElementById('progress')
     const secs = roomIds.map(id => document.getElementById(id))
+    let reached = 0
     const update = () => {
       // ponytail: re-measured every scroll since fonts and resizes shift section heights; seven rects is cheap
       const max = document.documentElement.scrollHeight - innerHeight
@@ -125,7 +133,10 @@ export default function Home3D() {
       for (let i = 0; i < n; i++) if (scrollY <= stops[i + 1]) { t = (i + Math.max(0, (scrollY - stops[i]) / (stops[i + 1] - stops[i] || 1))) / n; break }
       story.target = t
       bar.style.width = t * 100 + '%'
-      setRoom(Math.round(t * n))
+      const r = Math.round(t * n)
+      setRoom(r)
+      // How far visitors get through the walk: one event the first time each room is reached.
+      for (; reached < r; reached++) trackEvent('tour_room_reached', { event_category: 'engagement', room: rooms[reached + 1], room_index: reached + 1 })
     }
     addEventListener('scroll', update, { passive: true })
     addEventListener('resize', update)
@@ -164,6 +175,12 @@ export default function Home3D() {
         <canvas id="scene" ref={canvasRef} aria-hidden="true" />
         <div className={`poster${ready ? ' gone' : ''}`} aria-hidden="true" />
         <HomeNav />
+        {WHATSAPP_NUMBER && (
+          <a className="wa" href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_TEXT)}`} target="_blank" rel="noopener noreferrer"
+            aria-label="Chat with Vikku on WhatsApp" onClick={() => trackEvent('whatsapp_click', { event_category: 'conversion' })}>
+            <MessageCircle size={20} /><span>Chat on WhatsApp</span>
+          </a>
+        )}
 
         <div className="rooms">
           <p className="loading" ref={loadingRef}>Loading the studio…</p>
@@ -178,7 +195,7 @@ export default function Home3D() {
               <h1>Less busywork. <em>More business.</em></h1>
               <p>We build AI agents and automations that take repetitive work off your team's plate, so you can spend your time on what grows the business.</p>
               <div className="ctas">
-                <BookButton short="Book an AI Discovery Call" />
+                <BookButton short="Book an AI Discovery Call" location="hero" />
                 <a className="btn btn-ghost" href="#work">Explore our work</a>
               </div>
               <ul className="trust" aria-label="Company figures">
@@ -316,7 +333,7 @@ export default function Home3D() {
               <div className="bio">
                 <p>I'm Harsha Vardhan Reddy Sanikommu, Founder of Vikku — an AI agency helping businesses solve real-world problems through artificial intelligence, intelligent automation, and digital innovation.</p>
                 <p>I started Vikku with a simple belief: technology should do more than just work. It should solve meaningful problems, eliminate inefficiencies, and create opportunities for businesses to grow.</p>
-                <p>Over the past few years, I've worked on 8+ real-world projects across India and the USA, collaborating directly with businesses to understand their challenges, develop practical solutions, and turn ideas into reality.</p>
+                <p>Over the past few years, I've worked on 9 real-world projects across India and the USA, collaborating directly with businesses to understand their challenges, develop practical solutions, and turn ideas into reality.</p>
                 <p>As the founder of Vikku, I focus on identifying opportunities where AI can make a genuine difference—from automating repetitive operations and building AI-powered workflows to developing intelligent applications that help businesses work smarter.</p>
                 <p>My approach combines technical expertise with business thinking. Rather than adopting technology for the sake of innovation, I believe in finding the right problems to solve and delivering solutions that create measurable value.</p>
               </div>
@@ -337,7 +354,7 @@ export default function Home3D() {
               <div className="closing">
                 <h3>Let's build something that <em>matters.</em></h3>
                 <p>I'm always open to connecting with founders, business leaders, and innovators who want to explore how AI can transform their businesses.</p>
-                <div className="ctas"><BookButton short="Book an AI Discovery Call" /></div>
+                <div className="ctas"><BookButton short="Book an AI Discovery Call" location="founder" /></div>
               </div>
               <p className="contact-line">
                 <span className="label">Email</span>
