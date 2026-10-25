@@ -283,7 +283,42 @@ export default function Home3D() {
           </section>
 
           <section className="stop contact" id="contact">
-            <div className="panel">
+            <div className="panel wide">
+              <p className="eyebrow">Founder's office · About me</p>
+              <div className="founder">
+                <img src="/home3d/founder-harsha.jpg" alt="Harsha Vardhan Reddy Sanikommu" width="112" height="112" loading="lazy" />
+                <div>
+                  <strong>Harsha Vardhan Reddy Sanikommu</strong>
+                  <span>Founder, Vikku</span>
+                </div>
+              </div>
+              <h2>Turning business challenges into <em>AI-powered solutions.</em></h2>
+              <div className="bio">
+                <p>I'm Harsha Vardhan Reddy Sanikommu, Founder of Vikku — an AI agency helping businesses solve real-world problems through artificial intelligence, intelligent automation, and digital innovation.</p>
+                <p>I started Vikku with a simple belief: technology should do more than just work. It should solve meaningful problems, eliminate inefficiencies, and create opportunities for businesses to grow.</p>
+                <p>Over the past few years, I've worked on 8+ real-world projects across India and the USA, collaborating directly with businesses to understand their challenges, develop practical solutions, and turn ideas into reality.</p>
+                <p>As the founder of Vikku, I focus on identifying opportunities where AI can make a genuine difference—from automating repetitive operations and building AI-powered workflows to developing intelligent applications that help businesses work smarter.</p>
+                <p>My approach combines technical expertise with business thinking. Rather than adopting technology for the sake of innovation, I believe in finding the right problems to solve and delivering solutions that create measurable value.</p>
+              </div>
+              <h3>What we're building at Vikku</h3>
+              <ul className="cards">
+                <li><strong>AI Solutions</strong><span>Applying artificial intelligence to solve real business challenges.</span></li>
+                <li><strong>AI Automation</strong><span>Reducing manual work and streamlining business operations through intelligent workflows.</span></li>
+                <li><strong>AI Agents</strong><span>Building AI-powered systems that help businesses handle tasks, processes, and customer interactions.</span></li>
+                <li><strong>Digital Product Development</strong><span>Turning business ideas into practical, scalable digital experiences.</span></li>
+                <li className="full"><strong>Business Transformation</strong><span>Helping businesses discover and implement opportunities where AI can improve efficiency and performance.</span></li>
+              </ul>
+              <h3>My vision</h3>
+              <div className="bio">
+                <p>I believe AI is changing how businesses operate, compete, and grow. My vision for Vikku is to help businesses move beyond experimenting with AI and start using it to solve meaningful problems.</p>
+                <p>I'm passionate about building, experimenting, and working alongside ambitious businesses to turn complex challenges into intelligent solutions.</p>
+                <p>For me, Vikku is about more than technology. It's about creating impact, building meaningful partnerships, and helping businesses unlock what's possible with AI.</p>
+              </div>
+              <div className="closing">
+                <h3>Let's build something that <em>matters.</em></h3>
+                <p>I'm always open to connecting with founders, business leaders, and innovators who want to explore how AI can transform their businesses.</p>
+                <div className="ctas"><BookButton short="Book an AI Discovery Call" /></div>
+              </div>
               <p className="contact-line">
                 <span className="label">Email</span>
                 <span className="email" ref={emailRef}>connect@vikku.in</span>
