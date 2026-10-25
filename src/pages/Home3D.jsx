@@ -17,7 +17,7 @@ const roomIds = ['top', 'about', 'services', 'industries', 'process', 'work', 'c
 
 // WhatsApp business number in international format, digits only (e.g. 91XXXXXXXXXX).
 // The floating chat button stays hidden while this is empty.
-const WHATSAPP_NUMBER = ''
+const WHATSAPP_NUMBER = '919393979892'
 const WHATSAPP_TEXT = "Hi Vikku, I'd like to talk about automating part of my business."
 
 function BookButton({ className = '', short = 'Book a call', location }) {
