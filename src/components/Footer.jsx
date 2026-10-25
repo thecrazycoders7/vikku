@@ -26,7 +26,7 @@ const legal = [
 ]
 
 const socials = [
-  { icon: Instagram, href: 'https://www.instagram.com/vikku.in_ai_sdc/', label: 'Instagram' },
+  { icon: Instagram, href: 'https://www.instagram.com/vikku.aiautomationagency/', label: 'Instagram' },
   { icon: Mail,      href: 'mailto:connect@vikku.in',              label: 'Email' },
 ]
 
