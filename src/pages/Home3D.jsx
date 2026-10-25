@@ -346,7 +346,7 @@ export default function Home3D() {
               </p>
               <p className="contact-line">
                 <span className="label">Instagram</span>
-                <a href="https://www.instagram.com/vikku.in_ai_sdc/" target="_blank" rel="noopener noreferrer">@vikku.in_ai_sdc</a>
+                <a href="https://www.instagram.com/vikku.aiautomationagency/" target="_blank" rel="noopener noreferrer">@vikku.aiautomationagency</a>
               </p>
             </div>
           </section>
