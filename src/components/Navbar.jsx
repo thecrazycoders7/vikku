@@ -6,19 +6,22 @@ import useLockBodyScroll from '../hooks/useLockBodyScroll'
 import ThemeToggle from './ThemeToggle'
 import { CAL_ATTRS } from '../lib/cal'
 
+// Shared with the 3D homepage nav (pages/Home3D.jsx).
+export const toolLinks = [
+  { label: 'Free PM Tool',           path: '/pm' },
+  { label: 'AI Visibility Score',    path: '/tools/ai-visibility-score' },
+  { label: 'Business Impact',        path: '/tools/business-impact' },
+  { label: 'Project Estimator',      path: '/tools/project-estimator' },
+  { label: 'Timeline Calculator',    path: '/tools/timeline' },
+  { label: 'Tech Stack Recommender', path: '/tools/stack-recommender' },
+  { label: 'Maintenance Calculator', path: '/tools/maintenance' },
+]
+
 const navLinks = [
   { label: 'Services', href: '#services' },
   {
     label: 'Tools', href: '#tools', footerLabel: 'Explore all free tools', dropdownOnly: true,
-    dropdown: [
-      { label: 'Free PM Tool',           path: '/pm' },
-      { label: 'AI Visibility Score',    path: '/tools/ai-visibility-score' },
-      { label: 'Business Impact',        path: '/tools/business-impact' },
-      { label: 'Project Estimator',      path: '/tools/project-estimator' },
-      { label: 'Timeline Calculator',    path: '/tools/timeline' },
-      { label: 'Tech Stack Recommender', path: '/tools/stack-recommender' },
-      { label: 'Maintenance Calculator', path: '/tools/maintenance' },
-    ],
+    dropdown: toolLinks,
   },
   { label: 'Process',  href: '#process' },
   { label: 'About',    href: '#about' },
