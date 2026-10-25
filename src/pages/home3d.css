@@ -113,8 +113,19 @@
 .v3d .quotes figcaption{font-size:14px;color:var(--muted)}
 .v3d .quotes figcaption strong{color:var(--ink)}
 
-.v3d .contact .panel{max-width:600px;display:flex;flex-direction:column;align-items:flex-start;gap:12px}
-.v3d .contact h2{font-size:clamp(30px,4vw,46px);margin:0}
+.v3d .contact .panel{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.v3d .founder{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.v3d .founder img{width:112px;height:112px;object-fit:cover;border-radius:8px;flex-shrink:0;box-shadow:0 0 0 1px var(--line)}
+.v3d .founder strong{display:block;font-family:var(--display);font-weight:500;font-size:18px;line-height:1.25;color:var(--ink)}
+.v3d .founder span{display:block;margin-top:4px;font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-deep)}
+.v3d .bio{display:flex;flex-direction:column;gap:12px;max-width:62ch}
+.v3d .bio p{font-size:16px;line-height:1.65}
+.v3d .contact h3{margin:14px 0 0;font-family:var(--display);font-weight:500;font-size:20px;letter-spacing:-.01em;color:var(--ink)}
+.v3d .contact .cards{margin-top:4px;width:100%}
+.v3d .closing{width:100%;margin-top:10px;padding:20px;border-radius:6px;background:var(--orange-soft);display:flex;flex-direction:column;gap:10px}
+.v3d .closing h3{margin:0;font-size:24px}
+.v3d .closing h3 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--orange)}
+.v3d .contact h2{font-size:clamp(28px,3.4vw,40px);margin:0}
 .v3d .contact-line{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:15px}
 .v3d .label{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .v3d .email{font-family:var(--mono);font-size:16px;color:var(--ink);user-select:all}
