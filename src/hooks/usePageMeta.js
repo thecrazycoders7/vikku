@@ -25,7 +25,7 @@ export default function usePageMeta({ title, description, url }) {
     document.documentElement.setAttribute('data-seo-ready', 'true')
 
     return () => {
-      document.title = 'Vikku - Software & Tech Agency | Web Apps, Platforms & Digital Products'
+      document.title = 'Vikku | AI Agency for AI Agents, Business Automation & AI Software'
     }
   }, [title, description, url])
 }

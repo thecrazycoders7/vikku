@@ -3,6 +3,9 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 const TO_EMAIL = 'connect@vikku.in';
 
+// Visitor input is placed into the HTML email, so escape it to stop markup or link injection.
+const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -18,6 +21,9 @@ export default async function handler(req, res) {
 
     if (!name || !email || !message) {
       return res.status(400).json({ error: 'Missing required fields: name, email, or message' });
+    }
+    if ([name, email, message].some((v) => typeof v !== 'string') || message.length > 5000) {
+      return res.status(400).json({ error: 'Invalid fields' });
     }
 
     const rows = [
@@ -55,7 +61,7 @@ export default async function handler(req, res) {
                         <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 600;">
                           New project inquiry
                         </h1>
-                        <p style="margin: 10px 0 0; color: #999999; font-size: 14px;">from ${name}</p>
+                        <p style="margin: 10px 0 0; color: #999999; font-size: 14px;">from ${esc(name)}</p>
                       </td>
                     </tr>
 
@@ -66,13 +72,13 @@ export default async function handler(req, res) {
                           ${rows.map(([label, value]) => `
                             <tr>
                               <td style="padding: 12px 20px; border-bottom: 1px solid #2a2a2a; color: #999999; font-size: 13px; width: 130px;">${label}</td>
-                              <td style="padding: 12px 20px; border-bottom: 1px solid #2a2a2a; color: #ffffff; font-size: 13px;">${value}</td>
+                              <td style="padding: 12px 20px; border-bottom: 1px solid #2a2a2a; color: #ffffff; font-size: 13px;">${esc(value)}</td>
                             </tr>
                           `).join('')}
                         </table>
 
                         <p style="margin: 24px 0 8px; color: #999999; font-size: 13px; font-weight: 600;">Message</p>
-                        <p style="margin: 0; color: #ffffff; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+                        <p style="margin: 0; color: #ffffff; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${esc(message)}</p>
                       </td>
                     </tr>
 
@@ -80,7 +86,7 @@ export default async function handler(req, res) {
                     <tr>
                       <td style="padding: 30px 40px; border-top: 1px solid #222222; text-align: center;">
                         <p style="margin: 0; color: #666666; font-size: 12px;">
-                          Reply directly to this email to respond to ${name}.
+                          Reply directly to this email to respond to ${esc(name)}.
                         </p>
                       </td>
                     </tr>

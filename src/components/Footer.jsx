@@ -6,7 +6,7 @@ import { CAL_ATTRS } from '../lib/cal'
 const company = [
   { label: 'About',    href: '#about' },
   { label: 'Services', href: '#services' },
-  { label: 'Clients',  href: '#clients' },
+  { label: 'Work',     href: '#work' },
   { label: 'Contact',  cal: true },
 ]
 
@@ -55,7 +55,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1">
             <img src="/logo.png" alt="Vikku" className="h-6 w-auto object-contain mb-2.5" />
             <p className="text-white text-xs leading-relaxed mb-2.5 max-w-[200px]">
-              Building digital products that shape the future.
+              AI agents, business automation and intelligent software.
             </p>
             <a
               href="mailto:connect@vikku.in"

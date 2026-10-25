@@ -3,25 +3,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import AdminGate              from './components/admin/AdminGate'
-import Navbar              from './components/Navbar'
-import Hero                from './components/Hero'
-import Clients             from './components/Clients'
-import Services            from './components/Services'
-import FounderTools        from './components/FounderTools'
-import Process             from './components/Process'
-import TechStack           from './components/TechStack'
-import About               from './components/About'
-import Testimonials        from './components/Testimonials'
-import FAQ                 from './components/FAQ'
-import Footer              from './components/Footer'
-import ScrollToTop         from './components/ScrollToTop'
-import CursorGlow          from './components/CursorGlow'
 import RouteTracker        from './components/RouteTracker'
 import ErrorBoundary       from './components/ErrorBoundary'
 import CookieConsent       from './components/CookieConsent'
 import SplashScreen        from './components/SplashScreen'
-import Reveal              from './components/Reveal'
-import usePageMeta         from './hooks/usePageMeta'
+import Home3D              from './pages/Home3D'
 
 const Login                 = lazy(() => import('./pages/Login'))
 const Signup                = lazy(() => import('./pages/Signup'))
@@ -79,34 +65,6 @@ function RequireAuth({ children }) {
   return user ? children : <Navigate to="/login" replace />
 }
 
-function Home() {
-  usePageMeta({
-    title:       'Vikku - Software & Tech Agency | Web Apps, Platforms & Digital Products',
-    description: 'Vikku is a software & tech agency that builds web apps, staffing platforms, e-commerce stores, and custom digital products. Based in India, serving clients globally.',
-    url:         'https://vikku.in/',
-  })
-
-  return (
-    <div className="relative min-h-screen">
-      <CursorGlow />
-      <Navbar />
-      <main>
-        <Hero />
-        <Clients />
-        <Reveal><Services /></Reveal>
-        <Reveal><FounderTools /></Reveal>
-        <Reveal><Process /></Reveal>
-        <Reveal><TechStack /></Reveal>
-        <About />
-        <Reveal><Testimonials /></Reveal>
-        <Reveal><FAQ /></Reveal>
-      </main>
-      <Footer />
-      <ScrollToTop />
-    </div>
-  )
-}
-
 export default function App() {
   return (
     <BrowserRouter>
@@ -118,7 +76,7 @@ export default function App() {
         <ErrorBoundary>
           <Suspense fallback={<div className="min-h-screen bg-black" />}>
             <Routes>
-              <Route path="/"                        element={<Home />} />
+              <Route path="/"                        element={<Home3D />} />
               <Route path="/login"                   element={<Login />} />
               <Route path="/signup"                  element={<Signup />} />
               <Route path="/forgot-password"         element={<ForgotPassword />} />
