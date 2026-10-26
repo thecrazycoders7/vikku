@@ -145,3 +145,43 @@ export function nextMonth(dateStr) {
   const last = new Date(Date.UTC(y, m + 1, 0)).getUTCDate()
   return new Date(Date.UTC(y, m, Math.min(d, last))).toISOString().slice(0, 10)
 }
+
+// ---- Phase 3: meetings and quotations ----
+
+export const MEETING_STATUSES = [
+  { id: 'scheduled', label: 'Scheduled', tone: 'bg-blue-50 text-blue-700' },
+  { id: 'completed', label: 'Completed', tone: 'bg-emerald-50 text-emerald-700' },
+  { id: 'no_show',   label: 'No-show',   tone: 'bg-amber-50 text-amber-700' },
+  { id: 'cancelled', label: 'Cancelled', tone: 'bg-rose-50 text-rose-700' },
+]
+export const QUOTE_STATUSES = [
+  { id: 'draft',    label: 'Draft',    tone: 'bg-white/[0.06] text-white/60' },
+  { id: 'sent',     label: 'Sent',     tone: 'bg-blue-50 text-blue-700' },
+  { id: 'accepted', label: 'Accepted', tone: 'bg-emerald-50 text-emerald-700' },
+  { id: 'declined', label: 'Declined', tone: 'bg-rose-50 text-rose-700' },
+]
+
+// Quotation totals: subtotal of line items, minus discount, plus tax on what remains.
+// Worked in whole paise/cents so decimals like 1.5 x 99.99 round correctly (149.99, not 149.98).
+const cents = (n) => Math.round((Number(n) || 0) * 100)
+export function quoteTotals(items = [], taxPercent = 0, discount = 0) {
+  const subtotal = items.reduce((s, i) => s + Math.round((Number(i.qty) || 0) * cents(i.rate)), 0)
+  const disc = Math.min(Math.max(cents(discount), 0), subtotal)
+  const taxable = subtotal - disc
+  const tax = Math.round(taxable * (Number(taxPercent) || 0) / 100)
+  return { subtotal: subtotal / 100, discount: disc / 100, taxable: taxable / 100, tax: tax / 100, total: (taxable + tax) / 100 }
+}
+
+// Amount text for PDFs, whose built-in fonts have no ₹ glyph: "INR 2,36,000.00".
+export const pdfMoney = (n, currency = 'INR') =>
+  `${currency} ${(Number(n) || 0).toLocaleString(currency === 'USD' ? 'en-US' : 'en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+
+// Group meetings by local (IST) day for the agenda: [["2026-10-28", [...]], ...] in time order.
+export function meetingsByDay(meetings) {
+  const groups = {}
+  for (const m of [...meetings].sort((a, b) => a.starts_at.localeCompare(b.starts_at))) {
+    const d = new Date(m.starts_at).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
+    ;(groups[d] ||= []).push(m)
+  }
+  return Object.entries(groups)
+}
