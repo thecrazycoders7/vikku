@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, User, Mail, Activity, Search, X, Target, Briefcase } from 'lucide-react'
+import { LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, User, Mail, Activity, Search, X, Target, Briefcase, PieChart, FolderKanban, Wallet } from 'lucide-react'
 import AppHeader from '../../components/AppHeader'
 import { getAdminUsers } from '../../lib/adminService'
 import useLockBodyScroll from '../../hooks/useLockBodyScroll'
 
 const nav = [
   { label: 'Overview',   path: '/admin',                icon: LayoutDashboard },
+  { label: 'CRM',        path: '/admin/crm',             icon: PieChart },
   { label: 'Leads',      path: '/admin/crm/leads',       icon: Target },
   { label: 'Clients',    path: '/admin/crm/clients',     icon: Briefcase },
+  { label: 'Projects',   path: '/admin/crm/projects',    icon: FolderKanban },
+  { label: 'Payments',   path: '/admin/crm/payments',    icon: Wallet },
   { label: 'Users',      path: '/admin/users',           icon: Users },
   { label: 'Billing',    path: '/admin/billing',         icon: CreditCard },
   { label: 'Analytics',  path: '/admin/analytics',       icon: BarChart2 },
@@ -93,7 +96,7 @@ function GlobalSearch({ onClose }) {
 export default function AdminLayout({ children, title }) {
   const { pathname } = useLocation()
   // Sub-pages (e.g. a client's detail page) keep their section highlighted.
-  const isActive = (path) => pathname === path || (path !== '/admin' && pathname.startsWith(path + '/'))
+  const isActive = (path) => pathname === path || (!['/admin', '/admin/crm'].includes(path) && pathname.startsWith(path + '/'))
   const navigate = useNavigate()
   const [searchOpen, setSearchOpen] = useState(false)
 

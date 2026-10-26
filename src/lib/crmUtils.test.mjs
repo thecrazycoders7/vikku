@@ -28,3 +28,61 @@ assert.equal(whatsappNumber(''), null)
 assert.equal(formatMoney(1100000, 'INR'), '₹11,00,000')
 assert.equal(formatMoney(2500, 'USD'), '$2,500')
 console.log('crmUtils: all checks passed')
+
+// ---- Phase 2 money helpers ----
+import { moneySummary, monthStats, moneyText, overduePayments, activeMrr, billingSoon } from './crmUtils.js'
+
+const projects = [
+  { stage: 'ongoing',   budget: 250000, currency: 'INR', created_at: '2026-10-05T10:00:00Z' },
+  { stage: 'new',       budget: 4000,   currency: 'USD', created_at: '2026-10-20T10:00:00Z' },
+  { stage: 'cancelled', budget: 99999,  currency: 'INR', created_at: '2026-10-21T10:00:00Z' },
+  { stage: 'completed', budget: 80000,  currency: 'INR', created_at: '2026-09-02T10:00:00Z' },
+]
+const payments = [
+  { status: 'received', amount: 100000, currency: 'INR', paid_on: '2026-10-06' },
+  { status: 'received', amount: 80000,  currency: 'INR', paid_on: '2026-09-10' },
+  { status: 'received', amount: 1000,   currency: 'USD', paid_on: '2026-10-22' },
+  { status: 'pending',  amount: 150000, currency: 'INR', due_on: '2026-10-20' },
+  { status: 'pending',  amount: 3000,   currency: 'USD', due_on: '2026-11-15' },
+]
+const expenses = [
+  { amount: 2000, currency: 'INR', spent_on: '2026-10-03' },
+  { amount: 500,  currency: 'INR', spent_on: '2026-09-28' },
+]
+
+const m = moneySummary(projects, payments)
+assert.deepEqual(m.budget, { INR: 330000, USD: 4000 })        // cancelled excluded
+assert.deepEqual(m.paid, { INR: 180000, USD: 1000 })          // pending excluded
+assert.deepEqual(m.balance, { INR: 150000, USD: 3000 })
+// A retainer payment counts as paid but doesn't reduce the project balance.
+const withRetainer = moneySummary(projects, [...payments, { status: 'received', kind: 'retainer', amount: 15000, currency: 'INR', paid_on: '2026-10-25' }])
+assert.deepEqual(withRetainer.paid, { INR: 195000, USD: 1000 })
+assert.deepEqual(withRetainer.balance, { INR: 150000, USD: 3000 })
+
+const ms = monthStats({ projects, payments, expenses }, now)
+assert.deepEqual(ms.revenue, { INR: 250000, USD: 4000 })      // October, not cancelled
+assert.deepEqual(ms.received, { INR: 100000, USD: 1000 })
+assert.deepEqual(ms.expenses, { INR: 2000 })
+assert.deepEqual(ms.net, { INR: 98000, USD: 1000 })
+assert.equal(ms.newProjects, 2)
+
+assert.equal(moneyText({ INR: 250000, USD: 4000 }), '₹2,50,000 + $4,000')
+assert.equal(moneyText({}), '₹0')
+
+assert.equal(overduePayments(payments, '2026-10-26').length, 1)
+const retainers = [
+  { status: 'active', amount: 15000, currency: 'INR', next_billing_date: '2026-10-30' },
+  { status: 'active', amount: 200,   currency: 'USD', next_billing_date: '2026-12-01' },
+  { status: 'paused', amount: 9000,  currency: 'INR', next_billing_date: '2026-10-27' },
+]
+assert.deepEqual(activeMrr(retainers), { INR: 15000, USD: 200 })
+assert.equal(billingSoon(retainers, '2026-10-26').length, 1)
+console.log('crmUtils phase 2: all checks passed')
+
+import { nextMonth } from './crmUtils.js'
+assert.equal(nextMonth('2026-10-15'), '2026-11-15')
+assert.equal(nextMonth('2027-01-31'), '2027-02-28')
+assert.equal(nextMonth('2028-01-31'), '2028-02-29')   // leap year
+assert.equal(nextMonth('2026-03-31'), '2026-04-30')
+assert.equal(nextMonth('2026-12-10'), '2027-01-10')   // year rollover
+console.log('nextMonth: all checks passed')

@@ -56,6 +56,9 @@ const AdminActivity          = lazy(() => import('./pages/admin/AdminActivity'))
 const CrmLeads               = lazy(() => import('./pages/admin/crm/CrmLeads'))
 const CrmClients             = lazy(() => import('./pages/admin/crm/CrmClients'))
 const CrmClientDetail        = lazy(() => import('./pages/admin/crm/CrmClientDetail'))
+const CrmDashboard           = lazy(() => import('./pages/admin/crm/CrmDashboard'))
+const CrmProjects            = lazy(() => import('./pages/admin/crm/CrmProjects'))
+const CrmPayments            = lazy(() => import('./pages/admin/crm/CrmPayments'))
 
 function PMRedirect() {
   const { user, loading } = useAuth()
@@ -141,7 +144,9 @@ export default function App() {
               <Route path="/admin/announcements" element={<AdminGate><AdminAnnouncements /></AdminGate>} />
               <Route path="/admin/email"         element={<AdminGate><AdminEmail /></AdminGate>} />
               <Route path="/admin/activity"      element={<AdminGate><AdminActivity /></AdminGate>} />
-              <Route path="/admin/crm"           element={<Navigate to="/admin/crm/leads" replace />} />
+              <Route path="/admin/crm"           element={<AdminGate><CrmDashboard /></AdminGate>} />
+              <Route path="/admin/crm/projects"  element={<AdminGate><CrmProjects /></AdminGate>} />
+              <Route path="/admin/crm/payments"  element={<AdminGate><CrmPayments /></AdminGate>} />
               <Route path="/admin/crm/leads"     element={<AdminGate><CrmLeads /></AdminGate>} />
               <Route path="/admin/crm/clients"   element={<AdminGate><CrmClients /></AdminGate>} />
               <Route path="/admin/crm/clients/:id" element={<AdminGate><CrmClientDetail /></AdminGate>} />

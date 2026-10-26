@@ -64,3 +64,84 @@ export function pipelineStats(leads, now = new Date()) {
     followUpsDue: open.filter(l => l.next_follow_up && l.next_follow_up <= today).length,
   }
 }
+
+// ---- Phase 2: projects, payments, retainers, expenses ----
+
+export const PROJECT_STAGES = [
+  { id: 'new',       label: 'New',       tint: 'bg-violet-50 border-violet-100',   dot: 'bg-violet-500' },
+  { id: 'ongoing',   label: 'Ongoing',   tint: 'bg-emerald-50 border-emerald-100', dot: 'bg-emerald-500' },
+  { id: 'completed', label: 'Completed', tint: 'bg-blue-50 border-blue-100',       dot: 'bg-blue-500' },
+  { id: 'cancelled', label: 'Cancelled', tint: 'bg-rose-50 border-rose-100',       dot: 'bg-rose-500' },
+]
+export const PAYMENT_KINDS = [
+  { id: 'advance', label: 'Advance' }, { id: 'milestone', label: 'Milestone' }, { id: 'final', label: 'Final' },
+  { id: 'retainer', label: 'Retainer' }, { id: 'other', label: 'Other' },
+]
+export const PAYMENT_METHODS = [
+  { id: 'upi', label: 'UPI' }, { id: 'bank', label: 'Bank transfer' }, { id: 'razorpay', label: 'Razorpay' },
+  { id: 'card', label: 'Card' }, { id: 'cash', label: 'Cash' }, { id: 'other', label: 'Other' },
+]
+export const EXPENSE_CATEGORIES = [
+  { id: 'tools', label: 'Tools & software' }, { id: 'freelancer', label: 'Freelancers' }, { id: 'hosting', label: 'Hosting' },
+  { id: 'ads', label: 'Ads' }, { id: 'travel', label: 'Travel' }, { id: 'other', label: 'Other' },
+]
+export const labelOf = (list, id) => list.find(x => x.id === id)?.label || id
+
+// Money is always summed per currency (INR and USD are never mixed or converted).
+export function sumByCurrency(items, field = 'amount') {
+  const out = {}
+  for (const it of items) out[it.currency || 'INR'] = (out[it.currency || 'INR'] || 0) + Number(it[field] || 0)
+  return out
+}
+export function subtractSums(a, b) {
+  const out = { ...a }
+  for (const [cur, v] of Object.entries(b)) out[cur] = (out[cur] || 0) - v
+  return out
+}
+// "₹2,50,000 + $4,000", or "₹0" when empty.
+export function moneyText(sums) {
+  const parts = Object.entries(sums).filter(([, v]) => v !== 0).map(([cur, v]) => formatMoney(v, cur))
+  return parts.length ? parts.join(' + ') : formatMoney(0)
+}
+
+const inMonth = (date, now) => {
+  if (!date) return false
+  const d = new Date(date)
+  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
+}
+
+// Budget, paid and balance for one client or project. Cancelled projects and pending payments don't count;
+// "paid" is all money received, but retainer payments don't reduce what is still owed on project budgets.
+export function moneySummary(projects, payments) {
+  const received = payments.filter(p => p.status === 'received')
+  const budget = sumByCurrency(projects.filter(p => p.stage !== 'cancelled'), 'budget')
+  const paid = sumByCurrency(received)
+  return { budget, paid, balance: subtractSums(budget, sumByCurrency(received.filter(p => p.kind !== 'retainer'))) }
+}
+
+// This month's numbers for the CRM dashboard.
+export function monthStats({ projects, payments, expenses }, now = new Date()) {
+  const revenue = sumByCurrency(projects.filter(p => p.stage !== 'cancelled' && inMonth(p.created_at, now)), 'budget')
+  const received = sumByCurrency(payments.filter(p => p.status === 'received' && inMonth(p.paid_on, now)))
+  const spent = sumByCurrency(expenses.filter(e => inMonth(e.spent_on, now)))
+  return {
+    revenue, received, expenses: spent, net: subtractSums(received, spent),
+    newProjects: projects.filter(p => p.stage !== 'cancelled' && inMonth(p.created_at, now)).length,
+  }
+}
+
+export const isoDay = (d = new Date()) => d.toISOString().slice(0, 10)
+export const overduePayments = (payments, today = isoDay()) => payments.filter(p => p.status === 'pending' && p.due_on && p.due_on < today)
+export const activeMrr = (retainers) => sumByCurrency(retainers.filter(r => r.status === 'active'))
+export function billingSoon(retainers, today = isoDay(), days = 7) {
+  const end = new Date(today); end.setDate(end.getDate() + days)
+  const last = isoDay(end)
+  return retainers.filter(r => r.status === 'active' && r.next_billing_date && r.next_billing_date <= last)
+}
+
+// Next billing date one month on, end-of-month safe (31 Jan -> 28/29 Feb, 31 Mar -> 30 Apr).
+export function nextMonth(dateStr) {
+  const [y, m, d] = (dateStr || isoDay()).split('-').map(Number)
+  const last = new Date(Date.UTC(y, m + 1, 0)).getUTCDate()
+  return new Date(Date.UTC(y, m, Math.min(d, last))).toISOString().slice(0, 10)
+}
