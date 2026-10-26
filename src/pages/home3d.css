@@ -193,3 +193,24 @@
 .v3d .svc-cta h2{margin:0}
 .v3d .svc-cta p{margin:0;max-width:60ch;color:var(--muted)}
 @media (max-width:720px){.v3d .svc-main{gap:48px}.v3d .svc-cta{padding:22px}.v3d .lead{font-size:17px}}
+
+/* Tools dashboard (src/pages/Dashboard.jsx): same studio walk, tool cards in each room. */
+.v3d .steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:15px;color:var(--muted)}
+.v3d .steps li{display:flex;align-items:center;gap:12px}
+.v3d .steps b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--orange);color:var(--bg);font-size:12px;display:flex;align-items:center;justify-content:center}
+.v3d .ctas.pad{margin-top:20px}
+.v3d .panel .question{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--ink)}
+.v3d .tool-cards{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:16px}
+.v3d .tool-cards li{display:grid;grid-template-columns:180px minmax(0,1fr);gap:18px;align-items:start;padding-top:16px;border-top:1px solid var(--line)}
+.v3d .tool-cards img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:6px;background:var(--orange-soft)}
+.v3d .tool-cards div{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+.v3d .tool-cards strong{font-size:17px;color:var(--ink)}
+.v3d .tool-cards span{font-size:14px;line-height:1.5;color:var(--muted)}
+.v3d .tool-cards small{font-size:13px;line-height:1.45;color:var(--muted)}
+.v3d .tool-cards small b{color:var(--ink)}
+.v3d .tool-cards .btn{margin-top:6px}
+.v3d .stats.three{grid-template-columns:repeat(3,minmax(0,1fr));width:100%;margin-top:4px}
+@media (max-width:720px){
+  .v3d .tool-cards li{grid-template-columns:1fr}
+  .v3d .tool-cards img{max-height:180px}
+}
