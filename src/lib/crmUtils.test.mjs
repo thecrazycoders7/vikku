@@ -86,3 +86,15 @@ assert.equal(nextMonth('2028-01-31'), '2028-02-29')   // leap year
 assert.equal(nextMonth('2026-03-31'), '2026-04-30')
 assert.equal(nextMonth('2026-12-10'), '2027-01-10')   // year rollover
 console.log('nextMonth: all checks passed')
+
+import { quoteTotals, pdfMoney, meetingsByDay } from './crmUtils.js'
+const q = quoteTotals([{ qty: 1, rate: 200000 }, { qty: 2, rate: 10000 }], 18, 20000)
+assert.deepEqual(q, { subtotal: 220000, discount: 20000, taxable: 200000, tax: 36000, total: 236000 })
+assert.equal(quoteTotals([{ qty: 1, rate: 100 }], 18, 500).total, 0)        // discount can't go negative
+assert.equal(quoteTotals([{ qty: '1.5', rate: '99.99' }], 0, 0).total, 149.99) // strings and decimals
+assert.equal(quoteTotals([], 18, 0).total, 0)
+assert.equal(pdfMoney(236000, 'INR'), 'INR 2,36,000.00')
+assert.equal(pdfMoney(4000, 'USD'), 'USD 4,000.00')
+const days = meetingsByDay([{ starts_at: '2026-10-28T20:00:00Z' }, { starts_at: '2026-10-28T05:30:00Z' }])
+assert.deepEqual(days.map(([d, ms]) => [d, ms.length]), [['2026-10-28', 1], ['2026-10-29', 1]]) // 20:00 UTC = next day IST
+console.log('crmUtils phase 3: all checks passed')

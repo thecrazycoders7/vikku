@@ -76,3 +76,14 @@ export async function recordRetainerMonth(r) {
   await createPayment({ client_id: r.client_id, amount: r.amount, currency: r.currency, kind: 'retainer', status: 'received', paid_on: isoDay(), notes: r.title })
   return updateRetainer(r.id, { next_billing_date: nextMonth(r.next_billing_date || isoDay()) })
 }
+
+// ---- Phase 3: meetings, quotations ----
+export const listMeetings = async ({ leadId, clientId } = {}) => check(await list('crm_meetings', 'starts_at', { lead_id: leadId, client_id: clientId }, true))
+export const createMeeting = async (fields) => check(await supabase.from('crm_meetings').insert(fields).select().single())
+export const updateMeeting = async (id, fields) => check(await supabase.from('crm_meetings').update(fields).eq('id', id).select().single())
+export const deleteMeeting = async (id) => check(await supabase.from('crm_meetings').delete().eq('id', id))
+
+export const listDocuments = async ({ clientId } = {}) => check(await list('crm_documents', 'created_at', { client_id: clientId }))
+export const createDocument = async (fields) => check(await supabase.from('crm_documents').insert(fields).select().single())
+export const updateDocument = async (id, fields) => check(await supabase.from('crm_documents').update(fields).eq('id', id).select().single())
+export const deleteDocument = async (id) => check(await supabase.from('crm_documents').delete().eq('id', id))

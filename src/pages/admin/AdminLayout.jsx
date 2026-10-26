@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, User, Mail, Activity, Search, X, Target, Briefcase, PieChart, FolderKanban, Wallet } from 'lucide-react'
+import { LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, User, Mail, Activity, Search, X, Target, Briefcase, PieChart, FolderKanban, Wallet, CalendarDays, FileText } from 'lucide-react'
 import AppHeader from '../../components/AppHeader'
 import { getAdminUsers } from '../../lib/adminService'
 import useLockBodyScroll from '../../hooks/useLockBodyScroll'
@@ -12,6 +12,8 @@ const nav = [
   { label: 'Clients',    path: '/admin/crm/clients',     icon: Briefcase },
   { label: 'Projects',   path: '/admin/crm/projects',    icon: FolderKanban },
   { label: 'Payments',   path: '/admin/crm/payments',    icon: Wallet },
+  { label: 'Meetings',   path: '/admin/crm/meetings',    icon: CalendarDays },
+  { label: 'Quotes',     path: '/admin/crm/quotes',      icon: FileText },
   { label: 'Users',      path: '/admin/users',           icon: Users },
   { label: 'Billing',    path: '/admin/billing',         icon: CreditCard },
   { label: 'Analytics',  path: '/admin/analytics',       icon: BarChart2 },
