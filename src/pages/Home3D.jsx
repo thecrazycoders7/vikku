@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
 import SiteNav, { BookButton, WhatsAppButton } from '../components/SiteNav'
 import usePageMeta from '../hooks/usePageMeta'
+import useStudioWalk from '../hooks/useStudioWalk'
 import { trackEvent } from '../utils/analytics'
 import './home3d.css'
 
@@ -26,63 +27,10 @@ export default function Home3D() {
     url:         'https://www.vikku.in/',
   })
 
-  const canvasRef = useRef(null)
-  const loadingRef = useRef(null)
   const emailRef = useRef(null)
-  const [room, setRoom] = useState(0)
-
-  // Scroll → story progress in [0,1]; each section's centre maps to t = i / (sections - 1).
-  const story = useRef({ target: 0 }).current
-  useEffect(() => {
-    const bar = document.getElementById('progress')
-    const secs = roomIds.map(id => document.getElementById(id))
-    let reached = 0
-    const update = () => {
-      // ponytail: re-measured every scroll since fonts and resizes shift section heights; seven rects is cheap
-      const max = document.documentElement.scrollHeight - innerHeight
-      const stops = secs.map(s => s.getBoundingClientRect().top + scrollY + s.offsetHeight / 2 - innerHeight / 2)
-      const n = stops.length - 1
-      stops[0] = 0
-      stops[n] = Math.min(stops[n], max)
-      let t = 1
-      for (let i = 0; i < n; i++) if (scrollY <= stops[i + 1]) { t = (i + Math.max(0, (scrollY - stops[i]) / (stops[i + 1] - stops[i] || 1))) / n; break }
-      story.target = t
-      bar.style.width = t * 100 + '%'
-      const r = Math.round(t * n)
-      setRoom(r)
-      // How far visitors get through the walk: one event the first time each room is reached.
-      for (; reached < r; reached++) trackEvent('tour_room_reached', { event_category: 'engagement', room: rooms[reached + 1], room_index: reached + 1 })
-    }
-    addEventListener('scroll', update, { passive: true })
-    addEventListener('resize', update)
-    update()
-    return () => {
-      removeEventListener('scroll', update)
-      removeEventListener('resize', update)
-    }
-  }, [story])
-
-  // The 3D scene loads in its own chunk once the page is idle, and fades in over the poster when ready.
-  // Skipped during the build's headless prerender and on data-saver, 2G or low-memory devices,
-  // where the poster image stays as the backdrop. (Not 3G: Chrome's estimate often says 3G on fine desktop links.)
-  const [ready, setReady] = useState(false)
-  useEffect(() => {
-    const net = navigator.connection
-    const lite = net?.saveData || /2g/.test(net?.effectiveType || '') || (navigator.deviceMemory || 8) <= 2
-    if (navigator.webdriver || lite) { loadingRef.current.hidden = true; return }
-    let dispose = null
-    let cancelled = false
-    const start = () => import('../lib/studioScene').then(({ createStudio }) =>
-      createStudio({ canvas: canvasRef.current, loadingEl: loadingRef.current, story, onReady: () => setReady(true) }))
-      .then(d => { if (cancelled) d(); else dispose = d })
-      .catch(() => { if (loadingRef.current) loadingRef.current.hidden = true })
-    const idle = window.requestIdleCallback ? requestIdleCallback(start, { timeout: 1500 }) : setTimeout(start, 300)
-    return () => {
-      cancelled = true
-      window.cancelIdleCallback ? cancelIdleCallback(idle) : clearTimeout(idle)
-      dispose?.()
-    }
-  }, [story])
+  // How far visitors get through the walk: one event the first time each room is reached.
+  const { canvasRef, loadingRef, room, ready } = useStudioWalk(roomIds, (r) =>
+    trackEvent('tour_room_reached', { event_category: 'engagement', room: rooms[r], room_index: r }))
 
   return (
     <>
