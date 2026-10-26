@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient'
+import { isoDay, nextMonth } from './crmUtils'
 
 // Vikku CRM data access (admin-only; enforced by RLS in supabase/migrations/20261026_crm_phase1.sql).
 
@@ -29,3 +30,49 @@ export async function listActivity({ leadId, clientId }) {
   return check(await q)
 }
 export const addActivity = async (fields) => check(await supabase.from('crm_activity').insert(fields).select().single())
+
+// ---- Phase 2: projects, payments, retainers, expenses ----
+const list = (table, order, filters = {}, ascending = false) => {
+  let q = supabase.from(table).select('*').order(order, { ascending, nullsFirst: false })
+  for (const [col, val] of Object.entries(filters)) if (val) q = q.eq(col, val)
+  return q
+}
+
+export const listProjects = async ({ clientId } = {}) => check(await list('crm_projects', 'updated_at', { client_id: clientId }))
+export const createProject = async (fields) => check(await supabase.from('crm_projects').insert(fields).select().single())
+export const updateProject = async (id, fields) => check(await supabase.from('crm_projects').update(fields).eq('id', id).select().single())
+export const deleteProject = async (id) => check(await supabase.from('crm_projects').delete().eq('id', id))
+
+export const listPayments = async ({ clientId, projectId } = {}) => check(await list('crm_payments', 'created_at', { client_id: clientId, project_id: projectId }))
+export const createPayment = async (fields) => check(await supabase.from('crm_payments').insert(fields).select().single())
+export const updatePayment = async (id, fields) => check(await supabase.from('crm_payments').update(fields).eq('id', id).select().single())
+export const deletePayment = async (id) => check(await supabase.from('crm_payments').delete().eq('id', id))
+
+export const listRetainers = async ({ clientId } = {}) => check(await list('crm_retainers', 'next_billing_date', { client_id: clientId }, true))
+export const createRetainer = async (fields) => check(await supabase.from('crm_retainers').insert(fields).select().single())
+export const updateRetainer = async (id, fields) => check(await supabase.from('crm_retainers').update(fields).eq('id', id).select().single())
+export const deleteRetainer = async (id) => check(await supabase.from('crm_retainers').delete().eq('id', id))
+
+export const listExpenses = async () => check(await list('crm_expenses', 'spent_on'))
+export const createExpense = async (fields) => check(await supabase.from('crm_expenses').insert(fields).select().single())
+export const deleteExpense = async (id) => check(await supabase.from('crm_expenses').delete().eq('id', id))
+
+// Creates a Vikku PM board for a CRM project (owned by the signed-in admin) and links it.
+export async function createPmBoard(project, client, userId) {
+  if (!userId) throw new Error('Your session has expired. Sign in again to create a PM board.')
+  const { createProject: createPmProject } = await import('./pmService')
+  const board = await createPmProject({
+    user_id: userId,
+    name: project.name,
+    description: project.notes || null,
+    client_name: client?.company || client?.name || null,
+    client_email: client?.email || null,
+  })
+  return updateProject(project.id, { pm_project_id: board.id })
+}
+
+// Logs this month's retainer as a received payment and moves the next billing date one month on.
+export async function recordRetainerMonth(r) {
+  await createPayment({ client_id: r.client_id, amount: r.amount, currency: r.currency, kind: 'retainer', status: 'received', paid_on: isoDay(), notes: r.title })
+  return updateRetainer(r.id, { next_billing_date: nextMonth(r.next_billing_date || isoDay()) })
+}
