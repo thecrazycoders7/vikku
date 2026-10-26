@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, User, Mail, Activity, Search, X } from 'lucide-react'
+import { LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, User, Mail, Activity, Search, X, Target, Briefcase } from 'lucide-react'
 import AppHeader from '../../components/AppHeader'
 import { getAdminUsers } from '../../lib/adminService'
 import useLockBodyScroll from '../../hooks/useLockBodyScroll'
 
 const nav = [
   { label: 'Overview',   path: '/admin',                icon: LayoutDashboard },
+  { label: 'Leads',      path: '/admin/crm/leads',       icon: Target },
+  { label: 'Clients',    path: '/admin/crm/clients',     icon: Briefcase },
   { label: 'Users',      path: '/admin/users',           icon: Users },
   { label: 'Billing',    path: '/admin/billing',         icon: CreditCard },
   { label: 'Analytics',  path: '/admin/analytics',       icon: BarChart2 },
@@ -90,6 +92,8 @@ function GlobalSearch({ onClose }) {
 
 export default function AdminLayout({ children, title }) {
   const { pathname } = useLocation()
+  // Sub-pages (e.g. a client's detail page) keep their section highlighted.
+  const isActive = (path) => pathname === path || (path !== '/admin' && pathname.startsWith(path + '/'))
   const navigate = useNavigate()
   const [searchOpen, setSearchOpen] = useState(false)
 
@@ -117,7 +121,7 @@ export default function AdminLayout({ children, title }) {
                 key={path}
                 onClick={() => navigate(path)}
                 className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition-all mb-0.5 ${
-                  pathname === path
+                  isActive(path)
                     ? 'bg-white/10 text-white'
                     : 'text-white/50 hover:text-white hover:bg-white/[0.05]'
                 }`}
@@ -136,7 +140,7 @@ export default function AdminLayout({ children, title }) {
               key={path}
               onClick={() => navigate(path)}
               className={`flex-shrink-0 flex flex-col items-center gap-1 py-3 px-3 text-[10px] ${
-                pathname === path ? 'text-white' : 'text-white/40'
+                isActive(path) ? 'text-white' : 'text-white/40'
               }`}
             >
               <Icon size={16} />
