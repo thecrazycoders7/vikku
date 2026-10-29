@@ -1,6 +1,7 @@
 // Branded PDF export for tool results. jsPDF is dynamically imported so it stays
 // out of the main bundle and only loads when a user clicks "Download PDF".
 import { TOOL_LABELS } from './toolResultsService'
+import { pdfSafe } from './pdfText.js'
 
 const money = (n, sym = '₹') => `${sym}${Number(n || 0).toLocaleString('en-IN')}`
 const INK = [15, 23, 42]      // slate-900
@@ -73,13 +74,14 @@ export async function downloadResultPdf({ tool, title, result }) {
   y += 28
 
   doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(...INK)
-  doc.text(doc.splitTextToSize(title || TOOL_LABELS[tool] || 'Result', W - M * 2), M, y)
+  doc.text(doc.splitTextToSize(pdfSafe(title || TOOL_LABELS[tool] || 'Result'), W - M * 2), M, y)
   y += 26
   doc.setDrawColor(226, 232, 240); doc.line(M, y, W - M, y); y += 22
 
   const ensure = (h = 16) => { if (y + h > doc.internal.pageSize.getHeight() - 80) { doc.addPage(); y = 56 } }
 
-  for (const row of lines(tool, result || {})) {
+  for (const raw of lines(tool, result || {})) {
+    const row = Object.fromEntries(Object.entries(raw).map(([k, v]) => [k, pdfSafe(v)]))
     ensure()
     if (row.h) {
       y += 6
