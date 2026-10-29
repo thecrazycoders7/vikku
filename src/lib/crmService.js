@@ -87,3 +87,6 @@ export const listDocuments = async ({ clientId } = {}) => check(await list('crm_
 export const createDocument = async (fields) => check(await supabase.from('crm_documents').insert(fields).select().single())
 export const updateDocument = async (id, fields) => check(await supabase.from('crm_documents').update(fields).eq('id', id).select().single())
 export const deleteDocument = async (id) => check(await supabase.from('crm_documents').delete().eq('id', id))
+
+// Latest CRM events across all leads and clients (admin home "Recent activity").
+export const listRecentActivity = async (limit = 12) => check(await supabase.from('crm_activity').select('*').order('created_at', { ascending: false }).limit(limit))

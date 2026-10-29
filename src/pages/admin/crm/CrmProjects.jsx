@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Plus, Search, CalendarClock, ExternalLink, LayoutGrid } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import { ProjectForm } from './Forms'
+import useOpenOnParam from '../../../hooks/useOpenOnParam'
 import { MoneyTile, fmtDate } from './Lists'
 import { useAuth } from '../../../contexts/AuthContext'
 import {
@@ -20,6 +21,7 @@ export default function CrmProjects() {
   const [query, setQuery] = useState('')
   const [modal, setModal] = useState(null) // { item? }
   const [dragOver, setDragOver] = useState(null)
+  useOpenOnParam('new', () => setModal({}), !loading)
 
   const load = async () => {
     setError('')

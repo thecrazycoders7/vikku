@@ -1,38 +1,44 @@
-import { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, User, Mail, Activity, Search, X, Target, Briefcase, PieChart, FolderKanban, Wallet, CalendarDays, FileText, Sunrise } from 'lucide-react'
-import AppHeader from '../../components/AppHeader'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import {
+  LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, Settings, Mail, Activity, Search, X, Target, Briefcase,
+  PieChart, FolderKanban, Wallet, CalendarDays, FileText, CalendarClock, Menu as MenuIcon, PanelLeftClose, PanelLeftOpen,
+  LogOut, Globe, LayoutGrid, BellRing, ChevronDown,
+} from 'lucide-react'
+import NotificationBell from '../../components/pm/NotificationBell'
+import { useAuth } from '../../contexts/AuthContext'
 import { getAdminUsers } from '../../lib/adminService'
 import useLockBodyScroll from '../../hooks/useLockBodyScroll'
+import { Menu, MenuItem } from './ui'
 
-// Sidebar groups: the daily to-do first, then the client business, the tools business, messages and settings.
+// Sidebar groups. Every entry is an existing route; "Follow-ups" is the Leads board filtered to due follow-ups.
 const sections = [
-  { items: [{ label: 'Today', path: '/admin', icon: Sunrise }] },
-  { title: 'Clients', items: [
+  { title: 'Workspace', items: [
+    { label: 'Overview',     path: '/admin',              icon: LayoutDashboard },
     { label: 'CRM overview', path: '/admin/crm',          icon: PieChart },
     { label: 'Leads',        path: '/admin/crm/leads',    icon: Target },
     { label: 'Clients',      path: '/admin/crm/clients',  icon: Briefcase },
     { label: 'Projects',     path: '/admin/crm/projects', icon: FolderKanban },
-    { label: 'Payments',     path: '/admin/crm/payments', icon: Wallet },
-    { label: 'Meetings',     path: '/admin/crm/meetings', icon: CalendarDays },
-    { label: 'Quotes',       path: '/admin/crm/quotes',   icon: FileText },
   ] },
-  { title: 'Tools & users', items: [
-    { label: 'Tool stats', path: '/admin/overview',  icon: LayoutDashboard },
-    { label: 'Users',      path: '/admin/users',     icon: Users },
-    { label: 'Billing',    path: '/admin/billing',   icon: CreditCard },
-    { label: 'Analytics',  path: '/admin/analytics', icon: BarChart2 },
+  { title: 'Operations', items: [
+    { label: 'Meetings',   path: '/admin/crm/meetings',              icon: CalendarDays },
+    { label: 'Follow-ups', path: '/admin/crm/leads?view=followups',  icon: CalendarClock },
+    { label: 'Payments',   path: '/admin/crm/payments',              icon: Wallet },
+    { label: 'Quotes',     path: '/admin/crm/quotes',                icon: FileText },
   ] },
-  { title: 'Messages', items: [
-    { label: 'Announce', path: '/admin/announcements', icon: Megaphone },
-    { label: 'Email',    path: '/admin/email',         icon: Mail },
+  { title: 'Insights', items: [
+    { label: 'Analytics',       path: '/admin/analytics', icon: BarChart2 },
+    { label: 'Tool statistics', path: '/admin/overview',  icon: LayoutGrid },
+    { label: 'Activity log',    path: '/admin/activity',  icon: Activity },
   ] },
-  { title: 'Settings', items: [
-    { label: 'Activity', path: '/admin/activity', icon: Activity },
-    { label: 'Profile',  path: '/admin/profile',  icon: User },
+  { title: 'Administration', items: [
+    { label: 'Users',         path: '/admin/users',         icon: Users },
+    { label: 'Billing',       path: '/admin/billing',       icon: CreditCard },
+    { label: 'Announcements', path: '/admin/announcements', icon: Megaphone },
+    { label: 'Email',         path: '/admin/email',         icon: Mail },
+    { label: 'Settings',      path: '/admin/profile',       icon: Settings },
   ] },
 ]
-const nav = sections.flatMap(s => s.items)
 
 function GlobalSearch({ onClose }) {
   useLockBodyScroll()
@@ -42,140 +48,232 @@ function GlobalSearch({ onClose }) {
   const [allUsers, setAllUsers] = useState(null)
   const navigate = useNavigate()
 
+  useEffect(() => {
+    const onKey = e => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [onClose])
+
   const handleSearch = async (q) => {
     setQuery(q)
     if (!q.trim()) { setResults([]); return }
+    const match = (users) => users.filter(u => u.email?.toLowerCase().includes(q.toLowerCase())).slice(0, 8)
     if (!allUsers) {
       setLoading(true)
       try {
         const d = await getAdminUsers()
         setAllUsers(d.users || [])
-        setResults((d.users || []).filter(u => u.email?.toLowerCase().includes(q.toLowerCase())).slice(0, 8))
+        setResults(match(d.users || []))
       } catch { setResults([]) }
       finally { setLoading(false) }
     } else {
-      setResults(allUsers.filter(u => u.email?.toLowerCase().includes(q.toLowerCase())).slice(0, 8))
+      setResults(match(allUsers))
     }
   }
 
-  const PLAN_COLORS = { pro: 'text-violet-400', team: 'text-blue-400', free: 'text-white/30' }
-
   return (
-    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-[15vh] px-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <div className="w-full max-w-md glass rounded-2xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-white/[0.06]">
-          <Search size={14} className="text-white/40 flex-shrink-0" />
+    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-[15vh] px-4 bg-slate-900/30" onClick={onClose}>
+      <div role="dialog" aria-label="Search users" className="w-full max-w-md overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center gap-3 px-4 h-12 border-b border-slate-100">
+          <Search size={15} className="text-slate-400 flex-shrink-0" />
           <input
             autoFocus
             value={query}
             onChange={e => handleSearch(e.target.value)}
             placeholder="Search users by email…"
-            className="flex-1 bg-transparent text-sm text-white placeholder-white/30 focus:outline-none"
+            className="flex-1 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
-          {loading && <div className="w-3.5 h-3.5 border border-white/20 border-t-white/60 rounded-full animate-spin flex-shrink-0" />}
-          <button onClick={onClose} className="text-white/30 hover:text-white transition-colors"><X size={14} /></button>
+          {loading && <div className="w-3.5 h-3.5 border border-slate-200 border-t-slate-500 rounded-full animate-spin flex-shrink-0" />}
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-700" aria-label="Close search"><X size={15} /></button>
         </div>
 
         {results.length > 0 && (
-          <div className="max-h-72 overflow-y-auto">
+          <div className="max-h-72 overflow-y-auto py-1">
             {results.map(u => (
               <button
                 key={u.id}
                 onClick={() => { navigate('/admin/users'); onClose() }}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/[0.05] transition-colors border-b border-white/[0.04] last:border-0 text-left"
+                className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 text-left"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-white/80 font-mono truncate">{u.email}</p>
-                  <p className="text-[10px] text-white/30 mt-0.5">{u.projectCount} projects · joined {new Date(u.joinedAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</p>
+                  <p className="text-[13px] text-slate-900 truncate">{u.email}</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">{u.projectCount} projects · joined {new Date(u.joinedAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</p>
                 </div>
-                <span className={`text-[10px] font-medium flex-shrink-0 ${PLAN_COLORS[u.plan] || 'text-white/30'}`}>{u.plan}</span>
+                <span className="text-[11px] font-medium text-slate-500 capitalize">{u.plan}</span>
               </button>
             ))}
           </div>
         )}
 
         {query && !loading && results.length === 0 && (
-          <div className="px-4 py-6 text-center text-xs text-white/30">No users found for "{query}"</div>
+          <div className="px-4 py-6 text-center text-[13px] text-slate-500">No users found for "{query}"</div>
         )}
-
-        {!query && (
-          <div className="px-4 py-4 text-center text-xs text-white/20">Type to search across all users</div>
-        )}
+        {!query && <div className="px-4 py-5 text-center text-[13px] text-slate-400">Type to search across all users</div>}
       </div>
     </div>
   )
 }
 
-export default function AdminLayout({ children, title }) {
-  const { pathname } = useLocation()
-  // Sub-pages (e.g. a client's detail page) keep their section highlighted.
-  const isActive = (path) => pathname === path || (!['/admin', '/admin/crm'].includes(path) && pathname.startsWith(path + '/'))
-  const navigate = useNavigate()
-  const [searchOpen, setSearchOpen] = useState(false)
-
+function NavList({ collapsed, onNavigate }) {
+  const { pathname, search } = useLocation()
+  // Overview and CRM overview are exact matches; other pages keep their item lit on sub-pages
+  // (a client's detail page). The Follow-ups entry is the Leads route plus its filter.
+  const isActive = (path) => {
+    const [p, q] = path.split('?')
+    if (q) return pathname === p && search === `?${q}`
+    if (p === '/admin/crm/leads' && search.includes('view=followups')) return false
+    return pathname === p || (!['/admin', '/admin/crm'].includes(p) && pathname.startsWith(p + '/'))
+  }
   return (
-    <div className="min-h-screen bg-black">
-      <AppHeader breadcrumbs={[{ label: 'Admin' }]} />
-      <div className="flex max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-12 gap-6">
-        {/* Sidebar */}
-        <aside className="w-44 flex-shrink-0 hidden sm:block">
-          <div className="glass rounded-2xl p-2 sticky top-24">
-            <p className="text-[9px] text-white/30 uppercase tracking-widest px-3 py-2">Admin</p>
-
-            {/* Global search button */}
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition-all mb-2 text-white/30 hover:text-white hover:bg-white/[0.05] border border-white/[0.06]"
-            >
-              <Search size={11} />
-              <span className="flex-1 text-left">Search users</span>
-              <kbd className="text-[9px] bg-white/[0.06] px-1.5 py-0.5 rounded">⌘K</kbd>
-            </button>
-
-            {sections.map(({ title, items }, i) => (
-              <div key={title || i} className={i ? 'mt-3' : ''}>
-                {title && <p className="text-[9px] text-white/30 uppercase tracking-widest px-3 pb-1">{title}</p>}
-                {items.map(({ label, path, icon: Icon }) => (
-                  <button
-                    key={path}
-                    onClick={() => navigate(path)}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all mb-0.5 ${
-                      isActive(path)
-                        ? 'bg-white/10 text-white'
-                        : 'text-white/50 hover:text-white hover:bg-white/[0.05]'
+    <nav aria-label="Admin" className="flex flex-col gap-4">
+      {sections.map(({ title, items }) => (
+        <div key={title}>
+          <p className={`px-3 pb-1.5 text-[11px] font-medium uppercase tracking-wider text-slate-400 ${collapsed ? 'sr-only' : ''}`}>{title}</p>
+          <ul className="flex flex-col gap-0.5">
+            {items.map(({ label, path, icon: Icon }) => {
+              const active = isActive(path)
+              return (
+                <li key={path}>
+                  <Link
+                    to={path}
+                    onClick={onNavigate}
+                    title={collapsed ? label : undefined}
+                    aria-current={active ? 'page' : undefined}
+                    className={`relative flex items-center gap-2.5 rounded-lg h-8 text-[13px] transition-colors ${collapsed ? 'justify-center px-0' : 'px-3'} ${
+                      active ? 'bg-orange-50 text-orange-800 font-medium' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
-                    <Icon size={13} />
-                    {label}
-                  </button>
-                ))}
-              </div>
-            ))}
+                    {active && <span aria-hidden="true" className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r bg-orange-600" />}
+                    <Icon size={16} strokeWidth={1.75} className={active ? 'text-orange-600' : 'text-slate-400'} />
+                    <span className={collapsed ? 'sr-only' : 'truncate'}>{label}</span>
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  )
+}
+
+function readCollapsed() {
+  try { return localStorage.getItem('vikku_admin_sidebar') === 'collapsed' } catch { return false }
+}
+
+export default function AdminLayout({ children, title }) {
+  const { user, displayName, signOut } = useAuth()
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [drawer, setDrawer] = useState(false)
+  const [collapsed, setCollapsed] = useState(readCollapsed)
+
+  useEffect(() => {
+    setDrawer(false)
+    // Keep the current page visible in a sidebar that scrolls (e.g. Users near the bottom).
+    document.querySelector('aside [aria-current=page]')?.scrollIntoView({ block: 'nearest' })
+  }, [pathname])
+  useEffect(() => {
+    const onKey = e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setSearchOpen(true) } }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [])
+
+  const toggleCollapsed = () => setCollapsed(c => {
+    try { localStorage.setItem('vikku_admin_sidebar', c ? 'open' : 'collapsed') } catch { /* private mode */ }
+    return !c
+  })
+
+  const name = displayName || user?.email?.split('@')[0] || 'Admin'
+  const initials = name.split(/[\s.]+/).filter(Boolean).slice(0, 2).map(s => s[0].toUpperCase()).join('')
+
+  return (
+    <div className="adm min-h-screen">
+      {/* Top bar */}
+      <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-slate-200 bg-white">
+        <div className="flex h-full items-center gap-3 px-3 sm:px-5">
+          <button type="button" onClick={() => setDrawer(true)} className="md:hidden p-2 -ml-1 rounded-lg text-slate-600 hover:bg-slate-100" aria-label="Open navigation">
+            <MenuIcon size={18} />
+          </button>
+          <Link to="/admin" className="flex items-center gap-2 rounded-md">
+            <img src="/logo-sm.png" alt="" width="28" height="28" className="h-7 w-7 object-contain" />
+            <span className="text-[15px] font-semibold tracking-tight text-slate-900">Vikku</span>
+          </Link>
+          <span aria-hidden="true" className="hidden sm:block h-5 w-px bg-slate-200" />
+          <span className="hidden sm:inline text-[13px] font-medium text-slate-500">Admin</span>
+
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            className="ml-auto md:ml-6 md:mr-auto flex items-center gap-2 h-9 rounded-lg border border-slate-200 bg-slate-50 px-3 text-[13px] text-slate-500 hover:border-slate-300 md:w-72"
+            aria-label="Search users"
+          >
+            <Search size={15} className="text-slate-400" />
+            <span className="hidden md:inline flex-1 text-left">Search users…</span>
+            <kbd className="hidden md:inline text-[11px] font-medium text-slate-400 border border-slate-200 bg-white rounded px-1.5">⌘K</kbd>
+          </button>
+
+          <div className="flex items-center gap-1 text-slate-600 [&_button]:rounded-lg">
+            <NotificationBell />
+            <Link to="/admin/profile" className="hidden sm:flex p-2 rounded-lg hover:bg-slate-100" aria-label="Settings" title="Settings"><Settings size={17} /></Link>
           </div>
+
+          <Menu width="w-64" trigger={({ open, toggle }) => (
+            <button type="button" onClick={toggle} aria-haspopup="menu" aria-expanded={open}
+              className="flex items-center gap-2 rounded-lg p-1 pr-2 hover:bg-slate-100">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-100 text-[11px] font-semibold text-orange-800">{initials}</span>
+              <span className="hidden lg:block max-w-[140px] truncate text-[13px] font-medium text-slate-700">{name}</span>
+              <ChevronDown size={14} className="hidden lg:block text-slate-400" />
+            </button>
+          )}>
+            <div className="px-2.5 py-2 border-b border-slate-100 mb-1">
+              <p className="text-[13px] font-medium text-slate-900 truncate">{name}</p>
+              <p className="text-[12px] text-slate-500 truncate">{user?.email}</p>
+            </div>
+            <MenuItem icon={Settings} to="/admin/profile">Admin settings</MenuItem>
+            <MenuItem icon={BellRing} to="/dashboard/notifications">Email preferences</MenuItem>
+            <MenuItem icon={LayoutGrid} to="/dashboard">Your tools dashboard</MenuItem>
+            <MenuItem icon={Globe} to="/">View website</MenuItem>
+            <div className="my-1 border-t border-slate-100" />
+            <MenuItem icon={LogOut} danger onClick={async () => { await signOut(); navigate('/') }}>Sign out</MenuItem>
+          </Menu>
+        </div>
+      </header>
+
+      <div className="flex pt-16">
+        {/* Sidebar: icons only when collapsed (remembered), and always on tablets. */}
+        <aside className={`hidden md:flex flex-col sticky top-16 h-[calc(100vh-4rem)] flex-none border-r border-slate-200 bg-white transition-[width] duration-200 ${collapsed ? 'w-16' : 'w-16 lg:w-[232px]'}`}>
+          <div className="flex-1 overflow-y-auto px-2 py-4 lg:px-3">
+            <div className={collapsed ? '' : 'lg:hidden'}><NavList collapsed /></div>
+            {!collapsed && <div className="hidden lg:block"><NavList /></div>}
+          </div>
+          <button type="button" onClick={toggleCollapsed}
+            className="hidden lg:flex items-center gap-2 border-t border-slate-200 h-11 px-5 text-[13px] text-slate-500 hover:text-slate-900"
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+            {collapsed ? <PanelLeftOpen size={16} /> : <><PanelLeftClose size={16} /> Collapse</>}
+          </button>
         </aside>
 
-        {/* Mobile tab row - scrollable */}
-        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 glass border-t border-white/[0.06] flex overflow-x-auto">
-          {nav.map(({ label, path, icon: Icon }) => (
-            <button
-              key={path}
-              onClick={() => navigate(path)}
-              className={`flex-shrink-0 flex flex-col items-center gap-1 py-3 px-3 text-[10px] ${
-                isActive(path) ? 'text-white' : 'text-white/40'
-              }`}
-            >
-              <Icon size={16} />
-              {label}
-            </button>
-          ))}
-        </div>
+        {/* Mobile drawer */}
+        {drawer && (
+          <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Navigation">
+            <div className="absolute inset-0 bg-slate-900/30" onClick={() => setDrawer(false)} />
+            <div className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-y-auto bg-white px-3 pb-6 shadow-xl">
+              <div className="flex h-16 items-center justify-between px-2">
+                <span className="text-[15px] font-semibold text-slate-900">Vikku Admin</span>
+                <button type="button" onClick={() => setDrawer(false)} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100" aria-label="Close navigation"><X size={18} /></button>
+              </div>
+              <NavList onNavigate={() => setDrawer(false)} />
+            </div>
+          </div>
+        )}
 
-        {/* Main content */}
-        <main className="flex-1 min-w-0">
-          {title && (
-            <h1 className="font-display font-bold text-lg text-white mb-5">{title}</h1>
-          )}
-          {children}
+        <main className="flex-1 min-w-0 px-4 py-6 sm:px-6 lg:px-8 lg:py-7">
+          <div className="mx-auto max-w-[1360px]">
+            {title && <h1 className="text-[22px] font-semibold tracking-tight text-slate-900 mb-5">{title}</h1>}
+            {children}
+          </div>
         </main>
       </div>
 
