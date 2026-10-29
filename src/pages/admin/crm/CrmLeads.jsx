@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Plus, Search, Phone, MapPin, Building2, CalendarClock, MessageCircle, RefreshCw } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import LeadPanel from './LeadPanel'
+import useOpenOnParam from '../../../hooks/useOpenOnParam'
 import { LEAD_SOURCES, LEAD_STAGES, convertLead, formatMoney, listLeads, pipelineStats, sourceLabel, updateLead, whatsappNumber } from '../../../lib/crmService'
 
 function Stat({ label, children }) {
@@ -59,6 +61,8 @@ export default function CrmLeads() {
   const [source, setSource] = useState('')
   const [panel, setPanel] = useState(null) // { lead } | { stage } for a new lead
   const [dragOver, setDragOver] = useState(null)
+  const [params, setParams] = useSearchParams()
+  const followUps = params.get('view') === 'followups' // sidebar "Follow-ups": open leads with a follow-up date
 
   const load = async () => {
     setLoading(true); setError('')
@@ -67,12 +71,15 @@ export default function CrmLeads() {
     finally { setLoading(false) }
   }
   useEffect(() => { load() }, [])
+  useOpenOnParam('new', () => setPanel({ stage: 'new' }))
+  useOpenOnParam('lead', (id) => { const lead = leads.find(l => l.id === id); if (lead) setPanel({ lead }) }, !loading)
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
     return leads.filter(l => (!source || l.source === source) &&
+      (!followUps || (l.next_follow_up && !['won', 'lost'].includes(l.stage))) &&
       (!q || [l.name, l.company, l.phone, l.email, l.city].some(v => v?.toLowerCase().includes(q))))
-  }, [leads, query, source])
+  }, [leads, query, source, followUps])
 
   const stats = useMemo(() => pipelineStats(leads), [leads])
   const today = new Date().toISOString().slice(0, 10)
@@ -111,8 +118,8 @@ export default function CrmLeads() {
     <AdminLayout>
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <div className="mr-auto">
-          <h1 className="font-display font-bold text-lg text-white">Leads</h1>
-          <p className="text-xs text-white/40">Your sales pipeline</p>
+          <h1 className="font-display font-bold text-lg text-white">{followUps ? 'Follow-ups' : 'Leads'}</h1>
+          <p className="text-xs text-white/40">{followUps ? 'Open leads with a follow-up date' : 'Your sales pipeline'}</p>
         </div>
         <button onClick={() => setPanel({ stage: 'new' })} className="btn-primary flex items-center gap-1.5 text-xs px-4 py-2.5 rounded-xl">
           <Plus size={13} /> New lead
@@ -137,6 +144,11 @@ export default function CrmLeads() {
           <option value="" className="bg-black">All sources</option>
           {LEAD_SOURCES.map(s => <option key={s.id} value={s.id} className="bg-black">{s.label}</option>)}
         </select>
+        <button type="button" aria-pressed={followUps}
+          onClick={() => { const next = new URLSearchParams(params); followUps ? next.delete('view') : next.set('view', 'followups'); setParams(next) }}
+          className={`rounded-xl px-3 py-2 text-xs font-medium border ${followUps ? 'border-orange-200 bg-orange-50 text-orange-800' : 'glass text-white/60 hover:text-white'}`}>
+          Follow-ups only
+        </button>
         <button onClick={load} className="flex items-center justify-center gap-1.5 text-xs text-white/50 hover:text-white px-3">
           <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> Refresh
         </button>

@@ -270,3 +270,43 @@ html.light svg.lucide.absolute { color: var(--text-secondary) !important; }
   .text-white, .text-white\/80, .text-white\/70, .text-white\/60, .text-white\/50, .text-white\/40 { color: #111 !important; }
   .glass, .glass-strong { background: #fff !important; border: 1px solid #e5e5e5 !important; box-shadow: none !important; }
 }
+
+/* ── Admin workspace (src/pages/admin) ─────────────────────────────────────────
+   Flat white surfaces on slate, thin borders, orange only for actions and the
+   active page. Scoped to `.adm` so the public site keeps its own look; the
+   older admin pages' `glass` cards are flattened here instead of rewritten. */
+.adm {
+  --adm-bg: #F8FAFC;
+  --adm-card: #FFFFFF;
+  --adm-text: #0F172A;
+  --adm-muted: #64748B;
+  --adm-line: #E2E8F0;
+  --adm-soft: #F1F5F9;
+  --adm-accent: var(--brand-primary);
+  --adm-accent-soft: #FFF7ED;
+  background: var(--adm-bg);
+  color: var(--adm-text);
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 14px;
+}
+.adm .glass,
+.adm .glass-strong {
+  background: var(--adm-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--adm-line);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.adm .glass.rounded-2xl { border-radius: 12px; }
+.adm :focus-visible { outline: 2px solid var(--adm-accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .adm *, .adm *::before, .adm *::after { transition: none !important; animation: none !important; }
+}
+/* Compact row actions in admin lists. */
+.adm .act { display: inline-flex; align-items: center; height: 28px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--adm-line); background: #fff; font-size: 12px; font-weight: 500; color: #334155; white-space: nowrap; transition: border-color .15s, color .15s; }
+.adm .act:hover { border-color: #CBD5E1; color: var(--adm-text); }
+.adm .icon-act { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; color: var(--adm-muted); transition: background-color .15s, color .15s; }
+.adm .icon-act:hover { background: var(--adm-soft); color: var(--adm-text); }
+.adm ::-webkit-scrollbar { width: 8px; height: 8px; }
+.adm ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
+.adm ::-webkit-scrollbar-track { background: transparent; }

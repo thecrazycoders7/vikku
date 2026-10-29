@@ -3,6 +3,7 @@ import { Plus, Trash2, Download, ArrowLeft, Pencil } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import { Field, inputCls } from './LeadPanel'
 import { fmtDate } from './Lists'
+import useOpenOnParam from '../../../hooks/useOpenOnParam'
 import { downloadPdf } from '../../../lib/quotePdf'
 import {
   QUOTE_STATUSES, createDocument, deleteDocument, formatMoney, isoDay, listClients, listDocuments, listLeads,
@@ -131,6 +132,7 @@ export default function CrmDocuments() {
   const [error, setError] = useState('')
   const [editing, setEditing] = useState(null) // null = list, {} = new, {doc} = edit
   const [filter, setFilter] = useState('all')
+  useOpenOnParam('new', () => setEditing({}), !loading)
 
   const load = async () => {
     setError('')

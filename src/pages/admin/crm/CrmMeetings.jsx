@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Plus, Video, ChevronLeft, ChevronRight, Pencil, Trash2, CalendarCheck } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import { Modal } from './Forms'
+import useOpenOnParam from '../../../hooks/useOpenOnParam'
 import { Field, inputCls } from './LeadPanel'
 import {
   MEETING_STATUSES, createMeeting, deleteMeeting, listClients, listLeads, listMeetings, meetingsByDay, updateMeeting,
@@ -74,6 +75,7 @@ export default function CrmMeetings() {
   const [view, setView] = useState('upcoming') // upcoming | past | week
   const [weekOffset, setWeekOffset] = useState(0)
   const [modal, setModal] = useState(null)
+  useOpenOnParam('new', () => setModal({}), !loading)
 
   const load = async () => {
     setError('')

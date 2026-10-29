@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Plus, Search, ChevronRight } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import ClientForm from './ClientForm'
+import useOpenOnParam from '../../../hooks/useOpenOnParam'
 import { listClients } from '../../../lib/crmService'
 
 export default function CrmClients() {
@@ -13,6 +14,7 @@ export default function CrmClients() {
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('active')
   const [adding, setAdding] = useState(false)
+  useOpenOnParam('new', () => setAdding(true))
 
   useEffect(() => {
     listClients().then(setClients).catch(e => setError(e.message)).finally(() => setLoading(false))
