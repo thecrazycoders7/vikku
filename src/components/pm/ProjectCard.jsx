@@ -3,19 +3,29 @@ import { useNavigate } from 'react-router-dom'
 import { CheckCircle2, Circle, Clock, Copy, Loader2 } from 'lucide-react'
 import { duplicateProject } from '../../lib/pmService'
 
-const STATUS_COLORS = {
-  active: 'bg-green-500/20 text-green-400',
-  completed: 'bg-blue-500/20 text-blue-400',
-  'on-hold': 'bg-yellow-500/20 text-yellow-400',
-  archived: 'bg-white/10 text-white/40',
+const STATUS = {
+  active:    { label: 'Active',    cls: 'bg-emerald-50 text-emerald-700 ring-emerald-600/10' },
+  completed: { label: 'Completed', cls: 'bg-sky-50 text-sky-700 ring-sky-600/10' },
+  on_hold:   { label: 'On hold',   cls: 'bg-amber-50 text-amber-800 ring-amber-600/15' },
+  'on-hold': { label: 'On hold',   cls: 'bg-amber-50 text-amber-800 ring-amber-600/15' },
+  archived:  { label: 'Archived',  cls: 'bg-slate-50 text-slate-500 ring-slate-500/15' },
+}
+
+// Counts every task: "done" is finished, "todo" not started, every other stage (in progress,
+// review, custom workflow stages) counts as in progress, so the three numbers add up to the total.
+export function taskSummary(taskCounts = {}) {
+  const total = Object.values(taskCounts).reduce((a, b) => a + b, 0)
+  const done = taskCounts.done || 0
+  const todo = taskCounts.todo || 0
+  return { total, done, todo, doing: total - done - todo, progress: total ? Math.round((done / total) * 100) : 0 }
 }
 
 export default function ProjectCard({ project, taskCounts = {}, onDuplicated }) {
   const navigate = useNavigate()
   const [duplicating, setDuplicating] = useState(false)
-  const total = (taskCounts.todo || 0) + (taskCounts.in_progress || 0) + (taskCounts.review || 0) + (taskCounts.done || 0)
-  const done = taskCounts.done || 0
-  const progress = total > 0 ? Math.round((done / total) * 100) : 0
+  const { total, done, todo, doing, progress } = taskSummary(taskCounts)
+  const status = STATUS[project.status] || STATUS.active
+  const open = () => navigate(`/pm/projects/${project.slug || project.id}`)
 
   const handleDuplicate = async (e) => {
     e.stopPropagation()
@@ -32,76 +42,49 @@ export default function ProjectCard({ project, taskCounts = {}, onDuplicated }) 
 
   return (
     <div
-      onClick={() => navigate(`/pm/projects/${project.slug || project.id}`)}
-      className="glass rounded-2xl p-5 cursor-pointer hover:border-white/20 transition-all group"
+      role="link"
+      tabIndex={0}
+      onClick={open}
+      onKeyDown={(e) => { if (e.key === 'Enter') open() }}
+      className="group flex min-h-[148px] flex-col rounded-xl border border-slate-200 bg-white p-5 cursor-pointer transition-colors hover:border-slate-300"
     >
-      {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div
-            className="w-3 h-3 rounded-full flex-shrink-0"
-            style={{ backgroundColor: project.color || '#ffffff' }}
-          />
-          <h3 className="font-display font-semibold text-white text-sm group-hover:text-white/90 transition-colors line-clamp-1">
-            {project.name}
-          </h3>
-        </div>
-        <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-          <button
-            onClick={handleDuplicate}
-            disabled={duplicating}
-            title="Duplicate project"
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-white/30 hover:text-white/70 disabled:opacity-40"
-          >
-            {duplicating ? <Loader2 size={12} className="animate-spin" /> : <Copy size={12} />}
-          </button>
-          <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[project.status] || STATUS_COLORS.active}`}>
-            {project.status}
-          </span>
-        </div>
+      <div className="flex items-start gap-2.5">
+        <span className="mt-1.5 h-2.5 w-2.5 flex-none rounded-full ring-1 ring-black/5" style={{ backgroundColor: project.color || '#94A3B8' }} />
+        <h3 className="min-w-0 flex-1 text-[15px] font-semibold leading-6 text-slate-900 line-clamp-1">{project.name}</h3>
+        <button
+          type="button"
+          onClick={handleDuplicate}
+          disabled={duplicating}
+          title="Duplicate project"
+          aria-label={`Duplicate ${project.name}`}
+          className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 opacity-0 transition-opacity hover:bg-slate-100 hover:text-slate-700 focus-visible:opacity-100 group-hover:opacity-100 disabled:opacity-40"
+        >
+          {duplicating ? <Loader2 size={13} className="animate-spin" /> : <Copy size={13} />}
+        </button>
+        <span className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset ${status.cls}`}>{status.label}</span>
       </div>
 
-      {/* Description */}
-      {project.description && (
-        <p className="text-white/50 text-xs leading-relaxed mb-4 line-clamp-2">{project.description}</p>
-      )}
+      {project.description && <p className="mt-2 text-[13px] leading-5 text-slate-500 line-clamp-2">{project.description}</p>}
 
-      {/* Progress bar */}
-      <div className="mb-3">
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[10px] text-white/40">Progress</span>
-          <span className="text-[10px] text-white/60 font-medium">{progress}%</span>
+      <div className="mt-auto pt-4">
+        <div className="mb-1.5 flex items-center justify-between text-[12px]">
+          <span className="text-slate-500">{total ? `${done} of ${total} tasks done` : 'No tasks yet'}</span>
+          <span className="font-medium tabular-nums text-slate-700">{progress}%</span>
         </div>
-        <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-white/60 rounded-full transition-all"
-            style={{ width: `${progress}%` }}
-          />
+        <div className="h-1.5 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label={`${project.name} progress`}>
+          <div className="h-full rounded-full bg-orange-500 transition-[width]" style={{ width: `${progress}%` }} />
         </div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-slate-500">
+          <span className="flex items-center gap-1"><CheckCircle2 size={12} className="text-emerald-500" /> {done} done</span>
+          <span className="flex items-center gap-1"><Clock size={12} className="text-amber-500" /> {doing} in progress</span>
+          <span className="flex items-center gap-1"><Circle size={12} className="text-slate-400" /> {todo} to do</span>
+        </div>
+        {project.client_name && (
+          <p className="mt-3 truncate border-t border-slate-100 pt-3 text-[12px] text-slate-500">
+            Client <span className="font-medium text-slate-700">{project.client_name}</span>
+          </p>
+        )}
       </div>
-
-      {/* Stats */}
-      <div className="flex items-center gap-4 text-[10px] text-white/40">
-        <span className="flex items-center gap-1">
-          <CheckCircle2 size={10} className="text-green-400/60" />
-          {done} done
-        </span>
-        <span className="flex items-center gap-1">
-          <Clock size={10} className="text-yellow-400/60" />
-          {(taskCounts.in_progress || 0)} in progress
-        </span>
-        <span className="flex items-center gap-1">
-          <Circle size={10} />
-          {(taskCounts.todo || 0)} to do
-        </span>
-      </div>
-
-      {/* Client */}
-      {project.client_name && (
-        <div className="mt-3 pt-3 border-t border-white/[0.06] text-[10px] text-white/40">
-          Client: <span className="text-white/60">{project.client_name}</span>
-        </div>
-      )}
     </div>
   )
 }
