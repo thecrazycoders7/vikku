@@ -3,6 +3,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import { ExpenseForm, PaymentForm, RetainerForm } from './Forms'
 import { MoneyTile, PaymentRows, RetainerRows, fmtDate } from './Lists'
+import { useSort } from '../ui'
 import {
   EXPENSE_CATEGORIES, activeMrr, deleteExpense, deletePayment, formatMoney, isoDay, labelOf, listClients, listExpenses,
   listPayments, listProjects, listRetainers, monthStats, overduePayments, recordRetainerMonth, sumByCurrency, updatePayment,
@@ -37,6 +38,11 @@ export default function CrmPayments() {
   const pending = payments.filter(p => p.status === 'pending')
   const overdue = overduePayments(payments)
   const shown = status ? payments.filter(p => status === 'overdue' ? overdue.includes(p) : p.status === status) : payments
+  const { sorted, sort, setSort } = useSort(shown, { key: 'added', dir: 'desc' }, {
+    added: p => p.created_at, due: p => p.due_on, amount: p => Number(p.amount) || 0, paid: p => p.paid_on,
+  })
+  const SORTS = { newest: { key: 'added', dir: 'desc' }, due: { key: 'due', dir: 'asc' }, amount: { key: 'amount', dir: 'desc' }, paid: { key: 'paid', dir: 'desc' } }
+  const sortId = Object.keys(SORTS).find(k => SORTS[k].key === sort.key && SORTS[k].dir === sort.dir)
 
   return (
     <AdminLayout>
@@ -68,7 +74,13 @@ export default function CrmPayments() {
 
       {tab === 'Payments' && (
         <section className="glass rounded-2xl p-5">
-          <div className="flex justify-end mb-2">
+          <div className="flex flex-wrap justify-end gap-2 mb-2">
+            <select value={sortId} onChange={e => setSort(SORTS[e.target.value])} aria-label="Sort payments" className="glass rounded-xl px-3 py-1.5 text-xs text-white bg-transparent focus:outline-none">
+              <option value="newest" className="bg-black">Newest first</option>
+              <option value="due" className="bg-black">Due date (soonest)</option>
+              <option value="amount" className="bg-black">Amount (largest)</option>
+              <option value="paid" className="bg-black">Received (latest)</option>
+            </select>
             <select value={status} onChange={e => setStatus(e.target.value)} className="glass rounded-xl px-3 py-1.5 text-xs text-white bg-transparent focus:outline-none">
               <option value="" className="bg-black">All payments</option>
               <option value="received" className="bg-black">Received</option>
@@ -76,7 +88,7 @@ export default function CrmPayments() {
               <option value="overdue" className="bg-black">Overdue</option>
             </select>
           </div>
-          <PaymentRows payments={shown} clientsById={clientsById} projectsById={projectsById} showClient
+          <PaymentRows payments={sorted} clientsById={clientsById} projectsById={projectsById} showClient
             onReceived={p => run(() => updatePayment(p.id, { status: 'received', paid_on: isoDay() }))}
             onEdit={p => setModal({ type: 'payment', item: p })}
             onDelete={p => confirm(`Delete this ${formatMoney(p.amount, p.currency)} payment?`) && run(() => deletePayment(p.id))} />

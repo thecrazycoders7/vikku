@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAutoRefresh } from '../../hooks/useAutoRefresh'
 import { Search, RefreshCw, ChevronDown, Download, X, Folder, AlertTriangle } from 'lucide-react'
 import AdminLayout from './AdminLayout'
+import { SortHeader, useSort } from './ui'
 import { getAdminUsers, adminChangePlan, getAdminUserDetail, adminDeleteUser, getAdminExpiring } from '../../lib/adminService'
 import useLockBodyScroll from '../../hooks/useLockBodyScroll'
 
@@ -211,6 +212,11 @@ export default function AdminUsers() {
     return true
   })
 
+  const { sorted, sort, toggle } = useSort(filtered, { key: 'joined', dir: 'desc' }, {
+    email: u => u.email?.toLowerCase(), plan: u => ({ free: 0, pro: 1, team: 2 })[u.plan] ?? 0, projects: u => u.projectCount,
+    joined: u => u.joinedAt, active: u => u.lastSignIn,
+  })
+
   return (
     <AdminLayout title="Users">
       {/* Expiry alerts */}
@@ -292,23 +298,23 @@ export default function AdminUsers() {
         </div>
       ) : (
         <div className="glass rounded-2xl overflow-hidden">
-          <div className="grid grid-cols-[1fr_80px_56px_88px_88px_80px] gap-3 px-4 py-2.5 border-b border-white/[0.06] text-[10px] text-white/30 uppercase tracking-widest">
-            <span>Email</span>
-            <span>Plan</span>
-            <span className="text-right">Projects</span>
-            <span>Joined</span>
-            <span>Last Active</span>
+          <div className="grid grid-cols-[1fr_84px_96px_96px_116px_80px] gap-3 px-4 py-2.5 border-b border-white/[0.06] text-[10px] text-white/30 uppercase tracking-widest">
+            <SortHeader label="Email" k="email" sort={sort} onSort={toggle} />
+            <SortHeader label="Plan" k="plan" sort={sort} onSort={toggle} />
+            <SortHeader label="Projects" k="projects" sort={sort} onSort={toggle} className="text-right" />
+            <SortHeader label="Joined" k="joined" sort={sort} onSort={toggle} />
+            <SortHeader label="Last active" k="active" sort={sort} onSort={toggle} />
             <span className="text-right">Change</span>
           </div>
 
           {filtered.length === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-white/30">No users found</div>
           ) : (
-            filtered.map((u, i) => (
+            sorted.map((u, i) => (
               <div
                 key={u.id}
                 onClick={() => setDetailUserId(u.id)}
-                className={`grid grid-cols-[1fr_80px_56px_88px_88px_80px] gap-3 px-4 py-3 items-center cursor-pointer ${
+                className={`grid grid-cols-[1fr_84px_96px_96px_116px_80px] gap-3 px-4 py-3 items-center cursor-pointer ${
                   i !== filtered.length - 1 ? 'border-b border-white/[0.04]' : ''
                 } hover:bg-white/[0.02] transition-colors`}
               >

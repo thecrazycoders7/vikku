@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAutoRefresh } from '../../hooks/useAutoRefresh'
 import { RefreshCw, Copy, Check } from 'lucide-react'
 import AdminLayout from './AdminLayout'
+import { SortHeader, useSort } from './ui'
 import { getAdminBilling } from '../../lib/adminService'
 import { monthlyRevenue } from '../../lib/razorpayService'
 
@@ -72,6 +73,10 @@ export default function AdminBilling() {
     filter === 'active' ? s.status === 'active' :
     filter === 'cancelled' ? s.status === 'cancelled' : true
   )
+  const { sorted, sort, toggle } = useSort(filtered, { key: 'updated', dir: 'desc' }, {
+    email: s => s.email?.toLowerCase(), plan: s => ({ free: 0, pro: 1, team: 2 })[s.plan] ?? 0, status: s => s.status,
+    period: s => s.current_period_end, updated: s => s.updated_at,
+  })
 
   return (
     <AdminLayout title="Billing">
@@ -136,22 +141,22 @@ export default function AdminBilling() {
       ) : (
         <div className="glass rounded-2xl overflow-hidden">
           {/* Header */}
-          <div className="grid grid-cols-[1fr_72px_80px_140px_96px_96px] gap-3 px-4 py-2.5 border-b border-white/[0.06] text-[10px] text-white/30 uppercase tracking-widest">
-            <span>Email</span>
-            <span>Plan</span>
-            <span>Status</span>
+          <div className="grid grid-cols-[1fr_84px_100px_140px_116px_104px] gap-3 px-4 py-2.5 border-b border-white/[0.06] text-[10px] text-white/30 uppercase tracking-widest">
+            <SortHeader label="Email" k="email" sort={sort} onSort={toggle} />
+            <SortHeader label="Plan" k="plan" sort={sort} onSort={toggle} />
+            <SortHeader label="Status" k="status" sort={sort} onSort={toggle} />
             <span>Razorpay ID</span>
-            <span>Period End</span>
-            <span>Updated</span>
+            <SortHeader label="Period end" k="period" sort={sort} onSort={toggle} />
+            <SortHeader label="Updated" k="updated" sort={sort} onSort={toggle} />
           </div>
 
           {filtered.length === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-white/30">No subscriptions yet</div>
           ) : (
-            filtered.map((s, i) => (
+            sorted.map((s, i) => (
               <div
                 key={s.id}
-                className={`grid grid-cols-[1fr_72px_80px_140px_96px_96px] gap-3 px-4 py-3 items-center ${
+                className={`grid grid-cols-[1fr_84px_100px_140px_116px_104px] gap-3 px-4 py-3 items-center ${
                   i !== filtered.length - 1 ? 'border-b border-white/[0.04]' : ''
                 } hover:bg-white/[0.02] transition-colors`}
               >
