@@ -7,7 +7,7 @@ import { Sidebar } from '../SideNav'
 
 // Left bar for Vikku PM (dashboard and project pages): your projects to jump between, plus any
 // page-specific groups (a project's views and actions). Pass `projects` when the page already has
-// them, otherwise they're loaded here. Sits under AppHeader, which is 100px tall.
+// them, otherwise they're loaded here. Sits under AppHeader, which is 64px (h-16) tall.
 export default function PMSidebar({ projects: given, currentId, sections = [] }) {
   const { user } = useAuth()
   const { pathname } = useLocation()
@@ -31,5 +31,5 @@ export default function PMSidebar({ projects: given, currentId, sections = [] })
     ...sections,
     { title: 'Account', items: [{ key: 'refer', label: 'Refer & earn', icon: Gift, to: '/pm/refer', active: pathname === '/pm/refer' }] },
   ]
-  return <Sidebar sections={nav} storageKey="vikku_pm_sidebar" stick="top-[100px] h-[calc(100vh-100px)]" />
+  return <Sidebar sections={nav} storageKey="vikku_pm_sidebar" stick="top-16 h-[calc(100vh-4rem)]" />
 }
