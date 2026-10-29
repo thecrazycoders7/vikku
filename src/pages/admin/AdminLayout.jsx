@@ -1,27 +1,38 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, User, Mail, Activity, Search, X, Target, Briefcase, PieChart, FolderKanban, Wallet, CalendarDays, FileText } from 'lucide-react'
+import { LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, User, Mail, Activity, Search, X, Target, Briefcase, PieChart, FolderKanban, Wallet, CalendarDays, FileText, Sunrise } from 'lucide-react'
 import AppHeader from '../../components/AppHeader'
 import { getAdminUsers } from '../../lib/adminService'
 import useLockBodyScroll from '../../hooks/useLockBodyScroll'
 
-const nav = [
-  { label: 'Overview',   path: '/admin',                icon: LayoutDashboard },
-  { label: 'CRM',        path: '/admin/crm',             icon: PieChart },
-  { label: 'Leads',      path: '/admin/crm/leads',       icon: Target },
-  { label: 'Clients',    path: '/admin/crm/clients',     icon: Briefcase },
-  { label: 'Projects',   path: '/admin/crm/projects',    icon: FolderKanban },
-  { label: 'Payments',   path: '/admin/crm/payments',    icon: Wallet },
-  { label: 'Meetings',   path: '/admin/crm/meetings',    icon: CalendarDays },
-  { label: 'Quotes',     path: '/admin/crm/quotes',      icon: FileText },
-  { label: 'Users',      path: '/admin/users',           icon: Users },
-  { label: 'Billing',    path: '/admin/billing',         icon: CreditCard },
-  { label: 'Analytics',  path: '/admin/analytics',       icon: BarChart2 },
-  { label: 'Announce',   path: '/admin/announcements',   icon: Megaphone },
-  { label: 'Email',      path: '/admin/email',           icon: Mail },
-  { label: 'Activity',   path: '/admin/activity',        icon: Activity },
-  { label: 'Profile',    path: '/admin/profile',         icon: User },
+// Sidebar groups: the daily to-do first, then the client business, the tools business, messages and settings.
+const sections = [
+  { items: [{ label: 'Today', path: '/admin', icon: Sunrise }] },
+  { title: 'Clients', items: [
+    { label: 'CRM overview', path: '/admin/crm',          icon: PieChart },
+    { label: 'Leads',        path: '/admin/crm/leads',    icon: Target },
+    { label: 'Clients',      path: '/admin/crm/clients',  icon: Briefcase },
+    { label: 'Projects',     path: '/admin/crm/projects', icon: FolderKanban },
+    { label: 'Payments',     path: '/admin/crm/payments', icon: Wallet },
+    { label: 'Meetings',     path: '/admin/crm/meetings', icon: CalendarDays },
+    { label: 'Quotes',       path: '/admin/crm/quotes',   icon: FileText },
+  ] },
+  { title: 'Tools & users', items: [
+    { label: 'Tool stats', path: '/admin/overview',  icon: LayoutDashboard },
+    { label: 'Users',      path: '/admin/users',     icon: Users },
+    { label: 'Billing',    path: '/admin/billing',   icon: CreditCard },
+    { label: 'Analytics',  path: '/admin/analytics', icon: BarChart2 },
+  ] },
+  { title: 'Messages', items: [
+    { label: 'Announce', path: '/admin/announcements', icon: Megaphone },
+    { label: 'Email',    path: '/admin/email',         icon: Mail },
+  ] },
+  { title: 'Settings', items: [
+    { label: 'Activity', path: '/admin/activity', icon: Activity },
+    { label: 'Profile',  path: '/admin/profile',  icon: User },
+  ] },
 ]
+const nav = sections.flatMap(s => s.items)
 
 function GlobalSearch({ onClose }) {
   useLockBodyScroll()
@@ -121,19 +132,24 @@ export default function AdminLayout({ children, title }) {
               <kbd className="text-[9px] bg-white/[0.06] px-1.5 py-0.5 rounded">⌘K</kbd>
             </button>
 
-            {nav.map(({ label, path, icon: Icon }) => (
-              <button
-                key={path}
-                onClick={() => navigate(path)}
-                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition-all mb-0.5 ${
-                  isActive(path)
-                    ? 'bg-white/10 text-white'
-                    : 'text-white/50 hover:text-white hover:bg-white/[0.05]'
-                }`}
-              >
-                <Icon size={13} />
-                {label}
-              </button>
+            {sections.map(({ title, items }, i) => (
+              <div key={title || i} className={i ? 'mt-3' : ''}>
+                {title && <p className="text-[9px] text-white/30 uppercase tracking-widest px-3 pb-1">{title}</p>}
+                {items.map(({ label, path, icon: Icon }) => (
+                  <button
+                    key={path}
+                    onClick={() => navigate(path)}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all mb-0.5 ${
+                      isActive(path)
+                        ? 'bg-white/10 text-white'
+                        : 'text-white/50 hover:text-white hover:bg-white/[0.05]'
+                    }`}
+                  >
+                    <Icon size={13} />
+                    {label}
+                  </button>
+                ))}
+              </div>
             ))}
           </div>
         </aside>

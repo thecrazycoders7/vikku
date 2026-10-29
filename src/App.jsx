@@ -46,6 +46,7 @@ const NotificationPreferences = lazy(() => import('./pages/NotificationPreferenc
 const NotFound               = lazy(() => import('./pages/NotFound'))
 const ServicePage            = lazy(() => import('./pages/ServicePage'))
 const AdminDashboard         = lazy(() => import('./pages/admin/AdminDashboard'))
+const AdminToday             = lazy(() => import('./pages/admin/AdminToday'))
 const AdminUsers             = lazy(() => import('./pages/admin/AdminUsers'))
 const AdminBilling           = lazy(() => import('./pages/admin/AdminBilling'))
 const AdminProfile           = lazy(() => import('./pages/admin/AdminProfile'))
@@ -138,7 +139,8 @@ export default function App() {
               <Route path="/terms"                   element={<TermsOfService />} />
               <Route path="/cookies"                 element={<CookiePolicy />} />
               <Route path="/refunds"                 element={<RefundPolicy />} />
-              <Route path="/admin"                 element={<AdminGate><AdminDashboard /></AdminGate>} />
+              <Route path="/admin"                 element={<AdminGate><AdminToday /></AdminGate>} />
+              <Route path="/admin/overview"        element={<AdminGate><AdminDashboard /></AdminGate>} />
               <Route path="/admin/users"         element={<AdminGate><AdminUsers /></AdminGate>} />
               <Route path="/admin/billing"       element={<AdminGate><AdminBilling /></AdminGate>} />
               <Route path="/admin/profile"       element={<AdminGate><AdminProfile /></AdminGate>} />

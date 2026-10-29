@@ -57,7 +57,7 @@ export default function AdminDashboard() {
   const maxSignup  = data ? Math.max(...data.signupsByDay.map(d => d.count), 1) : 1
 
   return (
-    <AdminLayout title="Overview">
+    <AdminLayout title="Tool stats">
       <div className="flex items-center justify-between mb-5">
         <p className="text-xs text-white/40">Live data from Supabase</p>
         <button
