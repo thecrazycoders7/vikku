@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Plus, Trash2, Download, ArrowLeft, Pencil } from 'lucide-react'
+import { Plus, Trash2, Download, ArrowLeft, Pencil, Link2, ExternalLink } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import { Field, inputCls } from './LeadPanel'
 import { fmtDate } from './Lists'
 import useOpenOnParam from '../../../hooks/useOpenOnParam'
 import { downloadPdf } from '../../../lib/quotePdf'
+import { quoteLink } from '../../../lib/quoteShare'
+import { useToast } from '../ui'
 import {
   QUOTE_STATUSES, createDocument, deleteDocument, formatMoney, isoDay, listClients, listDocuments, listLeads,
   quoteTotals, updateDocument,
@@ -132,6 +134,18 @@ export default function CrmDocuments() {
   const [error, setError] = useState('')
   const [editing, setEditing] = useState(null) // null = list, {} = new, {doc} = edit
   const [filter, setFilter] = useState('all')
+  const [toast, showToast] = useToast()
+
+  // The client's accept/decline page. Only sent quotes can be answered, so copying a draft's link sends it.
+  const copyLink = async (d) => {
+    setError('')
+    try {
+      if (d.status === 'draft') { await updateDocument(d.id, { status: 'sent' }); await load() }
+      const url = quoteLink(d.share_token)
+      try { await navigator.clipboard.writeText(url); showToast({ text: `Link to ${d.number} copied${d.status === 'draft' ? ' · marked as sent' : ''}` }) }
+      catch { prompt('Copy this link for your client:', url) }
+    } catch (err) { setError(err.message) }
+  }
   useOpenOnParam('new', () => setEditing({}), !loading)
 
   const load = async () => {
@@ -185,12 +199,23 @@ export default function CrmDocuments() {
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-white truncate"><span className="text-white/40 font-mono text-xs mr-2">{d.number}</span>{d.title}</p>
                   <p className="text-[11px] text-white/40 truncate">{party?.name || 'Unknown'}{d.lead_id && !d.client_id ? ' (lead)' : ''} · {fmtDate(isoDay(new Date(d.created_at)))}{d.valid_until ? ` · valid until ${fmtDate(d.valid_until)}` : ''}{expired ? ' · expired' : ''}</p>
+                  {d.responded_at && (
+                    <p className="text-[11px] text-white/50 truncate">
+                      {d.status === 'accepted' ? 'Accepted' : 'Declined'} online{d.response_name ? ` by ${d.response_name}` : ''} · {fmtDate(d.responded_at)}{d.response_note ? ` · “${d.response_note}”` : ''}
+                    </p>
+                  )}
                 </div>
                 <span className="text-sm font-semibold text-white tabular-nums">{formatMoney(d.total, d.currency)}</span>
                 <select value={d.status} onChange={e => run(() => updateDocument(d.id, { status: e.target.value }))} className={`text-[11px] font-medium px-2 py-1 rounded-full border-0 ${statusOf(d.status)?.tone}`} aria-label="Quotation status">
                   {QUOTE_STATUSES.map(s => <option key={s.id} value={s.id} className="bg-black text-white">{s.label}</option>)}
                 </select>
                 <div className="flex items-center gap-1">
+                  {d.share_token && d.status !== 'declined' && (
+                    <button onClick={() => copyLink(d)} className="flex items-center gap-1 text-[11px] font-medium px-2 py-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/[0.06]" title={d.status === 'draft' ? 'Copy the client link (marks it as sent)' : 'Copy the link your client uses to accept'}>
+                      <Link2 size={13} /> Client link
+                    </button>
+                  )}
+                  {d.share_token && <a href={`/q/${d.share_token}`} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/[0.06]" aria-label="Preview what the client sees" title="Preview what the client sees"><ExternalLink size={13} /></a>}
                   <button onClick={() => downloadPdf(d, party).catch(err => setError(err.message))} className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/[0.06]" aria-label="Download PDF"><Download size={14} /></button>
                   <button onClick={() => setEditing({ doc: d })} className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/[0.06]" aria-label="Edit quotation"><Pencil size={13} /></button>
                   <button onClick={() => confirm(`Delete ${d.number}?`) && run(() => deleteDocument(d.id))} className="p-1.5 rounded-lg text-white/30 hover:text-red-500 hover:bg-red-50" aria-label="Delete quotation"><Trash2 size={13} /></button>
@@ -200,6 +225,7 @@ export default function CrmDocuments() {
           })}
         </div>
       )}
+      {toast}
     </AdminLayout>
   )
 }
