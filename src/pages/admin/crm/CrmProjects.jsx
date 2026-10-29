@@ -11,6 +11,33 @@ import {
   moneySummary, updateProject,
 } from '../../../lib/crmService'
 
+// Creates the project's board in Vikku PM, then turns into a link to it (the dialog stays open).
+function PmBoardButton({ project, client, userId, onLinked }) {
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  if (project.pm_project_id) {
+    return (
+      <Link to={`/pm/projects/${project.pm_project_id}`} className="flex items-center gap-1 text-xs font-medium px-3 py-2 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100">
+        <ExternalLink size={12} /> Open PM board
+      </Link>
+    )
+  }
+  const create = async () => {
+    setBusy(true); setError('')
+    try { onLinked(await createPmBoard(project, client, userId)) }
+    catch (err) { setError(err.message) }
+    finally { setBusy(false) }
+  }
+  return (
+    <>
+      <button type="button" onClick={create} disabled={busy} className="flex items-center gap-1 text-xs px-3 py-2 rounded-xl bg-white/[0.06] text-white/70 hover:text-white disabled:opacity-50">
+        <LayoutGrid size={12} /> {busy ? 'Creating…' : 'Create PM board'}
+      </button>
+      {error && <p role="alert" className="basis-full order-last text-xs text-red-500">{error}</p>}
+    </>
+  )
+}
+
 export default function CrmProjects() {
   const { user } = useAuth()
   const [projects, setProjects] = useState([])
@@ -128,7 +155,8 @@ export default function CrmProjects() {
         <ProjectForm project={modal.item} clients={clients} onClose={() => setModal(null)} onSaved={() => { setModal(null); load() }}
           extra={modal.item && (
             <>
-              {!modal.item.pm_project_id && <button type="button" onClick={async () => { try { await createPmBoard(modal.item, clientsById[modal.item.client_id], user?.id); setModal(null); load() } catch (err) { setError(err.message) } }} className="flex items-center gap-1 text-xs px-3 py-2 rounded-xl bg-white/[0.06] text-white/70 hover:text-white"><LayoutGrid size={12} /> Create PM board</button>}
+              <PmBoardButton project={modal.item} client={clientsById[modal.item.client_id]} userId={user?.id}
+                onLinked={(saved) => { setModal({ item: saved }); load() }} />
               <button type="button" onClick={async () => { if (!confirm(`Delete the project "${modal.item.name}"? Payments stay but are unlinked.`)) return; try { await deleteProject(modal.item.id); setModal(null); load() } catch (err) { setError(err.message) } }} className="text-xs px-3 py-2 rounded-xl text-white/40 hover:text-red-500 hover:bg-red-50">Delete</button>
             </>
           )} />
