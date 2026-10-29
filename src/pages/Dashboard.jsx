@@ -6,16 +6,17 @@ import useStudioWalk from '../hooks/useStudioWalk'
 import { getMyToolResults } from '../lib/toolResultsService'
 import './home3d.css'
 
-// The AI Tools dashboard is a walk through the same 3D studio as the homepage: each of the seven
-// sections sits in one room, so the tools unfold step by step as you scroll.
-const rooms = ['Entrance', 'Vikku PM', 'Check', 'Decide', 'Plan', 'Run', 'Your usage']
+// The AI Tools dashboard sits over a photoreal founder's desk (src/lib/deskScene.js): each of the seven
+// sections frames one object on the desk, so the tools unfold step by step as you scroll.
+const rooms = ['Welcome', 'Vikku PM', 'Check', 'Decide', 'Plan', 'Run', 'Your usage']
+const loadDesk = () => import('../lib/deskScene').then(m => m.createDesk)
 const roomIds = ['top', 'about', 'services', 'industries', 'process', 'work', 'contact']
 
 // Tools grouped by where the visitor is in their project journey, so a first-time user can find
 // "their" tool by the question they came with. Each group gets its own room.
 const toolGroups = [
   {
-    id: 'services', step: '00', room: 'AI lab', title: 'Check what', em: 'you already have',
+    id: 'services', step: '00', room: 'The laptop', title: 'Check what', em: 'you already have',
     question: 'Will AI recommend your business today?',
     tools: [{
       title: 'AI Visibility Score', img: '/tools/visibility.png', path: '/dashboard/ai-visibility-score',
@@ -25,7 +26,7 @@ const toolGroups = [
     }],
   },
   {
-    id: 'industries', step: '01', room: 'Industries wall', title: 'Decide', em: '& budget', right: true,
+    id: 'industries', step: '01', room: 'Calculator & coins', title: 'Decide', em: '& budget', right: true,
     question: 'Is this project worth it, and what will it cost?',
     tools: [
       {
@@ -43,7 +44,7 @@ const toolGroups = [
     ],
   },
   {
-    id: 'process', step: '02', room: 'Process wall', title: 'Plan', em: 'the build', right: true,
+    id: 'process', step: '02', room: 'Calendar & stack', title: 'Plan', em: 'the build', right: true,
     question: 'How long will it take, and what should it be built with?',
     tools: [
       {
@@ -61,7 +62,7 @@ const toolGroups = [
     ],
   },
   {
-    id: 'work', step: '03', room: 'Client lounge', title: 'Run', em: '& maintain',
+    id: 'work', step: '03', room: 'The toolbox', title: 'Run', em: '& maintain',
     question: 'What does it cost to keep it alive after launch?',
     tools: [{
       title: 'Maintenance Calculator', img: '/tools/maintenance.png', path: '/dashboard/maintenance',
@@ -77,7 +78,7 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const [stats, setStats] = useState({ total: 0, toolsUsed: 0 })
   const [showWelcome, setShowWelcome] = useState(() => !localStorage.getItem('vikku_onboarded'))
-  const { canvasRef, loadingRef, room, ready } = useStudioWalk(roomIds)
+  const { canvasRef, loadingRef, room, ready } = useStudioWalk(roomIds, undefined, loadDesk)
 
   useEffect(() => {
     if (!loading && !user) navigate('/login')
@@ -96,12 +97,12 @@ export default function Dashboard() {
   return (
     <div className="v3d">
       <canvas id="scene" ref={canvasRef} aria-hidden="true" />
-      <div className={`poster${ready ? ' gone' : ''}`} aria-hidden="true" />
+      <div className={`poster desk${ready ? ' gone' : ''}`} aria-hidden="true" />
       <SiteNav />
       <WhatsAppButton />
 
       <div className="rooms">
-        <p className="loading" ref={loadingRef}>Loading the studio…</p>
+        <p className="loading" ref={loadingRef}>Setting up the desk…</p>
         <ol aria-label="Rooms">
           {rooms.map((r, i) => <li key={r} className={i === room ? 'on' : ''}><a href={`#${roomIds[i]}`}>{r}</a></li>)}
         </ol>
@@ -112,7 +113,7 @@ export default function Dashboard() {
           <div className="hero-copy">
             <p className="eyebrow">Your AI tools</p>
             <h1>Welcome{firstName ? `, ${firstName}` : ''}. <em>Let's plan it.</em></h1>
-            <p>Six free tools, laid out room by room in the order you'll need them: check what you have, decide and budget, plan the build, then keep it running.</p>
+            <p>Six free tools, laid out across the desk in the order you'll need them: check what you have, decide and budget, plan the build, then keep it running.</p>
             {showWelcome && (
               <ul className="steps">
                 <li><b>1</b>Describe your project in a few plain sentences</li>
@@ -127,13 +128,13 @@ export default function Dashboard() {
                 <button type="button" className="btn btn-ghost" onClick={() => { setShowWelcome(false); localStorage.setItem('vikku_onboarded', '1') }}>Got it</button>
               )}
             </div>
-            <p className="hint">Scroll to walk through the tools <b>↓</b></p>
+            <p className="hint">Scroll across the desk <b>↓</b></p>
           </div>
         </section>
 
         <section className="stop right" id="about">
           <div className="panel wide">
-            <p className="eyebrow">Lobby · Vikku PM</p>
+            <p className="eyebrow">The planner · Vikku PM</p>
             <h2>Run client projects <em>end to end</em></h2>
             <p>Plan with AI, track work on a board, and share live progress with clients. Free to start, no credit card.</p>
             <ul className="cards">
@@ -174,7 +175,7 @@ export default function Dashboard() {
 
         <section className="stop contact" id="contact">
           <div className="panel wide">
-            <p className="eyebrow">Founder's office · Your usage</p>
+            <p className="eyebrow">By the window · Your usage</p>
             <h2>Your progress <em>so far</em></h2>
             <div className="stats three">
               <div className="stat"><b>{stats.toolsUsed}</b><span>Tools used</span></div>

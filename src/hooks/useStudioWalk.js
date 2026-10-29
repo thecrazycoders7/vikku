@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 
-// Scroll-driven walk through the 3D studio (src/lib/studioScene.js), shared by the homepage and the
-// tools dashboard. Each page has seven full-height sections whose ids are passed in; scrolling from
-// one section's centre to the next moves the camera one room along. Returns the canvas and loading
+// Scroll-driven 3D backdrop shared by the homepage (studio walk, src/lib/studioScene.js) and the tools
+// dashboard (desk, src/lib/deskScene.js; passed in as loadScene). Each page has seven full-height
+// sections whose ids are passed in; scrolling from one section's centre to the next moves the camera one stop along. Returns the canvas and loading
 // refs, the current room index and whether the scene has finished loading.
-export default function useStudioWalk(sectionIds, onRoomReached) {
+const loadStudio = () => import('../lib/studioScene').then(m => m.createStudio)
+
+export default function useStudioWalk(sectionIds, onRoomReached, loadScene = loadStudio) {
   const canvasRef = useRef(null)
   const loadingRef = useRef(null)
   const [room, setRoom] = useState(0)
@@ -52,8 +54,8 @@ export default function useStudioWalk(sectionIds, onRoomReached) {
     if (navigator.webdriver || lite) { loadingRef.current.hidden = true; return }
     let dispose = null
     let cancelled = false
-    const start = () => import('../lib/studioScene').then(({ createStudio }) =>
-      createStudio({ canvas: canvasRef.current, loadingEl: loadingRef.current, story, onReady: () => setReady(true) }))
+    const start = () => loadScene().then(create =>
+      create({ canvas: canvasRef.current, loadingEl: loadingRef.current, story, onReady: () => setReady(true) }))
       .then(d => { if (cancelled) d(); else dispose = d })
       .catch(() => { if (loadingRef.current) loadingRef.current.hidden = true })
     const idle = window.requestIdleCallback ? requestIdleCallback(start, { timeout: 1500 }) : setTimeout(start, 300)
@@ -62,7 +64,7 @@ export default function useStudioWalk(sectionIds, onRoomReached) {
       window.cancelIdleCallback ? cancelIdleCallback(idle) : clearTimeout(idle)
       dispose?.()
     }
-  }, [story])
+  }, [story, loadScene])
 
   return { canvasRef, loadingRef, room, ready }
 }
