@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, Settings, Mail, Activity, Search, X, Target, Briefcase,
-  PieChart, FolderKanban, Wallet, CalendarDays, FileText, CalendarClock, Menu as MenuIcon, PanelLeftClose, PanelLeftOpen,
+  PieChart, FolderKanban, Wallet, CalendarDays, FileText, CalendarClock, Menu as MenuIcon,
   LogOut, Globe, LayoutGrid, BellRing, ChevronDown,
 } from 'lucide-react'
 import NotificationBell from '../../components/pm/NotificationBell'
@@ -10,6 +10,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { getAdminUsers } from '../../lib/adminService'
 import useLockBodyScroll from '../../hooks/useLockBodyScroll'
 import { Menu, MenuItem } from './ui'
+import { SideNav, Sidebar } from '../../components/SideNav'
 
 // Sidebar groups. Every entry is an existing route; "Follow-ups" is the Leads board filtered to due follow-ups.
 const sections = [
@@ -114,51 +115,19 @@ function GlobalSearch({ onClose }) {
   )
 }
 
-function NavList({ collapsed, onNavigate }) {
+// Marks the current page. Overview and CRM overview are exact matches; other pages keep their item
+// lit on sub-pages (a client's detail page). The Follow-ups entry is the Leads route plus its filter.
+function useNavSections() {
   const { pathname, search } = useLocation()
-  // Overview and CRM overview are exact matches; other pages keep their item lit on sub-pages
-  // (a client's detail page). The Follow-ups entry is the Leads route plus its filter.
   const isActive = (path) => {
     const [p, q] = path.split('?')
     if (q) return pathname === p && search === `?${q}`
     if (p === '/admin/crm/leads' && search.includes('view=followups')) return false
     return pathname === p || (!['/admin', '/admin/crm'].includes(p) && pathname.startsWith(p + '/'))
   }
-  return (
-    <nav aria-label="Admin" className="flex flex-col gap-4">
-      {sections.map(({ title, items }) => (
-        <div key={title}>
-          <p className={`px-3 pb-1.5 text-[11px] font-medium uppercase tracking-wider text-slate-400 ${collapsed ? 'sr-only' : ''}`}>{title}</p>
-          <ul className="flex flex-col gap-0.5">
-            {items.map(({ label, path, icon: Icon }) => {
-              const active = isActive(path)
-              return (
-                <li key={path}>
-                  <Link
-                    to={path}
-                    onClick={onNavigate}
-                    title={collapsed ? label : undefined}
-                    aria-current={active ? 'page' : undefined}
-                    className={`relative flex items-center gap-2.5 rounded-lg h-8 text-[13px] transition-colors ${collapsed ? 'justify-center px-0' : 'px-3'} ${
-                      active ? 'bg-orange-50 text-orange-800 font-medium' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                    }`}
-                  >
-                    {active && <span aria-hidden="true" className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r bg-orange-600" />}
-                    <Icon size={16} strokeWidth={1.75} className={active ? 'text-orange-600' : 'text-slate-400'} />
-                    <span className={collapsed ? 'sr-only' : 'truncate'}>{label}</span>
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      ))}
-    </nav>
-  )
-}
-
-function readCollapsed() {
-  try { return localStorage.getItem('vikku_admin_sidebar') === 'collapsed' } catch { return false }
+  return sections.map(({ title, items }) => ({
+    title, items: items.map(({ label, path, icon }) => ({ label, icon, to: path, active: isActive(path) })),
+  }))
 }
 
 export default function AdminLayout({ children, title }) {
@@ -167,7 +136,7 @@ export default function AdminLayout({ children, title }) {
   const { pathname } = useLocation()
   const [searchOpen, setSearchOpen] = useState(false)
   const [drawer, setDrawer] = useState(false)
-  const [collapsed, setCollapsed] = useState(readCollapsed)
+  const navSections = useNavSections()
 
   useEffect(() => {
     setDrawer(false)
@@ -179,11 +148,6 @@ export default function AdminLayout({ children, title }) {
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [])
-
-  const toggleCollapsed = () => setCollapsed(c => {
-    try { localStorage.setItem('vikku_admin_sidebar', c ? 'open' : 'collapsed') } catch { /* private mode */ }
-    return !c
-  })
 
   const name = displayName || user?.email?.split('@')[0] || 'Admin'
   const initials = name.split(/[\s.]+/).filter(Boolean).slice(0, 2).map(s => s[0].toUpperCase()).join('')
@@ -242,18 +206,7 @@ export default function AdminLayout({ children, title }) {
       </header>
 
       <div className="flex pt-16">
-        {/* Sidebar: icons only when collapsed (remembered), and always on tablets. */}
-        <aside className={`hidden md:flex flex-col sticky top-16 h-[calc(100vh-4rem)] flex-none border-r border-slate-200 bg-white transition-[width] duration-200 ${collapsed ? 'w-16' : 'w-16 lg:w-[232px]'}`}>
-          <div className="flex-1 overflow-y-auto px-2 py-4 lg:px-3">
-            <div className={collapsed ? '' : 'lg:hidden'}><NavList collapsed /></div>
-            {!collapsed && <div className="hidden lg:block"><NavList /></div>}
-          </div>
-          <button type="button" onClick={toggleCollapsed}
-            className="hidden lg:flex items-center gap-2 border-t border-slate-200 h-11 px-5 text-[13px] text-slate-500 hover:text-slate-900"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
-            {collapsed ? <PanelLeftOpen size={16} /> : <><PanelLeftClose size={16} /> Collapse</>}
-          </button>
-        </aside>
+        <Sidebar sections={navSections} storageKey="vikku_admin_sidebar" stick="top-16 h-[calc(100vh-4rem)]" />
 
         {/* Mobile drawer */}
         {drawer && (
@@ -264,7 +217,7 @@ export default function AdminLayout({ children, title }) {
                 <span className="text-[15px] font-semibold text-slate-900">Vikku Admin</span>
                 <button type="button" onClick={() => setDrawer(false)} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100" aria-label="Close navigation"><X size={18} /></button>
               </div>
-              <NavList onNavigate={() => setDrawer(false)} />
+              <SideNav sections={navSections} onNavigate={() => setDrawer(false)} />
             </div>
           </div>
         )}

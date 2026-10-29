@@ -14,6 +14,8 @@ import TemplateGallery from '../../components/pm/TemplateGallery'
 import useSubscription from '../../hooks/useSubscription'
 import AppHeader from '../../components/AppHeader'
 import { KpiCard } from '../admin/ui'
+import PMSidebar from '../../components/pm/PMSidebar'
+import useOpenOnParam from '../../hooks/useOpenOnParam'
 
 const FREE_PROJECT_LIMIT = 3
 
@@ -102,6 +104,9 @@ export default function PMDashboard() {
     if (atProjectLimit()) { setShowUpgrade(true); return }
     setShowTemplates(true)
   }
+
+  // The PM sidebar's "New project" links here with ?new=1 so the free-plan limit is checked.
+  useOpenOnParam('new', () => handleNewProject(), !!user && !fetching && !subLoading)
 
   const pickTemplate = (key) => {
     setShowTemplates(false)
@@ -272,7 +277,9 @@ export default function PMDashboard() {
         }
       />
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-28 sm:pb-12">
+      <div className="flex">
+      <PMSidebar projects={[...projects, ...sharedProjects]} />
+      <main className="flex-1 min-w-0 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-28 sm:pb-12">
         {/* Page header */}
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <div className="min-w-0">
@@ -405,6 +412,7 @@ export default function PMDashboard() {
           )}
         </div>
       </main>
+      </div>
 
       {/* Phone action bar */}
       <div className="sm:hidden fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-slate-200 bg-white p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
