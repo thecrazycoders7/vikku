@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Mail, Instagram } from 'lucide-react'
-import { supabase } from '../lib/supabaseClient'
+import { subscribe, trapProps } from '../lib/signup'
 import { CAL_ATTRS } from '../lib/cal'
 import { servicePages } from '../data/servicePages'
 
@@ -33,17 +33,21 @@ const socials = [
 
 export default function Footer() {
   const [email, setEmail] = useState('')
+  const [trap, setTrap] = useState('')
   const [subStatus, setSubStatus] = useState('idle') // 'idle' | 'loading' | 'done' | 'error'
+  const [subError, setSubError] = useState('')
+  const startedAt = useRef(Date.now())
 
   const handleSubscribe = async (e) => {
     e.preventDefault()
     if (!email || !email.includes('@')) return
     setSubStatus('loading')
     try {
-      await supabase.from('subscribers').insert({ email, source: 'footer' })
+      await subscribe({ email, source: 'footer', website: trap, startedAt: startedAt.current })
       setSubStatus('done')
       setEmail('')
-    } catch {
+    } catch (err) {
+      setSubError(err.message)
       setSubStatus('error')
     }
   }
@@ -137,7 +141,8 @@ export default function Footer() {
             {subStatus === 'done' ? (
               <p className="text-green-400 text-xs">You're in! We'll be in touch.</p>
             ) : (
-              <form onSubmit={handleSubscribe} className="space-y-2">
+              <form onSubmit={handleSubscribe} className="relative space-y-2">
+                <input {...trapProps} value={trap} onChange={e => setTrap(e.target.value)} />
                 <input
                   type="email"
                   value={email}
@@ -152,7 +157,7 @@ export default function Footer() {
                 >
                   {subStatus === 'loading' ? 'Subscribing...' : 'Subscribe'}
                 </button>
-                {subStatus === 'error' && <p className="text-red-400 text-[10px]">Something went wrong. Try again.</p>}
+                {subStatus === 'error' && <p role="alert" className="text-red-400 text-[10px]">{subError}</p>}
                 <p className="text-[9px] text-white/30 leading-relaxed">By subscribing you agree to our <a href="/privacy" className="underline underline-offset-2 hover:text-white/60">Privacy Policy</a>. Unsubscribe anytime.</p>
               </form>
             )}

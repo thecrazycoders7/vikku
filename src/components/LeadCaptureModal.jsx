@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { X, Mail, ArrowRight, CheckCircle, Calendar } from 'lucide-react'
-import { supabase } from '../lib/supabaseClient'
+import { subscribe, trapProps } from '../lib/signup'
 import { emailToolResult } from '../lib/toolResultsService'
 import useLockBodyScroll from '../hooks/useLockBodyScroll'
 import { CAL_ATTRS } from '../lib/cal'
@@ -15,9 +15,13 @@ const SOURCE_LABELS = {
 export default function LeadCaptureModal({ open, onClose, source, shareId, onUnlock }) {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState('idle') // idle | loading | done | error
+  const [error, setError] = useState('')
+  const [trap, setTrap] = useState('')
+  const startedAt = useRef(Date.now())
 
   useEffect(() => {
-    if (!open) { setEmail(''); setStatus('idle') }
+    if (!open) { setEmail(''); setStatus('idle'); setTrap('') }
+    else startedAt.current = Date.now()
   }, [open])
 
   useLockBodyScroll(open)
@@ -29,31 +33,26 @@ export default function LeadCaptureModal({ open, onClose, source, shareId, onUnl
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!email || !email.includes('@')) return
-    setStatus('loading')
+    setStatus('loading'); setError('')
+    const clean = email.trim().toLowerCase()
+    const checks = { website: trap, startedAt: startedAt.current }
     try {
-      // If we have a saved result, email it with the booking CTA (also records the
-      // email + adds them to subscribers server-side - the auto follow-up).
-      if (shareId) {
-        await emailToolResult({ shareId, email: email.trim().toLowerCase(), tool: source })
-      } else {
-        await supabase.from('subscribers').upsert(
-          { email: email.trim().toLowerCase(), source },
-          { onConflict: 'email', ignoreDuplicates: true }
-        )
-      }
+      // With a saved result, email it with the booking CTA (this also adds them to subscribers
+      // server-side - the auto follow-up). Otherwise just record the sign-up.
+      if (shareId) await emailToolResult({ shareId, email: clean, tool: source, website: trap, elapsedMs: Date.now() - checks.startedAt })
+      else await subscribe({ email: clean, source, ...checks })
       setStatus('done')
       onUnlock?.()
-    } catch {
-      // Fall back to at least capturing the lead so we never lose them.
+    } catch (err) {
+      // A 400 is the person's input (e.g. a temporary email): show why. Otherwise still try to
+      // capture the lead so it's never lost.
+      if (err.status === 400) { setError(err.message); setStatus('error'); return }
       try {
-        await supabase.from('subscribers').upsert(
-          { email: email.trim().toLowerCase(), source },
-          { onConflict: 'email', ignoreDuplicates: true }
-        )
+        await subscribe({ email: clean, source, ...checks })
         setStatus('done')
         onUnlock?.()
-      } catch {
-        setStatus('error')
+      } catch (err2) {
+        setError(err2.message); setStatus('error')
       }
     }
   }
@@ -111,7 +110,8 @@ export default function LeadCaptureModal({ open, onClose, source, shareId, onUnl
               No spam - one useful email.
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-3">
+            <form onSubmit={handleSubmit} className="relative space-y-3">
+              <input {...trapProps} value={trap} onChange={(e) => setTrap(e.target.value)} />
               <input
                 type="email"
                 value={email}
@@ -135,7 +135,7 @@ export default function LeadCaptureModal({ open, onClose, source, shareId, onUnl
             </form>
 
             {status === 'error' && (
-              <p className="text-red-400 text-xs mt-2 text-center">Something went wrong. Try again.</p>
+              <p role="alert" className="text-red-400 text-xs mt-2 text-center">{error || 'Something went wrong. Try again.'}</p>
             )}
 
             <div className="flex items-center gap-4 mt-5 pt-4 border-t border-white/[0.06]">

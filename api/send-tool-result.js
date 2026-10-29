@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { checkSignup } from './_signup.js'
 
 const TOOL_LABELS = {
   cost_estimator:      'Cost Estimate',
@@ -59,10 +60,11 @@ function renderBody(tool, r) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const { shareId, email } = req.body || {}
-  if (!shareId || !email || !email.includes('@')) {
-    return res.status(400).json({ error: 'Missing share id or valid email' })
-  }
+  const { shareId, website, elapsedMs } = req.body || {}
+  const check = checkSignup({ email: req.body?.email, website, elapsedMs })
+  if (check.silent) return res.status(200).json({ ok: true })
+  if (!shareId || !check.ok) return res.status(400).json({ error: check.error || 'Missing share id' })
+  const email = check.email
 
   try {
     const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL

@@ -75,15 +75,15 @@ export async function getMyToolResults(userId) {
 }
 
 /** Email a saved result to the user (sends an HTML summary + link to the share page). */
-export async function emailToolResult({ shareId, email, tool, title }) {
+export async function emailToolResult({ shareId, email, tool, title, website, elapsedMs }) {
   const res = await fetch('/api/send-tool-result', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ shareId, email, tool, title }),
+    body: JSON.stringify({ shareId, email, tool, title, website, elapsedMs }),
   })
   if (!res.ok) {
     const d = await res.json().catch(() => ({}))
-    throw new Error(d.error || 'Failed to send email')
+    throw Object.assign(new Error(d.error || 'Failed to send email'), { status: res.status })
   }
   return res.json()
 }
