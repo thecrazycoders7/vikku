@@ -9,9 +9,10 @@ export default function useOpenOnParam(name, open, ready = true) {
   const value = params.get(name)
   useEffect(() => {
     if (!value || !ready) return
-    open(value)
+    // Clear the param first: open() may navigate elsewhere, and a later setParams would undo that.
     const next = new URLSearchParams(params)
     next.delete(name)
     setParams(next, { replace: true })
+    open(value)
   }, [value, ready])
 }

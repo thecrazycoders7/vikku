@@ -19,6 +19,7 @@ import FilesPanel from '../../components/pm/FilesPanel'
 import useSubscription from '../../hooks/useSubscription'
 import UpgradeModal from '../../components/pm/UpgradeModal'
 import AppHeader from '../../components/AppHeader'
+import PMSidebar from '../../components/pm/PMSidebar'
 import { DEFAULT_WORKFLOW_STAGES } from '../../lib/pmConstants'
 
 const TABS = [
@@ -313,8 +314,26 @@ export default function ProjectDetail() {
 
   if (!project) return null
 
+  // Desktop and tablet: views and project actions live in the left bar (PMSidebar). Phones keep the
+  // bottom tab bar and the ⋯ menu in the header; 640–767px keeps the header buttons and tab strip.
+  const sidebarSections = [
+    { title: 'Views', items: TABS.map((tab) => ({
+      key: tab.key, label: tab.label, icon: tab.icon, onClick: () => handleTabClick(tab),
+      active: activeTab === tab.key, tag: tab.pro && !isPro ? 'Pro' : null,
+    })) },
+    { title: 'Project', items: [
+      isOwner && { key: 'invite', label: 'Invite', icon: UserPlus, onClick: () => setShowInviteModal(true) },
+      isOwner && { key: 'share', label: 'Client share link', icon: Share2, active: shareTab,
+        onClick: () => isPro ? setShareTab((v) => !v) : triggerUpgrade('share'), tag: isPro ? null : 'Pro' },
+      { key: 'invoice', label: 'Invoice', icon: Receipt, to: `/pm/projects/${project.slug || project.id}/invoice` },
+      { key: 'export', label: 'Export PDF', icon: FileDown, onClick: handleExportPDF },
+      isOwner && { key: 'workflow', label: 'Workflow', icon: Layers,
+        onClick: () => isPro ? setShowWorkflow(true) : triggerUpgrade('workflow'), tag: isPro ? null : 'Pro' },
+    ].filter(Boolean) },
+  ]
+
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="adm min-h-screen">
       {showUpgrade && (
         <UpgradeModal
           reason={upgradeReason}
@@ -365,7 +384,7 @@ export default function ProjectDetail() {
             {isOwner && (
               <button
                 onClick={() => setShowInviteModal(true)}
-                className="hidden sm:flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
+                className="hidden sm:flex md:hidden items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
               >
                 <UserPlus size={14} />
                 <span className="hidden sm:inline">Invite</span>
@@ -384,7 +403,7 @@ export default function ProjectDetail() {
             />
             <button
               onClick={handleExportPDF}
-              className="hidden sm:flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
+              className="hidden sm:flex md:hidden items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
             >
               <FileDown size={14} />
               <span className="hidden sm:inline">Export</span>
@@ -392,7 +411,7 @@ export default function ProjectDetail() {
             {project.user_id === user?.id && (
               <button
                 onClick={() => isPro ? setShowWorkflow(true) : triggerUpgrade('workflow')}
-                className="hidden sm:flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
+                className="hidden sm:flex md:hidden items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
                 title="Customize workflow stages"
               >
                 <Layers size={14} />
@@ -402,7 +421,7 @@ export default function ProjectDetail() {
             )}
             <button
               onClick={() => navigate(`/pm/projects/${project?.slug || project?.id}/invoice`)}
-              className="hidden sm:flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
+              className="hidden sm:flex md:hidden items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
             >
               <Receipt size={14} />
               <span className="hidden sm:inline">Invoice</span>
@@ -410,7 +429,7 @@ export default function ProjectDetail() {
             {isOwner && (
               <button
                 onClick={() => isPro ? setShareTab(!shareTab) : triggerUpgrade('share')}
-                className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
+                className="flex md:hidden items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
               >
                 <Share2 size={14} />
                 <span className="hidden sm:inline">Share</span>
@@ -464,6 +483,10 @@ export default function ProjectDetail() {
           </div>
         }
       />
+
+      <div className="flex">
+        <PMSidebar currentId={project.id} sections={sidebarSections} />
+        <div className="flex-1 min-w-0">
 
       {/* Share panel */}
       {shareTab && (
@@ -663,7 +686,7 @@ export default function ProjectDetail() {
           ) : null
         })()}
         {/* Tabs */}
-        <div className="hidden sm:flex items-center gap-0.5 sm:gap-1 bg-white/[0.03] border border-white/[0.06] rounded-xl p-1 overflow-x-auto max-w-full">
+        <div className="hidden sm:flex md:hidden items-center gap-0.5 sm:gap-1 bg-white/[0.03] border border-white/[0.06] rounded-xl p-1 overflow-x-auto max-w-full">
           {TABS.map((tab) => {
             const Icon = tab.icon
             const active = activeTab === tab.key
@@ -802,6 +825,8 @@ export default function ProjectDetail() {
               </div>
             )}
           </div>
+        </div>
+      </div>
         </div>
       </div>
     </div>
