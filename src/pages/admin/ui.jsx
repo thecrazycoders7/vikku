@@ -89,7 +89,7 @@ export function EmptyState({ icon: Icon, title, children, action }) {
 }
 
 // Dropdown that closes on outside click and Escape. `trigger` gets { open, toggle, id }.
-export function Menu({ trigger, children, align = 'right', width = 'w-56' }) {
+export function Menu({ trigger, children, align = 'right', width = 'w-56', up = false }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
   useEffect(() => {
@@ -105,7 +105,7 @@ export function Menu({ trigger, children, align = 'right', width = 'w-56' }) {
       {trigger({ open, toggle: () => setOpen(o => !o) })}
       {open && (
         <div role="menu" onClick={() => setOpen(false)}
-          className={`absolute z-50 mt-2 ${width} ${align === 'right' ? 'right-0' : 'left-0'} rounded-xl border border-slate-200 bg-white p-1 shadow-lg shadow-slate-900/5`}>
+          className={`absolute z-50 ${up ? 'bottom-full mb-2' : 'mt-2'} ${width} ${align === 'right' ? 'right-0' : 'left-0'} rounded-xl border border-slate-200 bg-white p-1 shadow-lg shadow-slate-900/5`}>
           {children}
         </div>
       )}

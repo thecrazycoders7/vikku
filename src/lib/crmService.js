@@ -13,6 +13,16 @@ export const createLead = async (fields) => check(await supabase.from('crm_leads
 export const updateLead = async (id, fields) => check(await supabase.from('crm_leads').update(fields).eq('id', id).select().single())
 export const deleteLead = async (id) => check(await supabase.from('crm_leads').delete().eq('id', id))
 export const convertLead = async (id) => check(await supabase.rpc('crm_convert_lead', { p_lead_id: id }))
+// Bulk edits from the Leads board. Ids go in the query string, so they're sent 100 at a time.
+const chunks = (ids, n = 100) => Array.from({ length: Math.ceil(ids.length / n) }, (_, i) => ids.slice(i * n, i * n + n))
+export async function updateLeads(ids, fields) {
+  const out = []
+  for (const part of chunks(ids)) out.push(...check(await supabase.from('crm_leads').update(fields).in('id', part).select()))
+  return out
+}
+export async function deleteLeads(ids) {
+  for (const part of chunks(ids)) check(await supabase.from('crm_leads').delete().in('id', part))
+}
 
 // Clients
 export const listClients = async () => check(await supabase.from('crm_clients').select('*').order('name'))
