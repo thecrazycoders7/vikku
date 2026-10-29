@@ -100,3 +100,24 @@ export const deleteDocument = async (id) => check(await supabase.from('crm_docum
 
 // Latest CRM events across all leads and clients (admin home "Recent activity").
 export const listRecentActivity = async (limit = 12) => check(await supabase.from('crm_activity').select('*').order('created_at', { ascending: false }).limit(limit))
+
+// Linked Vikku PM boards for CRM projects: { [pm_project_id]: { slug, share_token, done, total, progress } }.
+// The admin owns boards made with "Create PM board", so RLS lets these reads through.
+export async function pmBoards(ids) {
+  if (!ids.length) return {}
+  const [boards, tasks] = await Promise.all([
+    supabase.from('pm_projects').select('id, slug, share_token').in('id', ids),
+    supabase.from('pm_tasks').select('project_id, status').in('project_id', ids),
+  ])
+  const out = {}
+  for (const b of check(boards)) out[b.id] = { slug: b.slug, share_token: b.share_token, done: 0, total: 0, progress: 0 }
+  for (const t of check(tasks)) {
+    const b = out[t.project_id]
+    if (!b) continue
+    b.total++
+    if (t.status === 'done') b.done++
+  }
+  for (const b of Object.values(out)) b.progress = b.total ? Math.round((b.done / b.total) * 100) : 0
+  return out
+}
+export const pmShareLink = (token) => `https://www.vikku.in/pm/share/${token}`
