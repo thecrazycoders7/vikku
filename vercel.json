@@ -11,7 +11,19 @@
       "destination": "/api/og/:shareId"
     },
     {
-      "source": "/(.*)",
+      "source": "/(login|signup|forgot-password|reset-password|account|payment-demo|vibelevel)",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/(admin|dashboard|pm)(/.*)?",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/(q|r-view|showcase)/:id",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/tools/(cost-estimator|roi-calculator|timeline-calculator|tech-recommender|maintenance-calculator)",
       "destination": "/app.html"
     }
   ],

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Home } from 'lucide-react'
 import usePageMeta from '../hooks/usePageMeta'
@@ -10,6 +11,15 @@ export default function NotFound() {
     description: 'The page you are looking for does not exist.',
     url:         'https://vikku.in/',
   })
+
+  // Shown inside the app (e.g. /pm/nope). Keep it out of search results; unknown public
+  // addresses get a real 404 from public/404.html instead.
+  useEffect(() => {
+    const robots = document.querySelector('meta[name="robots"]')
+    const before = robots?.content
+    if (robots) robots.content = 'noindex, follow'
+    return () => { if (robots) robots.content = before }
+  }, [])
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 text-center">
