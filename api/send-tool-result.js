@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { checkSignup } from './_signup.js'
+import { SOURCES, checkSignup } from './_signup.js'
 
 const TOOL_LABELS = {
   cost_estimator:      'Cost Estimate',
@@ -60,15 +60,27 @@ function renderBody(tool, r) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const { shareId, website, elapsedMs } = req.body || {}
+  // Two jobs share this function (Vercel Hobby allows 12 and we're at the limit): with a shareId it
+  // emails a saved tool result; without one it's a plain website sign-up (footer, tool email box).
+  const { shareId, source, website, elapsedMs } = req.body || {}
   const check = checkSignup({ email: req.body?.email, website, elapsedMs })
-  if (check.silent) return res.status(200).json({ ok: true })
-  if (!shareId || !check.ok) return res.status(400).json({ error: check.error || 'Missing share id' })
+  if (check.silent) return res.status(200).json({ ok: true }) // bots get a normal-looking reply
+  if (!check.ok) return res.status(400).json({ error: check.error })
   const email = check.email
 
   try {
     const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL
     const supabase = createClient(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY)
+
+    if (!shareId) {
+      const { error: subError } = await supabase.from('subscribers').upsert(
+        { email, source: SOURCES.includes(source) ? source : 'footer' },
+        { onConflict: 'email', ignoreDuplicates: true },
+      )
+      if (subError) throw subError
+      return res.status(200).json({ ok: true })
+    }
+
     const { data: rowData, error } = await supabase
       .from('tool_results').select('*').eq('share_id', shareId).maybeSingle()
     if (error || !rowData) return res.status(404).json({ error: 'Result not found' })
@@ -118,6 +130,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true })
   } catch (err) {
     console.error('send-tool-result error:', err)
-    return res.status(500).json({ error: 'Failed to send result' })
+    return res.status(500).json({ error: shareId ? 'Failed to send result' : 'Could not save your email. Please try again.' })
   }
 }

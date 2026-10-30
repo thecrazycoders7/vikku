@@ -1,8 +1,8 @@
-// Website sign-ups go through the bot-checked endpoint (api/subscribe.js); the browser can't
+// Website sign-ups go through the bot-checked server function (api/send-tool-result.js); the browser can't
 // write to `subscribers` directly. `startedAt` is when the form appeared (bots submit instantly),
 // `website` is the hidden trap field (people never see it, bots fill it in).
 export async function subscribe({ email, source, website, startedAt }) {
-  const res = await fetch('/api/subscribe', {
+  const res = await fetch('/api/send-tool-result', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, source, website, elapsedMs: Date.now() - startedAt }),

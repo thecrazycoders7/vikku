@@ -1,5 +1,5 @@
 -- ============================================================================
--- Website sign-ups only through the server (api/subscribe.js, api/send-tool-result.js).
+-- Website sign-ups only through the server (api/send-tool-result.js).
 --
 -- The footer and free-tool forms used to insert into `subscribers` straight from the browser
 -- with the public key, so bots could add rows (and, through the CRM trigger, junk leads)
