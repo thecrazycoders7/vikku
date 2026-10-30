@@ -9,6 +9,7 @@ import CookieConsent       from './components/CookieConsent'
 import SplashScreen        from './components/SplashScreen'
 import Home3D              from './pages/Home3D'
 
+const CaseStudyJobly        = lazy(() => import('./pages/CaseStudyJobly'))
 const Login                 = lazy(() => import('./pages/Login'))
 const Signup                = lazy(() => import('./pages/Signup'))
 const ForgotPassword        = lazy(() => import('./pages/ForgotPassword'))
@@ -93,6 +94,7 @@ export default function App() {
               <Route path="/ai-integration"          element={<ServicePage slug="ai-integration" />} />
               <Route path="/ai-software-development" element={<ServicePage slug="ai-software-development" />} />
               <Route path="/ai-voice-agents"         element={<ServicePage slug="ai-voice-agents" />} />
+              <Route path="/work/jobly-solutions"    element={<CaseStudyJobly />} />
               <Route path="/login"                   element={<Login />} />
               <Route path="/signup"                  element={<Signup />} />
               <Route path="/forgot-password"         element={<ForgotPassword />} />
