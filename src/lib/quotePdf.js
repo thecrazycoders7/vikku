@@ -1,4 +1,5 @@
 import { isoDay, pdfMoney, quoteTotals } from './crmUtils.js'
+import { pdfSafe } from './pdfText.js'
 
 // Quotation PDF for the CRM (src/pages/admin/crm/CrmDocuments.jsx). quotePdf is pure so it can be
 // rendered in Node for checks; downloadPdf loads jsPDF and the logo in the browser and saves the file.
@@ -31,11 +32,11 @@ export function quotePdf(jsPDF, doc, party, logo) {
 
   let y = 162
   pdf.setFontSize(9).setTextColor(...muted).text('PREPARED FOR', M, y)
-  pdf.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...ink).text(party?.name || '-', M, y + 15)
+  pdf.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...ink).text(pdfSafe(party?.name) || '-', M, y + 15)
   pdf.setFont('helvetica', 'normal').setFontSize(9).setTextColor(...muted)
-  ;[party?.company, party?.email, party?.phone].filter(Boolean).forEach((l, i) => pdf.text(l, M, y + 28 + i * 12))
+  ;[party?.company, party?.email, party?.phone].filter(Boolean).forEach((l, i) => pdf.text(pdfSafe(l), M, y + 28 + i * 12))
   y += 76
-  pdf.setFont('helvetica', 'bold').setFontSize(12).setTextColor(...ink).text(doc.title, M, y)
+  pdf.setFont('helvetica', 'bold').setFontSize(12).setTextColor(...ink).text(pdfSafe(doc.title), M, y)
   y += 20
 
   const cols = { desc: M, qty: W - M - 210, rate: W - M - 110, amt: W - M }
@@ -49,7 +50,7 @@ export function quotePdf(jsPDF, doc, party, logo) {
   header()
   pdf.setFont('helvetica', 'normal').setFontSize(10)
   for (const it of doc.items) {
-    const lines = pdf.splitTextToSize(it.description || '-', cols.qty - cols.desc - 40)
+    const lines = pdf.splitTextToSize(pdfSafe(it.description) || '-', cols.qty - cols.desc - 40)
     if (y + lines.length * 13 > H - 140) { pdf.addPage(); y = 60; header(); pdf.setFont('helvetica', 'normal').setFontSize(10) }
     pdf.setTextColor(...ink).text(lines, cols.desc, y)
     pdf.text(String(Number(it.qty) || 0), cols.qty, y, { align: 'right' })
@@ -73,7 +74,7 @@ export function quotePdf(jsPDF, doc, party, logo) {
 
   for (const [label, body] of [['Notes', doc.notes], ['Terms', doc.terms]]) {
     if (!body) continue
-    const lines = pdf.splitTextToSize(body, W - 2 * M)
+    const lines = pdf.splitTextToSize(pdfSafe(body), W - 2 * M)
     if (y + 20 + lines.length * 12 > H - 60) { pdf.addPage(); y = 60 }
     pdf.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...muted).text(label.toUpperCase(), M, y)
     pdf.setFont('helvetica', 'normal').setFontSize(9).setTextColor(...ink).text(lines, M, y + 14)
