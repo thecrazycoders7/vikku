@@ -27,6 +27,7 @@ const StackRecommender      = lazy(() => import('./pages/StackRecommender'))
 const MaintenanceCalculator = lazy(() => import('./pages/MaintenanceCalculator'))
 const AIVisibilityScore     = lazy(() => import('./pages/AIVisibilityScore'))
 const ShareableResult       = lazy(() => import('./pages/ShareableResult'))
+const QuoteView             = lazy(() => import('./pages/QuoteView'))
 const SavedResults          = lazy(() => import('./pages/SavedResults'))
 const PMDashboard           = lazy(() => import('./pages/pm/PMDashboard'))
 const NewProject            = lazy(() => import('./pages/pm/NewProject'))
@@ -121,6 +122,7 @@ export default function App() {
               <Route path="/tools/maintenance-calculator"     element={<MaintenanceCalculator />} />
               <Route path="/tools/ai-visibility-score"        element={<AIVisibilityScore />} />
               <Route path="/r/:shareId"                    element={<ShareableResult />} />
+              <Route path="/q/:token"                      element={<QuoteView />} />
               <Route path="/r-view/:shareId"               element={<ShareableResult />} />
               <Route path="/dashboard/saved"               element={<SavedResults />} />
               <Route path="/dashboard/notifications"       element={<NotificationPreferences />} />
