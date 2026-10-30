@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, RotateCcw, Sparkles, Check, Layers } from 'lucide-react'
 import Seo from '../components/Seo'
 import ToolFAQ from '../components/tools/ToolFAQ'
-import { TOOL_FAQ, faqJsonLd } from '../lib/toolContent'
+import { TOOL_ABOUT, TOOL_FAQ, TOOL_SEO, faqJsonLd } from '../lib/toolContent'
 import { CAL_ATTRS } from '../lib/cal'
 import { useAuth } from '../contexts/AuthContext'
 import { Q, Q_ORDER, recommend } from '../lib/techStack'
@@ -37,7 +37,7 @@ export default function StackRecommender() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Tech Stack Recommender — Vikku" description="Answer a few questions and get an opinionated, reasoned tech stack for your project — frontend, backend, database, hosting and more." canonical="/tools/stack-recommender" jsonLd={faqJsonLd('stack_recommender')} />
+      <Seo {...TOOL_SEO.stack_recommender} jsonLd={faqJsonLd('stack_recommender')} />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <button onClick={() => navigate(homePath)} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> {user ? 'Dashboard' : 'Back'}</button>
@@ -48,10 +48,10 @@ export default function StackRecommender() {
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         <div key={key} style={{ animation: 'stkIn .4s cubic-bezier(0.16,1,0.3,1) both' }}>
-          <div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)] mb-2">
-            {step === 0 ? 'Let’s find your stack' : CHEERS[Math.min(step - 1, CHEERS.length - 1)]}
-          </div>
-          <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-white mb-8">{def.q}</h1>
+          {step === 0
+            ? <h1 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)] mb-2">{TOOL_SEO.stack_recommender.h1}</h1>
+            : <div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)] mb-2">{CHEERS[Math.min(step - 1, CHEERS.length - 1)]}</div>}
+          <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-white mb-8">{def.q}</h2>
 
           {def.multi ? (
             <div className="flex flex-wrap gap-2.5">
@@ -83,7 +83,7 @@ export default function StackRecommender() {
           </button>
         </div>
 
-        {step === 0 && <ToolFAQ content={TOOL_FAQ.stack_recommender} />}
+        {step === 0 && <ToolFAQ content={TOOL_FAQ.stack_recommender} about={TOOL_ABOUT.stack_recommender} />}
       </div>
       <style>{`@keyframes stkIn { from { opacity:0; transform: translateY(12px) } to { opacity:1; transform:none } }`}</style>
     </div>

@@ -5,7 +5,7 @@ import Seo from '../components/Seo'
 import { CAL_ATTRS } from '../lib/cal'
 import AISummary from '../components/tools/AISummary'
 import ToolFAQ from '../components/tools/ToolFAQ'
-import { TOOL_FAQ, faqJsonLd } from '../lib/toolContent'
+import { TOOL_ABOUT, TOOL_FAQ, TOOL_SEO, faqJsonLd } from '../lib/toolContent'
 import { useAuth } from '../contexts/AuthContext'
 import {
   PROJECT_TYPES, PLATFORMS, ROLES, FEATURE_GROUPS, INTEGRATIONS, AI_CAPS,
@@ -64,7 +64,7 @@ export default function ProjectEstimator() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="AI Project Estimator — Vikku" description="Answer a few quick questions and get a professional software project estimate in minutes." canonical="/tools/project-estimator" jsonLd={faqJsonLd('project_estimator')} />
+      <Seo {...TOOL_SEO.project_estimator} jsonLd={faqJsonLd('project_estimator')} />
 
       {/* Header + progress */}
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05]">
@@ -81,10 +81,10 @@ export default function ProjectEstimator() {
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         <div key={current.id} style={{ animation: 'estIn .4s cubic-bezier(0.16,1,0.3,1) both' }}>
-          <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)]">
-            {step === 0 ? 'Let’s scope your project' : CHEERS[Math.min(step - 1, CHEERS.length - 1)]}
-          </div>
-          <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-white mb-2">{current.q}</h1>
+          {step === 0
+            ? <h1 className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)]">{TOOL_SEO.project_estimator.h1}</h1>
+            : <div className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)]">{CHEERS[Math.min(step - 1, CHEERS.length - 1)]}</div>}
+          <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-white mb-2">{current.q}</h2>
           <p className="text-white/50 text-sm mb-8">{current.hint}</p>
 
           <StepBody id={current.id} a={a} set={set} toggle={toggle} onPick={next} />
@@ -104,7 +104,7 @@ export default function ProjectEstimator() {
           </button>
         </div>
 
-        {step === 0 && <ToolFAQ content={TOOL_FAQ.project_estimator} />}
+        {step === 0 && <ToolFAQ content={TOOL_FAQ.project_estimator} about={TOOL_ABOUT.project_estimator} />}
       </div>
 
       <style>{`@keyframes estIn { from { opacity:0; transform: translateY(12px) } to { opacity:1; transform:none } }`}</style>
