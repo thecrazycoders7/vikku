@@ -103,7 +103,7 @@ export default function CaseStudyJobly() {
 
       <main className="svc-main">
         <header className="svc-hero">
-          <nav className="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/#work">Work</a><span>/</span><span>Jobly Solutions</span></nav>
+          <nav className="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><a href="/work">Work</a><span>/</span><span>Jobly Solutions</span></nav>
           <p className="eyebrow">Case study · Recruitment and staffing</p>
           <h1>From WhatsApp and Excel to <em>one staffing platform</em></h1>
           <p className="lead">

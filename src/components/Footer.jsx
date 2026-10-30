@@ -5,17 +5,19 @@ import { CAL_ATTRS } from '../lib/cal'
 import { servicePages } from '../data/servicePages'
 
 const company = [
-  { label: 'About',    href: '#about' },
-  { label: 'Services', href: '#services' },
-  { label: 'Work',     href: '#work' },
+  { label: 'About',    href: '/about' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Work',     href: '/work' },
   { label: 'Contact',  cal: true },
 ]
 
 const tools = [
-  { label: 'AI Cost Estimator', href: '/dashboard/cost-estimator' },
-  { label: 'ROI Calculator',    href: '/dashboard/roi-calculator' },
-  { label: 'Timeline Calculator', href: '/dashboard/timeline-calculator' },
-  { label: 'Tech Recommender',  href: '/dashboard/tech-recommender' },
+  { label: 'Project Estimator',   href: '/tools/project-estimator' },
+  { label: 'ROI Calculator',      href: '/tools/business-impact' },
+  { label: 'Timeline Calculator', href: '/tools/timeline' },
+  { label: 'Tech Stack Recommender', href: '/tools/stack-recommender' },
+  { label: 'Maintenance Calculator', href: '/tools/maintenance' },
+  { label: 'AI Visibility Score', href: '/tools/ai-visibility-score' },
 ]
 
 const legal = [
