@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ArrowUp, ArrowDown, ChevronsUpDown } from 'lucide-react'
 
 // Small presentational pieces for the admin workspace (tokens in index.css under `.adm`).
 
@@ -136,4 +136,38 @@ export function useToast() {
     </div>
   )
   return [node, setToast]
+}
+
+// Sorting for admin lists. `get` maps a key to a value getter (lowercase strings yourself); empty values
+// always go last. Click a header to sort by it, click again to flip.
+export function useSort(rows, initial, get) {
+  const [sort, setSort] = useState(initial) // { key, dir: 'asc' | 'desc' }
+  const sorted = useMemo(() => {
+    const value = get[sort.key]
+    if (!value) return rows
+    const m = sort.dir === 'desc' ? -1 : 1
+    const empty = (v) => v == null || v === ''
+    return [...rows].sort((a, b) => {
+      const x = value(a), y = value(b)
+      if (empty(x)) return empty(y) ? 0 : 1
+      if (empty(y)) return -1
+      return (x < y ? -1 : x > y ? 1 : 0) * m
+    })
+  }, [rows, sort]) // `get` is a fresh object each render; it only changes with `rows`
+  const toggle = (key) => setSort(s => s.key === key ? { key, dir: s.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: key === initial.key ? initial.dir : 'asc' })
+  return { sorted, sort, setSort, toggle }
+}
+
+// Column header that sorts its list (pair with useSort).
+export function SortHeader({ label, k, sort, onSort, className = '' }) {
+  const on = sort.key === k
+  const Icon = !on ? ChevronsUpDown : sort.dir === 'asc' ? ArrowUp : ArrowDown
+  return (
+    <span role="columnheader" aria-sort={on ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'} className={className}>
+      <button type="button" onClick={() => onSort(k)}
+        className={`inline-flex items-center gap-1 whitespace-nowrap uppercase tracking-widest rounded hover:text-slate-700 ${on ? 'text-slate-700' : ''}`}>
+        {label} <Icon size={11} className={on ? 'text-orange-600' : 'opacity-50'} />
+      </button>
+    </span>
+  )
 }

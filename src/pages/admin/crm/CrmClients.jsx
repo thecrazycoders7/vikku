@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Plus, Search, ChevronRight } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import ClientForm from './ClientForm'
+import { useSort } from '../ui'
 import useOpenOnParam from '../../../hooks/useOpenOnParam'
 import { listClients } from '../../../lib/crmService'
 
@@ -25,6 +26,11 @@ export default function CrmClients() {
     return clients.filter(c => (!status || c.status === status) &&
       (!q || [c.name, c.company, c.phone, c.email, c.city].some(v => v?.toLowerCase().includes(q))))
   }, [clients, query, status])
+  const { sorted, sort, setSort } = useSort(visible, { key: 'name', dir: 'asc' }, {
+    name: c => c.name?.toLowerCase(), added: c => c.created_at,
+  })
+  const SORTS = { name: { key: 'name', dir: 'asc' }, newest: { key: 'added', dir: 'desc' }, oldest: { key: 'added', dir: 'asc' } }
+  const sortId = Object.keys(SORTS).find(k => SORTS[k].key === sort.key && SORTS[k].dir === sort.dir)
 
   return (
     <AdminLayout>
@@ -49,6 +55,11 @@ export default function CrmClients() {
           <option value="past" className="bg-black">Past</option>
           <option value="" className="bg-black">All</option>
         </select>
+        <select value={sortId} onChange={e => setSort(SORTS[e.target.value])} aria-label="Sort clients" className="glass rounded-xl px-3 py-2 text-sm text-white bg-transparent focus:outline-none">
+          <option value="name" className="bg-black">Name A–Z</option>
+          <option value="newest" className="bg-black">Newest first</option>
+          <option value="oldest" className="bg-black">Oldest first</option>
+        </select>
       </div>
 
       {error && <div className="text-sm text-red-500 mb-3">{error}</div>}
@@ -62,7 +73,7 @@ export default function CrmClients() {
         </div>
       ) : (
         <div className="glass rounded-2xl divide-y divide-black/[0.05] overflow-hidden">
-          {visible.map(c => (
+          {sorted.map(c => (
             <button key={c.id} onClick={() => navigate(`/admin/crm/clients/${c.id}`)}
               className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.04] transition-colors">
               <span className="w-9 h-9 rounded-full bg-orange-50 text-orange-600 font-semibold text-sm flex items-center justify-center flex-shrink-0">

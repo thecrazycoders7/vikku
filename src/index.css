@@ -310,3 +310,5 @@ html.light svg.lucide.absolute { color: var(--text-secondary) !important; }
 .adm ::-webkit-scrollbar { width: 8px; height: 8px; }
 .adm ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 8px; }
 .adm ::-webkit-scrollbar-track { background: transparent; }
+/* Older admin pages: their headings match the new page titles without rewriting each page. */
+.adm main h1.font-display { font-size: 22px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; }
