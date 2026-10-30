@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { Share2, Trash2, Copy, Check, LayoutDashboard, GitBranch, BarChart2, Calendar, Lock, UserPlus, FileDown, Search, X as XIcon, Receipt, Timer, Sparkles, MessageSquare, AlertCircle, Clock, Layers, MoreHorizontal, Paperclip } from 'lucide-react'
+import { Share2, Trash2, Copy, Check, LayoutDashboard, GitBranch, BarChart2, Calendar, Lock, UserPlus, FileDown, Search, X as XIcon, Receipt, Timer, Sparkles, MessageSquare, AlertCircle, Clock, Layers, MoreHorizontal, Paperclip, PanelRightOpen, PanelRightClose } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { getProject, getTasks, getMilestones, deleteProject, getWorkflow, getClientComments, updateProject, getProjectDependencies, getSubtaskCounts } from '../../lib/pmService'
 import { supabase } from '../../lib/supabaseClient'
@@ -52,6 +52,13 @@ export default function ProjectDetail() {
   const [milestones, setMilestones] = useState([])
   const [fetching, setFetching] = useState(true)
   const [activeTab, setActiveTab] = useState('kanban')
+  // Wide screens: the details column (milestones, team, about, activity) can fold away to give the
+  // board more room. Remembered per browser; below 1280px it already sits under the board.
+  const [detailsOpen, setDetailsOpen] = useState(() => { try { return localStorage.getItem('vikku_pm_details') !== 'closed' } catch { return true } })
+  const toggleDetails = () => setDetailsOpen((open) => {
+    try { localStorage.setItem('vikku_pm_details', open ? 'closed' : 'open') } catch { /* private mode */ }
+    return !open
+  })
   const [shareTab, setShareTab] = useState(false)
   const [copied, setCopied] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -755,7 +762,20 @@ export default function ProjectDetail() {
           </div>
 
           {/* Sidebar */}
-          <div className="w-full xl:w-64 xl:flex-shrink-0 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4">
+          {!detailsOpen && (
+            <div className="hidden xl:flex flex-col items-center flex-shrink-0 w-10 pt-1">
+              <button type="button" onClick={toggleDetails} title="Show milestones, team and activity" aria-label="Show details panel"
+                className="flex flex-col items-center gap-2 rounded-lg border border-slate-200 bg-white px-2 py-3 text-[11px] font-medium text-slate-600 hover:border-slate-300 hover:text-slate-900">
+                <PanelRightOpen size={16} />
+                <span className="[writing-mode:vertical-rl] rotate-180">Details</span>
+              </button>
+            </div>
+          )}
+          <div className={`${detailsOpen ? '' : 'xl:hidden'} w-full xl:w-64 xl:flex-shrink-0 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4 content-start`}>
+            <button type="button" onClick={toggleDetails} aria-label="Hide details panel"
+              className="hidden xl:flex items-center justify-end gap-1.5 -mb-2 text-[12px] font-medium text-slate-500 hover:text-slate-900">
+              <PanelRightClose size={14} /> Hide details
+            </button>
             <div className="glass rounded-2xl p-5">
               <MilestoneList projectId={project.id} milestones={milestones} onMilestonesChange={setMilestones} />
             </div>
