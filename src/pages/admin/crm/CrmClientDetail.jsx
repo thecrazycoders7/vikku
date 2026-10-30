@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Phone, Mail, MapPin, Pencil, Trash2, MessageCircle, Globe2, Plus, ExternalLink, LayoutGrid } from 'lucide-react'
+import { ArrowLeft, Phone, Mail, MapPin, Pencil, Trash2, MessageCircle, Globe2, Plus, ExternalLink, LayoutGrid, Link2 } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import ClientForm from './ClientForm'
 import Timeline from './Timeline'
 import { PaymentForm, ProjectForm, RetainerForm } from './Forms'
 import { MoneyTile, PaymentRows, RetainerRows, fmtDate } from './Lists'
 import { useAuth } from '../../../contexts/AuthContext'
+import usePmBoards from './usePmBoards'
+import { useToast } from '../ui'
 import {
   PROJECT_STAGES, createPmBoard, deleteClient, deletePayment, deleteProject, formatMoney, getClient, listPayments,
-  listProjects, listRetainers, moneySummary, moneyText, isoDay, recordRetainerMonth, updatePayment, whatsappNumber,
+  listProjects, listRetainers, moneySummary, moneyText, isoDay, pmShareLink, recordRetainerMonth, updatePayment, whatsappNumber,
 } from '../../../lib/crmService'
 
 const TABS = ['Timeline', 'Projects', 'Payments']
@@ -26,6 +28,14 @@ export default function CrmClientDetail() {
   const [tab, setTab] = useState('Timeline')
   const [modal, setModal] = useState(null) // { type: 'client'|'project'|'payment'|'retainer', item? }
   const [timelineKey, setTimelineKey] = useState(0)
+  const boards = usePmBoards(projects)
+  const [toast, showToast] = useToast()
+  // The PM board's read-only client view, to send the client by WhatsApp or email.
+  const copyShare = async (token, name) => {
+    const url = pmShareLink(token)
+    try { await navigator.clipboard.writeText(url); showToast({ text: `Progress link for ${name} copied` }) }
+    catch { prompt('Copy this link for your client:', url) }
+  }
 
   const loadMoney = async () => {
     const [pr, pa, re] = await Promise.all([listProjects({ clientId: id }), listPayments({ clientId: id }), listRetainers({ clientId: id })])
@@ -138,6 +148,11 @@ export default function CrmClientDetail() {
                           <p className="text-[11px] text-white/40">{[p.service, p.due_date && `Due ${fmtDate(p.due_date)}`].filter(Boolean).join(' · ')}</p>
                         </button>
                         <p className="text-xs text-white/60">{formatMoney(paidByProject[p.id] || 0, p.currency)} of {formatMoney(p.budget, p.currency)} paid</p>
+                        {boards[p.pm_project_id] && <p className="text-xs text-white/60" title="Tasks done on the linked Vikku PM board">Work {boards[p.pm_project_id].progress}% · {boards[p.pm_project_id].done}/{boards[p.pm_project_id].total} tasks</p>}
+                        {boards[p.pm_project_id]?.share_token && (
+                          <button onClick={() => copyShare(boards[p.pm_project_id].share_token, p.name)} title="Copy the read-only progress link for this client"
+                            className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1.5 rounded-lg bg-white/[0.06] text-white/60 hover:text-white"><Link2 size={11} /> Client progress link</button>
+                        )}
                         {p.pm_project_id
                           ? <Link to={`/pm/projects/${p.pm_project_id}`} className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700"><ExternalLink size={11} /> PM board</Link>
                           : <button onClick={() => run(() => createPmBoard(p, client, user?.id))} className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1.5 rounded-lg bg-white/[0.06] text-white/60 hover:text-white"><LayoutGrid size={11} /> Create PM board</button>}
@@ -180,6 +195,7 @@ export default function CrmClientDetail() {
       )}
       {modal?.type === 'payment' && <PaymentForm payment={modal.item} clients={[client]} projects={projects} clientId={client.id} onClose={() => setModal(null)} onSaved={closeAndReload} />}
       {modal?.type === 'retainer' && <RetainerForm retainer={modal.item} clients={[client]} clientId={client.id} onClose={() => setModal(null)} onSaved={closeAndReload} />}
+      {toast}
     </AdminLayout>
   )
 }

@@ -4,6 +4,7 @@ import { Plus, Search, CalendarClock, ExternalLink, LayoutGrid } from 'lucide-re
 import AdminLayout from '../AdminLayout'
 import { ProjectForm } from './Forms'
 import useOpenOnParam from '../../../hooks/useOpenOnParam'
+import usePmBoards from './usePmBoards'
 import { MoneyTile, fmtDate } from './Lists'
 import { useAuth } from '../../../contexts/AuthContext'
 import {
@@ -49,6 +50,7 @@ export default function CrmProjects() {
   const [modal, setModal] = useState(null) // { item? }
   const [dragOver, setDragOver] = useState(null)
   useOpenOnParam('new', () => setModal({}), !loading)
+  const boards = usePmBoards(projects)
 
   const load = async () => {
     setError('')
@@ -136,6 +138,12 @@ export default function CrmProjects() {
                       <p className="text-[11px] text-white/50 truncate">{client?.name}{client?.company ? ` · ${client.company}` : ''}</p>
                       <div className="mt-2 h-1.5 rounded-full bg-black/[0.06] overflow-hidden"><div className="h-full bg-emerald-500" style={{ width: `${pct}%` }} /></div>
                       <p className="mt-1 text-[11px] text-white/50">{formatMoney(paid, p.currency)} of {formatMoney(p.budget, p.currency)}</p>
+                      {boards[p.pm_project_id] && (
+                        <div className="mt-2" title="Tasks done on the linked Vikku PM board">
+                          <div className="h-1 rounded-full bg-black/[0.06] overflow-hidden"><div className="h-full bg-orange-500" style={{ width: `${boards[p.pm_project_id].progress}%` }} /></div>
+                          <p className="mt-1 text-[11px] text-white/50">Work {boards[p.pm_project_id].progress}% · {boards[p.pm_project_id].done}/{boards[p.pm_project_id].total} tasks</p>
+                        </div>
+                      )}
                       <div className="mt-2 flex items-center gap-1.5 flex-wrap">
                         {p.service && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">{p.service}</span>}
                         {p.due_date && <span className={`text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 ${late ? 'bg-red-50 text-red-600' : 'bg-white/[0.06] text-white/50'}`}><CalendarClock size={10} /> {fmtDate(p.due_date)}</span>}
