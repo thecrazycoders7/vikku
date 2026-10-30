@@ -1,5 +1,5 @@
 // Bot checks for website sign-ups (footer newsletter, free-tool "email me the result"). Used by
-// api/subscribe.js and api/send-tool-result.js; tested by api/_signup.test.mjs.
+// api/send-tool-result.js; tested by api/_signup.test.mjs.
 // Every sign-up becomes a CRM lead, so junk is stopped here rather than cleaned up later.
 
 // Sources the site actually sends; anything else is stored as 'footer'.
