@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:prerender": "vite build && node scripts/prerender.mjs",
+    "build:prerender": "node scripts/check-routes.mjs && vite build && node scripts/prerender.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
