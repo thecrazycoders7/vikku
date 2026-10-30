@@ -9,6 +9,14 @@
     <priority>1.0</priority>
   </url>
 
+  <!-- Case studies -->
+  <url>
+    <loc>https://www.vikku.in/work/jobly-solutions</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <!-- AI service pages -->
   <url>
     <loc>https://www.vikku.in/ai-agents</loc>

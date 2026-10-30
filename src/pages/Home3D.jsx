@@ -151,7 +151,7 @@ export default function Home3D() {
               <ul className="cards">
                 <li><strong><a href="https://www.tapbywisein.com/" target="_blank" rel="noopener noreferrer">TapByWisein</a></strong><span>NFC networking platform</span></li>
                 <li><strong><a href="https://www.unisysinfotech.com/" target="_blank" rel="noopener noreferrer">Unisys Infotech</a></strong><span>IT solutions and services</span><em>Replaced Excel and WhatsApp workflows with one central app</em></li>
-                <li><strong><a href="https://www.joblysolutions.com/" target="_blank" rel="noopener noreferrer">Jobly Solutions</a></strong><span>Recruitment and staffing</span><em>Replaced Excel and WhatsApp workflows with one central app</em></li>
+                <li><strong><a href="https://www.joblysolutions.com/" target="_blank" rel="noopener noreferrer">Jobly Solutions</a></strong><span>Recruitment and staffing</span><em>Replaced Excel and WhatsApp workflows with one central app</em><Link className="try" to="/work/jobly-solutions">Read the case study</Link></li>
                 <li><strong><a href="https://www.mediamanager4u.com/#/" target="_blank" rel="noopener noreferrer">Media Manager 4U</a></strong><span>Media management platform</span><em>Reported growth from 0 to 6 paying clients</em></li>
                 <li><strong><a href="https://www.rolexads.in/" target="_blank" rel="noopener noreferrer">Rolex Ads</a></strong><span>Advertising and marketing</span><em>Reported a 4× increase in leads</em></li>
                 <li><strong><a href="https://www.nivicollections.com/" target="_blank" rel="noopener noreferrer">Nivi Collections</a></strong><span>Fashion and collections</span></li>
