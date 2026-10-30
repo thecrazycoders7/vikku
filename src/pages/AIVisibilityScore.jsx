@@ -6,7 +6,7 @@ import ToolResultActions from '../components/tools/ToolResultActions'
 import ToolFAQ from '../components/tools/ToolFAQ'
 import ToolSocialProof from '../components/tools/ToolSocialProof'
 import { saveToolResult } from '../lib/toolResultsService'
-import { TOOL_FAQ, TOOL_SEO, faqJsonLd } from '../lib/toolContent'
+import { TOOL_ABOUT, TOOL_FAQ, TOOL_SEO, faqJsonLd } from '../lib/toolContent'
 import Seo from '../components/Seo'
 import { useAuth } from '../contexts/AuthContext'
 import { CAL_ATTRS } from '../lib/cal'
@@ -255,7 +255,7 @@ export default function AIVisibilityScore() {
                   </div>
                 </div>
 
-                <ToolFAQ content={TOOL_FAQ.ai_visibility_score} />
+                <ToolFAQ content={TOOL_FAQ.ai_visibility_score} about={TOOL_ABOUT.ai_visibility_score} />
               </>
             )}
           </>

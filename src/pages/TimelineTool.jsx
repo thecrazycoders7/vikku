@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, RotateCcw, Sparkles, Check, Flag } from 'lucide-react'
 import Seo from '../components/Seo'
 import ToolFAQ from '../components/tools/ToolFAQ'
-import { TOOL_FAQ, faqJsonLd } from '../lib/toolContent'
+import { TOOL_ABOUT, TOOL_FAQ, TOOL_SEO, faqJsonLd } from '../lib/toolContent'
 import { CAL_ATTRS } from '../lib/cal'
 import { useAuth } from '../contexts/AuthContext'
 import { TYPES, SIZE, PLATFORMS, TEAM, DESIGN, COMPLEXITY, estimateTimeline, weekDate } from '../lib/timelineModel'
@@ -45,7 +45,7 @@ export default function TimelineTool() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Project Timeline Calculator — Vikku" description="Get a realistic, phase-by-phase project timeline with milestones and dates." canonical="/tools/timeline" jsonLd={faqJsonLd('timeline')} />
+      <Seo {...TOOL_SEO.timeline} jsonLd={faqJsonLd('timeline')} />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <button onClick={() => navigate(homePath)} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> {user ? 'Dashboard' : 'Back'}</button>
@@ -56,8 +56,10 @@ export default function TimelineTool() {
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         <div key={cur.id} style={{ animation: 'tlIn .4s cubic-bezier(0.16,1,0.3,1) both' }}>
-          <div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)] mb-2">{step === 0 ? 'Plan your timeline' : CHEERS[Math.min(step - 1, CHEERS.length - 1)]}</div>
-          <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-white mb-8">{cur.q}</h1>
+          {step === 0
+            ? <h1 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)] mb-2">{TOOL_SEO.timeline.h1}</h1>
+            : <div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)] mb-2">{CHEERS[Math.min(step - 1, CHEERS.length - 1)]}</div>}
+          <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-white mb-8">{cur.q}</h2>
 
           {single && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -90,7 +92,7 @@ export default function TimelineTool() {
           </button>
         </div>
 
-        {step === 0 && <ToolFAQ content={TOOL_FAQ.timeline} />}
+        {step === 0 && <ToolFAQ content={TOOL_FAQ.timeline} about={TOOL_ABOUT.timeline} />}
       </div>
       <style>{`@keyframes tlIn { from { opacity:0; transform: translateY(12px) } to { opacity:1; transform:none } }`}</style>
     </div>

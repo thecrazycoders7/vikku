@@ -42,6 +42,37 @@ export const TOOL_SEO = {
     description: 'Find out how much it really costs to maintain your app or website every month - hosting, monitoring, bug fixes, security, and support. Free AI estimate.',
     canonical: '/tools/maintenance-calculator',
   },
+  // The six tools in the sitemap. `h1` is the page's main heading (the step question is an h2).
+  project_estimator: {
+    h1: 'Free software project cost estimator',
+    title: 'Software Cost Calculator: Free Project Estimator | Vikku',
+    description: 'How much will your app, website or AI product cost? Answer a few questions and get an effort range, cost drivers and risks in minutes. Free.',
+    canonical: '/tools/project-estimator',
+  },
+  business_impact: {
+    h1: 'Free business impact and ROI calculator',
+    title: 'Free ROI Calculator for Software and Automation | Vikku',
+    description: 'Is your software, automation or marketing project worth it? Build a 3-year model with ROI, NPV, payback and total cost of ownership. Free.',
+    canonical: '/tools/business-impact',
+  },
+  timeline: {
+    h1: 'Free software project timeline calculator',
+    title: 'Software Project Timeline Calculator (Free) | Vikku',
+    description: 'How long will your project take? Get a realistic phase-by-phase timeline with milestones, from discovery and design to testing and launch. Free.',
+    canonical: '/tools/timeline',
+  },
+  stack_recommender: {
+    h1: 'Free tech stack recommender',
+    title: 'Tech Stack Recommender: Which Stack Should You Use? | Vikku',
+    description: 'Not sure what to build on? Answer a few questions and get a reasoned tech stack for each layer of your project, with alternatives. Free.',
+    canonical: '/tools/stack-recommender',
+  },
+  maintenance: {
+    h1: 'Free software maintenance cost calculator',
+    title: 'Software Maintenance Cost Calculator (Free) | Vikku',
+    description: 'What does it cost to keep your app or website running? See monthly hosting, monitoring, security, fixes and support, with three support tiers. Free.',
+    canonical: '/tools/maintenance',
+  },
   ai_visibility_score: {
     title: 'AI Visibility Score - Will ChatGPT Recommend Your Business? | Vikku',
     description: 'Paste your URL and see how likely AI assistants are to find and recommend your business - plus exactly what to fix. Free instant check.',
@@ -50,6 +81,60 @@ export const TOOL_SEO = {
 }
 
 // Build FAQPage structured data from a tool's FAQ block (rich results in Google).
+// "Who it's for / what you get / how it works" and related links, shown with the FAQ on each indexed tool.
+const SERVICE_LINKS = {
+  agents: ['AI agent development', '/ai-agents'],
+  automation: ['AI business automation', '/ai-automation'],
+  integration: ['AI integration', '/ai-integration'],
+  software: ['AI software development', '/ai-software-development'],
+}
+const TOOL_LINKS = {
+  estimator: ['Project cost estimator', '/tools/project-estimator'],
+  impact: ['ROI calculator', '/tools/business-impact'],
+  timeline: ['Timeline calculator', '/tools/timeline'],
+  stack: ['Tech stack recommender', '/tools/stack-recommender'],
+  maintenance: ['Maintenance calculator', '/tools/maintenance'],
+  visibility: ['AI Visibility Score', '/tools/ai-visibility-score'],
+}
+export const TOOL_ABOUT = {
+  project_estimator: {
+    who: 'Founders and teams who have an idea for a website, app, SaaS or AI product but no budget number to plan around yet.',
+    gets: ['An effort range in hours and a likely timeline', 'An investment range with MVP, Business and Enterprise options', 'The biggest cost drivers and risks in your scope', 'A short AI summary you can share with your team'],
+    steps: ['Pick what you want to build', 'Answer questions on platforms, features, integrations, design and security', 'Read your estimate, then save it or email it to yourself'],
+    related: [TOOL_LINKS.impact, TOOL_LINKS.timeline, TOOL_LINKS.maintenance, SERVICE_LINKS.software],
+  },
+  business_impact: {
+    who: "Business owners and decision-makers deciding whether an automation, software or marketing investment is worth making.",
+    gets: ['A 3-year financial model', 'Total cost of ownership, ROI, NPV and payback period', 'The value drivers behind the numbers', 'Risk adjustment, and a live simulator to test your assumptions'],
+    steps: ['Choose the kind of investment', 'Enter your numbers, or mark the ones you are not sure about', 'Review your business case and adjust the assumptions'],
+    related: [TOOL_LINKS.estimator, TOOL_LINKS.maintenance, SERVICE_LINKS.automation, SERVICE_LINKS.agents],
+  },
+  timeline: {
+    who: 'Anyone who needs a delivery date they can commit to, whether you are planning a launch or checking a quote from a vendor.',
+    gets: ['A total timeline in weeks', 'A phase-by-phase schedule from discovery to launch', 'Dated milestones', 'What is driving the timeline up or down'],
+    steps: ['Describe what you are building and how big it is', 'Tell us about your platforms, team and designs', 'Get your schedule and see what affects it'],
+    related: [TOOL_LINKS.estimator, TOOL_LINKS.stack, TOOL_LINKS.maintenance, SERVICE_LINKS.software],
+  },
+  stack_recommender: {
+    who: 'Founders and product teams who need to choose technologies but do not want to spend weeks comparing frameworks.',
+    gets: ['A recommended stack for each layer of your product', 'The reasoning behind each choice', 'Alternatives worth considering'],
+    steps: ['Describe your product', 'Tell us about your scale and constraints', 'Get your stack, with the reasons behind it'],
+    related: [TOOL_LINKS.estimator, TOOL_LINKS.timeline, SERVICE_LINKS.software, SERVICE_LINKS.integration],
+  },
+  maintenance: {
+    who: 'Anyone budgeting beyond launch day, or checking whether a monthly support quote is fair.',
+    gets: ['A monthly cost estimate', 'A breakdown across hosting, monitoring, security, fixes and support', 'Basic, Standard and Premium support tiers'],
+    steps: ['Choose what you are maintaining', 'Tell us your user numbers, support level and AI usage', 'See your monthly cost, broken down'],
+    related: [TOOL_LINKS.estimator, TOOL_LINKS.impact, SERVICE_LINKS.software, SERVICE_LINKS.integration],
+  },
+  ai_visibility_score: {
+    who: 'Business owners with a website who want to know whether AI assistants like ChatGPT can find, understand and recommend them.',
+    gets: ['A visibility score for your site', 'A prioritised list of what is blocking you', 'Concrete fixes you can act on'],
+    steps: ['Paste your website address', 'We check how readable your site is for AI assistants', 'Read your score and the fixes'],
+    related: [SERVICE_LINKS.agents, SERVICE_LINKS.integration, TOOL_LINKS.estimator, TOOL_LINKS.impact],
+  },
+}
+
 export function faqJsonLd(toolKey) {
   const c = TOOL_FAQ[toolKey]
   if (!c) return null

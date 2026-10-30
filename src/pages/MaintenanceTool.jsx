@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, RotateCcw, Sparkles, Check } from 'lucide-react'
 import Seo from '../components/Seo'
 import ToolFAQ from '../components/tools/ToolFAQ'
-import { TOOL_FAQ, faqJsonLd } from '../lib/toolContent'
+import { TOOL_ABOUT, TOOL_FAQ, TOOL_SEO, faqJsonLd } from '../lib/toolContent'
 import { CAL_ATTRS } from '../lib/cal'
 import { useAuth } from '../contexts/AuthContext'
 import { TYPES, SCALE, SUPPORT, AI, SERVICES, estimateMaintenance, inr, inrShort } from '../lib/maintenanceModel'
@@ -43,7 +43,7 @@ export default function MaintenanceTool() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Maintenance Cost Calculator — Vikku" description="Estimate the monthly cost to run and maintain your software — hosting, support, security and more." canonical="/tools/maintenance" jsonLd={faqJsonLd('maintenance')} />
+      <Seo {...TOOL_SEO.maintenance} jsonLd={faqJsonLd('maintenance')} />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <button onClick={() => navigate(homePath)} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> {user ? 'Dashboard' : 'Back'}</button>
@@ -54,8 +54,10 @@ export default function MaintenanceTool() {
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         <div key={cur.id} style={{ animation: 'mtIn .4s cubic-bezier(0.16,1,0.3,1) both' }}>
-          <div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)] mb-2">{step === 0 ? 'Estimate your running cost' : CHEERS[Math.min(step - 1, CHEERS.length - 1)]}</div>
-          <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-white mb-8">{cur.q}</h1>
+          {step === 0
+            ? <h1 className="text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)] mb-2">{TOOL_SEO.maintenance.h1}</h1>
+            : <div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--brand-primary)] mb-2">{CHEERS[Math.min(step - 1, CHEERS.length - 1)]}</div>}
+          <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-white mb-8">{cur.q}</h2>
 
           {single && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -88,7 +90,7 @@ export default function MaintenanceTool() {
           </button>
         </div>
 
-        {step === 0 && <ToolFAQ content={TOOL_FAQ.maintenance} />}
+        {step === 0 && <ToolFAQ content={TOOL_FAQ.maintenance} about={TOOL_ABOUT.maintenance} />}
       </div>
       <style>{`@keyframes mtIn { from { opacity:0; transform: translateY(12px) } to { opacity:1; transform:none } }`}</style>
     </div>
