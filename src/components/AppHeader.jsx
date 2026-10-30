@@ -21,8 +21,8 @@ export default function AppHeader({ breadcrumbs = [], actions, badge }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <div className="sticky top-0 z-50 glass border-b border-white/[0.05] px-4 sm:px-6 py-3.5">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+    <div className="sticky top-0 z-50 bg-white border-b border-slate-200 px-3 sm:px-5">
+      <div className="h-16 flex items-center justify-between gap-4">
 
         {/* Left: back arrow (mobile) + logo + breadcrumbs */}
         <div className="flex items-center gap-1.5 min-w-0">
@@ -41,11 +41,11 @@ export default function AppHeader({ breadcrumbs = [], actions, badge }) {
           })()}
           <button
             onClick={() => navigate('/')}
-            className="flex items-center flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity"
-            style={{ width: '64px', height: '64px' }}
+            className="flex items-center gap-2 flex-shrink-0 rounded-md"
             aria-label="Vikku home"
           >
-            <img src="/logo.png" alt="Vikku" className="w-full h-full object-contain object-center" />
+            <img src="/logo-sm.png" alt="" width="28" height="28" className="h-7 w-7 object-contain" />
+            <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-slate-900">Vikku</span>
           </button>
           {breadcrumbs.map((crumb, i) => {
             const isLast = i === breadcrumbs.length - 1
