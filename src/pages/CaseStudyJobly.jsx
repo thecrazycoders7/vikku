@@ -27,8 +27,7 @@ const WORKFLOWS = [
 const SCOPE = [
   { title: '5 portals, 6 roles', desc: 'Admin, HR, Operations, Finance and Employee, plus Legal review.' },
   { title: '70+ screens', desc: 'Built to work on desktop and on a phone.' },
-  { title: '48 database tables', desc: 'People, clients, timesheets, invoices, cases and more.' },
-  { title: '400+ commits', desc: 'Shipped in small steps, shaped by real daily use.' },
+  { title: '48 database tables', desc: 'People, clients, timesheets, invoices, cases and more.', full: true },
 ]
 
 const STACK = [
@@ -160,7 +159,7 @@ export default function CaseStudyJobly() {
             In September 2026 we moved the platform onto AWS, including its production data, logins and documents.
           </p>
           <ul className="cards">
-            {SCOPE.map(s => <li key={s.title}><strong>{s.title}</strong><span>{s.desc}</span></li>)}
+            {SCOPE.map(s => <li key={s.title} className={s.full ? 'full' : undefined}><strong>{s.title}</strong><span>{s.desc}</span></li>)}
           </ul>
         </section>
 
