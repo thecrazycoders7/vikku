@@ -5,13 +5,11 @@ import SiteNav, { BookButton, WhatsAppButton } from '../components/SiteNav'
 import usePageMeta from '../hooks/usePageMeta'
 import useStudioWalk from '../hooks/useStudioWalk'
 import { trackEvent } from '../utils/analytics'
+import { AI_PRODUCTS, CLIENT_WORK, FOUNDER, STATS, TESTIMONIALS, WHY_VIKKU } from '../data/company'
 import './home3d.css'
 
 const rooms = ['Entrance', 'Lobby', 'AI lab', 'Industries', 'Process wall', 'Client lounge', "Founder's office"]
 const roomIds = ['top', 'about', 'services', 'industries', 'process', 'work', 'contact']
-
-// Founder's LinkedIn profile URL; the link under the photo stays hidden while this is empty.
-const FOUNDER_LINKEDIN = 'https://www.linkedin.com/in/harsha-vardhan-reddy-sanikommu/'
 
 // Copy to clipboard where allowed, otherwise select the text for a manual copy.
 async function copyText(text, el, button, label) {
@@ -57,9 +55,7 @@ export default function Home3D() {
                 <a className="btn btn-ghost" href="#work">Explore our work</a>
               </div>
               <ul className="trust" aria-label="Company figures">
-                <li><b>9</b>Projects delivered</li>
-                <li><b>8+</b>Clients</li>
-                <li><b>IN · US</b>Clients across India and the USA</li>
+                {STATS.map(([n, label]) => <li key={label}><b>{n}</b>{label}</li>)}
               </ul>
               <p className="hint">Scroll to walk in <b>↓</b></p>
             </div>
@@ -71,12 +67,7 @@ export default function Home3D() {
               <h2>We turn complex business problems into <em>practical AI.</em></h2>
               <p>Vikku builds AI-powered products, intelligent agents, and business automation systems that help companies work smarter, operate faster, and scale efficiently.</p>
               <ul className="cards">
-                <li><strong>AI with a business purpose</strong><span>We solve real operational problems instead of adding AI for appearances.</span></li>
-                <li><strong>Built around your workflows</strong><span>Designed around how you already work, and the systems you already use.</span></li>
-                <li><strong>Engineering beyond the demo</strong><span>Reliability, testing, security and maintainability come first.</span></li>
-                <li><strong>Human oversight where it matters</strong><span>Approvals, permissions and escalation are part of the design.</span></li>
-                <li><strong>One partner, idea to deployment</strong><span>Discovery, architecture, build, integration and ongoing support.</span></li>
-                <li><strong>Built for your business</strong><span>Shaped to your requirements, not one product forced on every client.</span></li>
+                {WHY_VIKKU.map(([title, desc]) => <li key={title}><strong>{title}</strong><span>{desc}</span></li>)}
               </ul>
               <p className="note">We work with founders building AI products, growing businesses cutting manual work, established companies integrating AI, and international teams that need an engineering partner.</p>
             </div>
@@ -141,38 +132,28 @@ export default function Home3D() {
               <h3>AI we've shipped</h3>
               <p>Vikku's own AI products, running GPT-4o in production behind rate-limited server functions. Try any of them free.</p>
               <ul className="cards">
-                <li><strong>AI Project Planner</strong><span>Describe a project in Vikku PM and the AI drafts a realistic task and milestone plan.</span><Link className="try" to="/pm">Try it</Link></li>
-                <li><strong>AI Visibility Score</strong><span>Checks whether AI assistants like ChatGPT can find and read your website, then scores it and lists the fixes.</span><Link className="try" to="/tools/ai-visibility-score">Try it</Link></li>
-                <li><strong>AI summaries with guardrails</strong><span>In the Project Estimator and Business Impact tools, our models do the maths and the AI explains the result. It is not allowed to change the numbers.</span><Link className="try" to="/tools/project-estimator">Try it</Link></li>
-                <li><strong>AI Maintenance Calculator</strong><span>Breaks down the monthly cost of running a product: hosting, monitoring, security, fixes and support.</span><Link className="try" to="/tools/maintenance">Try it</Link></li>
+                {AI_PRODUCTS.map(p => <li key={p.name}><strong>{p.name}</strong><span>{p.desc}</span><Link className="try" to={p.to}>Try it</Link></li>)}
               </ul>
               <h3>Client engineering</h3>
               <p>Software we built for real businesses. These were not AI projects; they show the engineering foundation behind our AI work.</p>
               <ul className="cards">
-                <li><strong><a href="https://www.tapbywisein.com/" target="_blank" rel="noopener noreferrer">TapByWisein</a></strong><span>NFC networking platform</span></li>
-                <li><strong><a href="https://www.unisysinfotech.com/" target="_blank" rel="noopener noreferrer">Unisys Infotech</a></strong><span>IT solutions and services</span><em>Replaced Excel and WhatsApp workflows with one central app</em></li>
-                <li><strong><a href="https://www.joblysolutions.com/" target="_blank" rel="noopener noreferrer">Jobly Solutions</a></strong><span>Recruitment and staffing</span><em>Replaced Excel and WhatsApp workflows with one central app</em><Link className="try" to="/work/jobly-solutions">Read the case study</Link></li>
-                <li><strong><a href="https://www.mediamanager4u.com/#/" target="_blank" rel="noopener noreferrer">Media Manager 4U</a></strong><span>Media management platform</span><em>Reported growth from 0 to 6 paying clients</em></li>
-                <li><strong><a href="https://www.rolexads.in/" target="_blank" rel="noopener noreferrer">Rolex Ads</a></strong><span>Advertising and marketing</span><em>Reported a 4× increase in leads</em></li>
-                <li><strong><a href="https://www.nivicollections.com/" target="_blank" rel="noopener noreferrer">Nivi Collections</a></strong><span>Fashion and collections</span></li>
+                {CLIENT_WORK.map(c => (
+                  <li key={c.name}>
+                    <strong><a href={c.url} target="_blank" rel="noopener noreferrer">{c.name}</a></strong>
+                    <span>{c.desc}</span>
+                    {c.note && <em>{c.note}</em>}
+                    {c.caseStudy && <Link className="try" to={c.caseStudy}>Read the case study</Link>}
+                  </li>
+                ))}
               </ul>
+              <p className="proof">See everything on our <Link to="/work">work page</Link>.</p>
               <div className="quotes">
-                <figure>
-                  <blockquote>“Our leads literally 4x'd within a few months of launching. Clients now come to us.”</blockquote>
-                  <figcaption><strong>Rahamath Thullaa</strong> · Founder, Rolex Ads</figcaption>
-                </figure>
-                <figure>
-                  <blockquote>“We went from zero to 6 paying clients within months of our website going live.”</blockquote>
-                  <figcaption><strong>Mohan Manjunath Reddy</strong> · Co-founder, Media Manager 4U</figcaption>
-                </figure>
-                <figure>
-                  <blockquote>“Vikku took our entire staffing workflow from WhatsApp groups and Excel sheets into a proper platform.”</blockquote>
-                  <figcaption><strong>Jagan</strong> · Director, Jobly Solutions</figcaption>
-                </figure>
-                <figure>
-                  <blockquote>“Now we're getting enquiries directly from our website every week, from people who found us on Google.”</blockquote>
-                  <figcaption><strong>Sainath</strong> · Owner, HSO CCTV</figcaption>
-                </figure>
+                {TESTIMONIALS.map(t => (
+                  <figure key={t.name}>
+                    <blockquote>“{t.quote}”</blockquote>
+                    <figcaption><strong>{t.name}</strong> · {t.role}</figcaption>
+                  </figure>
+                ))}
               </div>
             </div>
           </section>
@@ -181,20 +162,16 @@ export default function Home3D() {
             <div className="panel wide">
               <p className="eyebrow">Founder's office · About me</p>
               <div className="founder">
-                <img src="/home3d/founder-harsha.jpg" alt="Harsha Vardhan Reddy Sanikommu" width="112" height="112" loading="lazy" />
+                <img src={FOUNDER.photo} alt={FOUNDER.name} width="112" height="112" loading="lazy" />
                 <div>
-                  <strong>Harsha Vardhan Reddy Sanikommu</strong>
-                  <span>Founder, Vikku</span>
-                  {FOUNDER_LINKEDIN && <a className="founder-link" href={FOUNDER_LINKEDIN} target="_blank" rel="noopener noreferrer">LinkedIn</a>}
+                  <strong>{FOUNDER.name}</strong>
+                  <span>{FOUNDER.role}</span>
+                  <a className="founder-link" href={FOUNDER.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
                 </div>
               </div>
               <h2>Turning business challenges into <em>AI-powered solutions.</em></h2>
               <div className="bio">
-                <p>I'm Harsha Vardhan Reddy Sanikommu, Founder of Vikku — an AI agency helping businesses solve real-world problems through artificial intelligence, intelligent automation, and digital innovation.</p>
-                <p>I started Vikku with a simple belief: technology should do more than just work. It should solve meaningful problems, eliminate inefficiencies, and create opportunities for businesses to grow.</p>
-                <p>Over the past few years, I've worked on 9 real-world projects across India and the USA, collaborating directly with businesses to understand their challenges, develop practical solutions, and turn ideas into reality.</p>
-                <p>As the founder of Vikku, I focus on identifying opportunities where AI can make a genuine difference—from automating repetitive operations and building AI-powered workflows to developing intelligent applications that help businesses work smarter.</p>
-                <p>My approach combines technical expertise with business thinking. Rather than adopting technology for the sake of innovation, I believe in finding the right problems to solve and delivering solutions that create measurable value.</p>
+                {FOUNDER.bio.map(p => <p key={p}>{p}</p>)}
               </div>
               <h3>What we're building at Vikku</h3>
               <ul className="cards">
@@ -206,9 +183,7 @@ export default function Home3D() {
               </ul>
               <h3>My vision</h3>
               <div className="bio">
-                <p>I believe AI is changing how businesses operate, compete, and grow. My vision for Vikku is to help businesses move beyond experimenting with AI and start using it to solve meaningful problems.</p>
-                <p>I'm passionate about building, experimenting, and working alongside ambitious businesses to turn complex challenges into intelligent solutions.</p>
-                <p>For me, Vikku is about more than technology. It's about creating impact, building meaningful partnerships, and helping businesses unlock what's possible with AI.</p>
+                {FOUNDER.vision.map(p => <p key={p}>{p}</p>)}
               </div>
               <div className="closing">
                 <h3>Let's build something that <em>matters.</em></h3>

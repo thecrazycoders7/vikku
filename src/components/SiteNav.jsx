@@ -85,7 +85,7 @@ export default function SiteNav() {
           <nav className="nav" aria-label="Main">
             <div className="nav-links">
               <Dropdown label="Services" items={serviceLinks} open={open === 'services'} setOpen={toggle('services')} go={go} />
-              <a className="nav-link" href="/#about">About</a>
+              <a className="nav-link" href="/about">About</a>
               <Dropdown label="Free tools" items={toolLinks} open={open === 'tools'} setOpen={toggle('tools')} go={go} />
             </div>
             {auth}
@@ -100,7 +100,7 @@ export default function SiteNav() {
       {/* Outside the header: its backdrop-filter would trap a fixed child inside the 64px bar. */}
       {menuOpen && (
         <div className="mobile-menu">
-          <a className="menu-item" href="/#about" onClick={() => setMenuOpen(false)}>About</a>
+          <a className="menu-item" href="/about" onClick={() => setMenuOpen(false)}>About</a>
           <a className="menu-item" href="/#contact" onClick={() => setMenuOpen(false)}>Contact</a>
           <p className="label">Services</p>
           {serviceLinks.map(({ label, path }) => <button key={path} type="button" className="menu-item" onClick={() => go(path)}>{label}</button>)}
