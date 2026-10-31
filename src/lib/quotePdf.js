@@ -5,7 +5,7 @@ import { pdfSafe } from './pdfText.js'
 // rendered in Node for checks; downloadPdf loads jsPDF and the logo in the browser and saves the file.
 const fmtDate = (d) => new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
 
-async function logoDataUrl() {
+export async function logoDataUrl() {
   try {
     const blob = await (await fetch('/logo-sm.png')).blob()
     return await new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(blob) })

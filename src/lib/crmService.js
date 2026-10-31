@@ -98,6 +98,19 @@ export const createDocument = async (fields) => check(await supabase.from('crm_d
 export const updateDocument = async (id, fields) => check(await supabase.from('crm_documents').update(fields).eq('id', id).select().single())
 export const deleteDocument = async (id) => check(await supabase.from('crm_documents').delete().eq('id', id))
 
+// Documents made from templates (/admin/documents), plus the business details and edited wording they use.
+export const listClientDocs = async ({ clientId } = {}) => check(await list('crm_client_docs', 'updated_at', { client_id: clientId }))
+export const getClientDoc = async (id) => check(await supabase.from('crm_client_docs').select('*').eq('id', id).single())
+export const createClientDoc = async (fields) => check(await supabase.from('crm_client_docs').insert(fields).select().single())
+export const updateClientDoc = async (id, fields) => check(await supabase.from('crm_client_docs').update(fields).eq('id', id).select().single())
+export const deleteClientDoc = async (id) => check(await supabase.from('crm_client_docs').delete().eq('id', id))
+export async function getDocSettings() {
+  const rows = check(await supabase.from('crm_doc_settings').select('key, value'))
+  return Object.fromEntries(rows.map(r => [r.key, r.value]))
+}
+export const setDocSetting = async (key, value) => check(await supabase.from('crm_doc_settings').upsert({ key, value }))
+export const deleteDocSetting = async (key) => check(await supabase.from('crm_doc_settings').delete().eq('key', key))
+
 // Latest CRM events across all leads and clients (admin home "Recent activity").
 export const listRecentActivity = async (limit = 12) => check(await supabase.from('crm_activity').select('*').order('created_at', { ascending: false }).limit(limit))
 
