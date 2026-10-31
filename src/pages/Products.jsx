@@ -4,10 +4,11 @@ import Footer from '../components/Footer'
 import Seo from '../components/Seo'
 import './home3d.css'
 
-const DESCRIPTION = 'Software built and run by Vikku Labs, including Vikku, an AI phone receptionist for hospitals, and Vikku PM, a project management tool.'
+const DESCRIPTION = 'Software built and run by Vikku Labs, including Vikku, an AI phone receptionist for hospitals, Harsha Farms, a dairy delivery app, and Vikku PM, a project management tool.'
 
 const PRODUCTS = [
   { name: 'Vikku AI Receptionist', status: 'In testing, no live hospital yet', desc: 'An AI phone receptionist for hospitals. It answers calls in Telugu, English and Hindi, books patients into the doctor\'s real queue, and hands emergencies to staff.', to: '/products/hospital-receptionist', cta: 'View product' },
+  { name: 'Harsha Farms', status: 'Pre-launch, runs on Android with sample data', desc: 'A dairy subscription and delivery app that runs a daily milk business from one place, for customers, delivery partners, vendors and administrators.', to: '/products/harsha-farms', cta: 'Read the case study' },
   { name: 'Vikku PM', status: 'Live', desc: 'Project management for founders and small teams. Describe a project and the AI drafts a realistic task and milestone plan.', to: '/pm', cta: 'Open Vikku PM' },
 ]
 
@@ -36,8 +37,8 @@ export default function Products() {
 
         <section className="svc-section">
           <ul className="cards">
-            {PRODUCTS.map(p => (
-              <li key={p.name}>
+            {PRODUCTS.map((p, i) => (
+              <li key={p.name} className={i === PRODUCTS.length - 1 ? 'full' : ''}>
                 <strong>{p.name}</strong>
                 <span>{p.desc}</span>
                 <em>{p.status}</em>

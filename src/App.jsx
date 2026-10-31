@@ -14,6 +14,7 @@ const About                 = lazy(() => import('./pages/About'))
 const Work                  = lazy(() => import('./pages/Work'))
 const Products              = lazy(() => import('./pages/Products'))
 const ProductReceptionist   = lazy(() => import('./pages/ProductReceptionist'))
+const CaseStudyHarshaFarms  = lazy(() => import('./pages/CaseStudyHarshaFarms'))
 const Login                 = lazy(() => import('./pages/Login'))
 const Signup                = lazy(() => import('./pages/Signup'))
 const ForgotPassword        = lazy(() => import('./pages/ForgotPassword'))
@@ -102,6 +103,7 @@ export default function App() {
               <Route path="/work"                    element={<Work />} />
               <Route path="/products"                element={<Products />} />
               <Route path="/products/hospital-receptionist" element={<ProductReceptionist />} />
+              <Route path="/products/harsha-farms"   element={<CaseStudyHarshaFarms />} />
               <Route path="/work/jobly-solutions"    element={<CaseStudyJobly />} />
               <Route path="/login"                   element={<Login />} />
               <Route path="/signup"                  element={<Signup />} />
