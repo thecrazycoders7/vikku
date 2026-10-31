@@ -84,6 +84,7 @@ export default function SiteNav() {
           <a className="logo" href="/#top" onClick={() => setMenuOpen(false)}><img className="logo-mark" src="/logo.png" alt="" />Vikku</a>
           <nav className="nav" aria-label="Main">
             <div className="nav-links">
+              <a className="nav-link" href="/products">Products</a>
               <Dropdown label="Services" items={serviceLinks} open={open === 'services'} setOpen={toggle('services')} go={go} />
               <a className="nav-link" href="/about">About</a>
               <Dropdown label="Free tools" items={toolLinks} open={open === 'tools'} setOpen={toggle('tools')} go={go} />
@@ -100,6 +101,7 @@ export default function SiteNav() {
       {/* Outside the header: its backdrop-filter would trap a fixed child inside the 64px bar. */}
       {menuOpen && (
         <div className="mobile-menu">
+          <a className="menu-item" href="/products" onClick={() => setMenuOpen(false)}>Products</a>
           <a className="menu-item" href="/about" onClick={() => setMenuOpen(false)}>About</a>
           <a className="menu-item" href="/#contact" onClick={() => setMenuOpen(false)}>Contact</a>
           <p className="label">Services</p>

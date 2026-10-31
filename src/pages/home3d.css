@@ -201,6 +201,7 @@
 .v3d .cs-panel h4{margin:24px 0 8px;font-size:15px;font-weight:700}
 .v3d .cs-shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:20px}
 .v3d .cs-shot{margin:0;min-width:0}
+.v3d .cards + .cs-shot{margin-top:20px}
 .v3d .cs-shot a{display:block;border-radius:8px}
 .v3d .cs-shot img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px}
 .v3d .cs-shot figcaption{margin-top:8px;font-size:13px;color:var(--muted)}
