@@ -201,13 +201,16 @@
 .v3d .cs-panel h4{margin:24px 0 8px;font-size:15px;font-weight:700}
 .v3d .cs-shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:20px}
 .v3d .cs-shot{margin:0;min-width:0}
+.v3d .cards + .cs-shot,.v3d .lead + .cs-shot{margin-top:20px}
+.v3d .cs-phones{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:20px}
+.v3d .cs-shot + .cards{margin-top:20px}
 .v3d .cs-shot a{display:block;border-radius:8px}
 .v3d .cs-shot img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:8px}
 .v3d .cs-shot figcaption{margin-top:8px;font-size:13px;color:var(--muted)}
 .v3d .cs-week{list-style:none;counter-reset:w;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 24px}
 .v3d .cs-week li{counter-increment:w;display:flex;gap:10px;font-size:15px;color:var(--muted)}
 .v3d .cs-week li::before{content:counter(w);flex:none;font-family:var(--mono);font-size:13px;line-height:1.7;color:var(--orange-deep)}
-@media (max-width:720px){.v3d .cs-shots,.v3d .cs-week{grid-template-columns:1fr}}
+@media (max-width:720px){.v3d .cs-shots,.v3d .cs-week{grid-template-columns:1fr}.v3d .cs-phones{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .v3d .svc-cta{display:flex;flex-direction:column;gap:14px;padding:32px;border-radius:8px;background:var(--orange-soft)}
 .v3d .svc-cta h2{margin:0}
 .v3d .svc-cta p{margin:0;max-width:60ch;color:var(--muted)}

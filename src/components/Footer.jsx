@@ -7,6 +7,7 @@ import { servicePages } from '../data/servicePages'
 const company = [
   { label: 'About',    href: '/about' },
   { label: 'Services', href: '/#services' },
+  { label: 'Products', href: '/products' },
   { label: 'Work',     href: '/work' },
   { label: 'Contact',  cal: true },
 ]
