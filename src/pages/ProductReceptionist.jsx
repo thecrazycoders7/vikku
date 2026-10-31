@@ -6,6 +6,7 @@ import './home3d.css'
 
 const SITE = 'https://www.vikku.in'
 const PATH = '/products/hospital-receptionist'
+const IMG = '/products/hospital-receptionist'
 const DESCRIPTION = 'Vikku is an AI phone receptionist for hospitals in Andhra Pradesh and Telangana. It answers calls in Telugu, English and Hindi, books patients into the doctor\'s queue and hands emergencies to staff.'
 
 const AT_A_GLANCE = [
@@ -85,7 +86,7 @@ const JSON_LD = {
 export default function ProductReceptionist() {
   return (
     <div className="v3d svc">
-      <Seo title="AI Phone Receptionist for Hospitals | Vikku Labs" description={DESCRIPTION} canonical={PATH} jsonLd={JSON_LD} />
+      <Seo title="AI Phone Receptionist for Hospitals | Vikku Labs" description={DESCRIPTION} canonical={PATH} image={`${SITE}${IMG}/caller-corridor.jpg`} jsonLd={JSON_LD} />
       <SiteNav />
       <WhatsAppButton />
 
@@ -103,6 +104,10 @@ export default function ProductReceptionist() {
         </header>
 
         <section className="svc-section">
+          <figure className="cs-shot">
+            <img src={`${IMG}/caller-corridor.jpg`} alt="A man on the phone in a hospital corridor" width="1200" height="630" />
+            <figcaption>Illustrative images throughout this page.</figcaption>
+          </figure>
           <ul className="cards">
             {AT_A_GLANCE.map(f => <li key={f.label}><span>{f.label}</span><strong>{f.value}</strong></li>)}
           </ul>
@@ -111,6 +116,9 @@ export default function ProductReceptionist() {
         <section className="svc-section">
           <h2>The <em>problem</em></h2>
           <p className="lead">A hospital front desk does two jobs at once: it serves the patients in front of it and answers the phone. When the desk is busy or closed, the caller gets no answer and may go elsewhere. Generic voice bots do not fit this setting, for four reasons.</p>
+          <figure className="cs-shot">
+            <img src={`${IMG}/night-desk.webp`} alt="An empty hospital front desk at night, with a phone on the counter" width="1400" height="788" loading="lazy" />
+          </figure>
           <ul className="cards">
             {PROBLEMS.map(p => <li key={p.title}><strong>{p.title}</strong><span>{p.desc}</span></li>)}
           </ul>
@@ -122,10 +130,16 @@ export default function ProductReceptionist() {
           <ul className="cards">
             {FEATURES.map(f => <li key={f.title}><strong>{f.title}</strong><span>{f.desc}</span></li>)}
           </ul>
-          <figure className="cs-shot">
-            <img src="/products/hospital-receptionist/landing.webp" alt="Vikku landing page with the headline Every patient call answered" width="1600" height="775" loading="lazy" />
-            <figcaption>The Vikku landing page.</figcaption>
-          </figure>
+          <div className="cs-shots">
+            <figure className="cs-shot">
+              <img src={`${IMG}/patient-calling.webp`} alt="A woman at home talking on her phone" width="720" height="900" loading="lazy" />
+              <figcaption>For patients: a phone agent that answers in their language.</figcaption>
+            </figure>
+            <figure className="cs-shot">
+              <img src={`${IMG}/front-desk.webp`} alt="A hospital receptionist smiling while talking on the phone" width="720" height="900" loading="lazy" />
+              <figcaption>For staff: calls and bookings on one dashboard.</figcaption>
+            </figure>
+          </div>
         </section>
 
         <section className="svc-section" id="how-a-call-works">
