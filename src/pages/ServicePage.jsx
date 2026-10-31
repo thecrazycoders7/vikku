@@ -19,7 +19,7 @@ function structuredData(page) {
         serviceType: page.eyebrow,
         description: page.description,
         url,
-        provider: { '@type': 'Organization', name: 'Vikku', url: SITE, logo: `${SITE}/logo.png` },
+        provider: { '@type': 'Organization', name: 'Vikku Labs', url: SITE, logo: `${SITE}/logo.png` },
         areaServed: ['India', 'United States', 'United Kingdom', 'Middle East'],
       },
       {

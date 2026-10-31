@@ -37,7 +37,7 @@ export default function usePageMeta({ title, description, url }) {
     document.documentElement.setAttribute('data-seo-ready', 'true')
 
     return () => {
-      document.title = 'Vikku | AI Agency for AI Agents, Business Automation & AI Software'
+      document.title = 'Vikku Labs | AI Agency for AI Agents, Business Automation & AI Software'
       if (canon && prevCanon != null) canon.setAttribute('href', prevCanon)
     }
   }, [title, description, url])

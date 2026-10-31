@@ -35,7 +35,7 @@ export default function ToolResultActions({ shareId, tool, navigate, result, tit
 
   const shareUrl = shareId ? `${window.location.origin}/r/${shareId}` : ''
   const cross = CROSS_TOOL[tool]
-  const waText = encodeURIComponent(`My ${TOOL_LABELS[tool] || 'result'} from Vikku: ${shareUrl}`)
+  const waText = encodeURIComponent(`My ${TOOL_LABELS[tool] || 'result'} from Vikku Labs: ${shareUrl}`)
   const waUrl = `https://wa.me/?text=${waText}`
 
   const copyLink = async () => {
@@ -128,11 +128,11 @@ export default function ToolResultActions({ shareId, tool, navigate, result, tit
       {shareId && (
         <div className="mt-5 pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold text-white/70">Want an exact quote from Vikku?</p>
+            <p className="text-xs font-semibold text-white/70">Want an exact quote from Vikku Labs?</p>
             <p className="text-xs text-white/30 mt-0.5">We build exactly this kind of project. Free 30-min scoping call.</p>
           </div>
           <a
-            href={`mailto:connect@vikku.in?subject=Project%20Quote%20Request&body=Hi%20Vikku%20team%2C%0A%0AI%20used%20your%20${encodeURIComponent(TOOL_LABELS[tool] || 'AI tool')}%20and%20would%20like%20an%20exact%20quote.%0A%0AEstimate%20link%3A%20${encodeURIComponent(shareId ? `${window.location.origin}/r/${shareId}` : '')}`}
+            href={`mailto:connect@vikku.in?subject=Project%20Quote%20Request&body=Hi%20Vikku%20Labs%20team%2C%0A%0AI%20used%20your%20${encodeURIComponent(TOOL_LABELS[tool] || 'AI tool')}%20and%20would%20like%20an%20exact%20quote.%0A%0AEstimate%20link%3A%20${encodeURIComponent(shareId ? `${window.location.origin}/r/${shareId}` : '')}`}
             className="flex-shrink-0 flex items-center gap-1.5 bg-white text-black text-xs font-semibold px-4 py-2 rounded-xl hover:bg-white/90 transition-colors"
           >
             Get a quote <ArrowRight size={12} />

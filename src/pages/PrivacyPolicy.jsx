@@ -80,7 +80,7 @@ To exercise any of these rights, email us at connect@vikku.in with the subject l
     title: '10. Contact Us',
     body: `If you have any questions about this Privacy Policy or our privacy practices, please contact us:
 
-Vikku
+Vikku Labs
 Email: connect@vikku.in
 Website: https://vikku.in`,
   },
@@ -88,8 +88,8 @@ Website: https://vikku.in`,
 
 export default function PrivacyPolicy() {
   usePageMeta({
-    title:       'Privacy Policy - Vikku',
-    description: 'How Vikku collects, uses, stores, and protects your personal data.',
+    title:       'Privacy Policy - Vikku Labs',
+    description: 'How Vikku Labs collects, uses, stores, and protects your personal data.',
     url:         'https://vikku.in/privacy',
   })
 
@@ -114,7 +114,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <p className="text-white/60 text-sm leading-relaxed mb-10">
-          Vikku ("we", "us", or "our") operates vikku.in. This Privacy Policy explains how we collect,
+          Vikku Labs ("we", "us", or "our") operates vikku.in. This Privacy Policy explains how we collect,
           use, and protect your personal information when you use our website and services. By using
           our services, you agree to the collection and use of information in accordance with this policy.
         </p>

@@ -5,7 +5,7 @@ import Seo from '../components/Seo'
 import { AI_PRODUCTS, CLIENT_WORK, TESTIMONIALS } from '../data/company'
 import './home3d.css'
 
-const DESCRIPTION = "Vikku's work: AI products running in production and software built for businesses in India and the USA, with a full case study and client testimonials."
+const DESCRIPTION = "Vikku Labs' work: AI products running in production and software built for businesses in India and the USA, with a full case study and client testimonials."
 
 const JSON_LD = {
   '@context': 'https://schema.org',
@@ -18,7 +18,7 @@ const JSON_LD = {
 export default function Work() {
   return (
     <div className="v3d svc">
-      <Seo title="Our Work: AI Products and Client Projects | Vikku" description={DESCRIPTION} canonical="/work" jsonLd={JSON_LD} />
+      <Seo title="Our Work: AI Products and Client Projects | Vikku Labs" description={DESCRIPTION} canonical="/work" jsonLd={JSON_LD} />
       <SiteNav />
       <WhatsAppButton />
 
@@ -40,7 +40,7 @@ export default function Work() {
 
         <section className="svc-section">
           <h2>AI we've <em>shipped</em></h2>
-          <p className="lead">Vikku's own AI products, running GPT-4o in production behind rate-limited server functions. Try any of them free.</p>
+          <p className="lead">Vikku Labs' own AI products, running GPT-4o in production behind rate-limited server functions. Try any of them free.</p>
           <ul className="cards">
             {AI_PRODUCTS.map(p => <li key={p.name}><strong>{p.name}</strong><span>{p.desc}</span><Link className="try" to={p.to}>Try it</Link></li>)}
           </ul>

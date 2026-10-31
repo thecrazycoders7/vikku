@@ -142,7 +142,7 @@ function Shell({ children, navigate, onBack, home = '/' }) {
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05] px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <button onClick={() => (onBack ? onBack() : navigate(home))} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> {!onBack && home !== '/' ? 'Dashboard' : 'Back'}</button>
-          <span className="text-xs text-white/50">Vikku Business Impact</span>
+          <span className="text-xs text-white/50">Vikku Labs Business Impact</span>
         </div>
       </div>
       <div className="max-w-3xl mx-auto px-6 py-10">{children}</div>
@@ -178,7 +178,7 @@ function Result({ navigate, category, model, values, setValues, fields, opts, se
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Your Business Case — Vikku" description="Your financial model." canonical="/tools/business-impact" />
+      <Seo title="Your Business Case — Vikku Labs" description="Your financial model." canonical="/tools/business-impact" />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05] px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button onClick={onEdit} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> Edit inputs</button>
@@ -331,7 +331,7 @@ function Result({ navigate, category, model, values, setValues, fields, opts, se
           <p className="text-white/60 text-sm mb-6 max-w-md mx-auto">Book a free call and we’ll pressure-test these numbers, propose a pilot, and turn this into a CFO-ready business case.</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button {...CAL_ATTRS} className="btn-primary active:scale-95 px-7 py-3 rounded-xl text-sm">Get a validated business case</button>
-            <button {...CAL_ATTRS} className="px-7 py-3 rounded-xl text-sm border border-white/15 text-white hover:bg-white/5 transition-colors">Talk to a Vikku Expert</button>
+            <button {...CAL_ATTRS} className="px-7 py-3 rounded-xl text-sm border border-white/15 text-white hover:bg-white/5 transition-colors">Talk to a Vikku Labs Expert</button>
           </div>
         </div>
       </div>

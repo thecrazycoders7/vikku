@@ -12,7 +12,7 @@ import '../pages/home3d.css'
 
 // WhatsApp business number in international format, digits only.
 const WHATSAPP_NUMBER = '919393979892'
-const WHATSAPP_TEXT = "Hi Vikku, I'd like to talk about automating part of my business."
+const WHATSAPP_TEXT = "Hi Vikku Labs, I'd like to talk about automating part of my business."
 
 const serviceLinks = servicePages.map(({ slug, navLabel }) => ({ label: navLabel, path: `/${slug}` }))
 
@@ -29,7 +29,7 @@ export function BookButton({ className = '', short = 'Book a call', location }) 
 export function WhatsAppButton() {
   return (
     <a className="wa" href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_TEXT)}`} target="_blank" rel="noopener noreferrer"
-      aria-label="Chat with Vikku on WhatsApp" onClick={() => trackEvent('whatsapp_click', { event_category: 'conversion' })}>
+      aria-label="Chat with Vikku Labs on WhatsApp" onClick={() => trackEvent('whatsapp_click', { event_category: 'conversion' })}>
       <MessageCircle size={20} /><span>Chat on WhatsApp</span>
     </a>
   )
@@ -81,7 +81,7 @@ export default function SiteNav() {
     <>
       <header className="top">
         <div className="top-inner">
-          <a className="logo" href="/#top" onClick={() => setMenuOpen(false)}><img className="logo-mark" src="/logo.png" alt="" />Vikku</a>
+          <a className="logo" href="/#top" onClick={() => setMenuOpen(false)}><img className="logo-mark" src="/logo.png" alt="" />Vikku Labs</a>
           <nav className="nav" aria-label="Main">
             <div className="nav-links">
               <Dropdown label="Services" items={serviceLinks} open={open === 'services'} setOpen={toggle('services')} go={go} />

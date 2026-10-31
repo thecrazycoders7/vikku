@@ -23,7 +23,7 @@ export default function NotificationPreferences() {
   const [prefs, setPrefs] = useState(null)
   const [status, setStatus] = useState('idle') // idle | saving | saved | error
 
-  usePageMeta({ title: 'Email Preferences - Vikku', description: 'Control which emails Vikku sends you.', url: 'https://vikku.in/dashboard/notifications' })
+  usePageMeta({ title: 'Email Preferences - Vikku Labs', description: 'Control which emails Vikku Labs sends you.', url: 'https://vikku.in/dashboard/notifications' })
 
   useEffect(() => { if (!loading && !user) navigate('/login') }, [user, loading, navigate])
   useEffect(() => { if (user) getEmailPrefs(user.id).then(setPrefs) }, [user])
@@ -47,7 +47,7 @@ export default function NotificationPreferences() {
         <button onClick={() => navigate('/dashboard')} className="inline-flex items-center gap-2 text-white/40 hover:text-white text-sm mb-8"><ArrowLeft size={15} /> Back to Dashboard</button>
 
         <h1 className="font-display font-extrabold text-3xl text-white mb-2">Email preferences</h1>
-        <p className="text-white/50 text-sm mb-8">Choose what Vikku emails you about. Account and billing receipts are always sent.</p>
+        <p className="text-white/50 text-sm mb-8">Choose what Vikku Labs emails you about. Account and billing receipts are always sent.</p>
 
         <div className="glass rounded-2xl divide-y divide-white/[0.06]">
           {PREF_CATEGORIES.map((c) => (

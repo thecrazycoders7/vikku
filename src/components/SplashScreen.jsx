@@ -48,7 +48,7 @@ export default function SplashScreen() {
           className="font-display font-extrabold tracking-tight"
           style={{ fontSize: 'clamp(2.2rem, 7vw, 3.75rem)', color: 'var(--text)' }}
         >
-          Vikku
+          Vikku Labs
         </span>
       </div>
       <style>{`

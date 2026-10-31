@@ -7,7 +7,7 @@ export default function NotFound() {
   const navigate = useNavigate()
 
   usePageMeta({
-    title:       'Page Not Found - Vikku',
+    title:       'Page Not Found - Vikku Labs',
     description: 'The page you are looking for does not exist.',
     url:         'https://vikku.in/',
   })

@@ -29,8 +29,8 @@ export default function Login() {
   const navigate = useNavigate()
 
   usePageMeta({
-    title:       'Log In - Vikku',
-    description: 'Log in to your Vikku account to access your dashboard, project management tools, and saved results.',
+    title:       'Log In - Vikku Labs',
+    description: 'Log in to your Vikku Labs account to access your dashboard, project management tools, and saved results.',
     url:         'https://vikku.in/login',
   })
 

@@ -166,8 +166,9 @@ export async function createDesk({ canvas, loadingEl, story, onReady }) {
   sheet(.44, .06, tex(1024, 140, (c, w, h) => {
     c.fillStyle = '#24201c'; c.fillRect(0, 0, w, h);
     if (logo.naturalWidth) c.drawImage(logo, 40, 15, 110, 110);
-    c.fillStyle = '#f4f1ed'; font(c, 700, 64, F.d); c.fillText('VIKKU', 175, h / 2 + 3);
-    c.fillStyle = C.orange; font(c, 500, 40, F.m); c.fillText('AI TOOLS', 450, h / 2 + 4);
+    c.fillStyle = '#f4f1ed'; font(c, 700, 64, F.d); c.fillText('VIKKU LABS', 175, h / 2 + 3);
+    const end = 175 + c.measureText('VIKKU LABS').width;
+    c.fillStyle = C.orange; font(c, 500, 40, F.m); c.fillText('AI TOOLS', end + 40, h / 2 + 4);
   }), plate).position.set(0, .037, .017);
   plate.children[1].rotation.x = -.25;
 

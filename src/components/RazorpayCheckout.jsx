@@ -52,7 +52,7 @@ const RazorpayCheckout = ({ amount, currency = 'INR', onSuccess, onFailure }) =>
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: orderData.amount,
         currency: orderData.currency,
-        name: 'Vikku Agency',
+        name: 'Vikku Labs',
         description: 'Payment for services',
         order_id: orderData.order_id,
         handler: async function (response) {

@@ -21,7 +21,7 @@ export function quotePdf(jsPDF, doc, party, logo) {
   const money = (n) => pdfMoney(n, doc.currency)
 
   if (logo) pdf.addImage(logo, 'PNG', M, 40, 36, 36)
-  pdf.setFont('helvetica', 'bold').setFontSize(18).setTextColor(...ink).text('Vikku', M + (logo ? 46 : 0), 64)
+  pdf.setFont('helvetica', 'bold').setFontSize(18).setTextColor(...ink).text('Vikku Labs', M + (logo ? 46 : 0), 64)
   pdf.setFont('helvetica', 'normal').setFontSize(9).setTextColor(...muted)
   ;['www.vikku.in', 'connect@vikku.in', '+91 93939 79892'].forEach((l, i) => pdf.text(l, W - M, 48 + i * 12, { align: 'right' }))
 
@@ -84,7 +84,7 @@ export function quotePdf(jsPDF, doc, party, logo) {
   const pages = pdf.getNumberOfPages()
   for (let i = 1; i <= pages; i++) {
     pdf.setPage(i).setFont('helvetica', 'normal').setFontSize(8).setTextColor(...muted)
-    pdf.text('Thank you for considering Vikku.', M, H - 30)
+    pdf.text('Thank you for considering Vikku Labs.', M, H - 30)
     pdf.text(`${i} / ${pages}`, W - M, H - 30, { align: 'right' })
   }
   return pdf
