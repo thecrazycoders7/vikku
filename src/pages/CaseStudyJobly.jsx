@@ -8,7 +8,7 @@ import './home3d.css'
 
 const SITE = 'https://www.vikku.in'
 const PATH = '/work/jobly-solutions'
-const DESCRIPTION = 'How Vikku moved Jobly Solutions, a US staffing company, from WhatsApp groups and Excel sheets to one platform for HR, timesheets, invoicing and immigration cases.'
+const DESCRIPTION = 'How Vikku Labs moved Jobly Solutions, a US staffing company, from WhatsApp groups and Excel sheets to one platform for HR, timesheets, invoicing and immigration cases.'
 
 const AT_A_GLANCE = [
   { label: 'Client', value: 'Jobly Solutions' },
@@ -42,8 +42,8 @@ const JSON_LD = {
   headline: 'Jobly Solutions: from WhatsApp and Excel to one staffing platform',
   description: DESCRIPTION,
   url: `${SITE}${PATH}`,
-  author: { '@type': 'Organization', name: 'Vikku', url: SITE },
-  publisher: { '@type': 'Organization', name: 'Vikku', url: SITE, logo: `${SITE}/logo.png` },
+  author: { '@type': 'Organization', name: 'Vikku Labs', url: SITE },
+  publisher: { '@type': 'Organization', name: 'Vikku Labs', url: SITE, logo: `${SITE}/logo.png` },
 }
 
 // One portal at a time. All panels stay in the page (hidden) so search engines and the prerender see them.
@@ -97,7 +97,7 @@ function PortalTabs() {
 export default function CaseStudyJobly() {
   return (
     <div className="v3d svc">
-      <Seo title="Jobly Solutions Case Study | Vikku" description={DESCRIPTION} canonical={PATH} jsonLd={JSON_LD} />
+      <Seo title="Jobly Solutions Case Study | Vikku Labs" description={DESCRIPTION} canonical={PATH} jsonLd={JSON_LD} />
       <SiteNav />
       <WhatsAppButton />
 
@@ -108,7 +108,7 @@ export default function CaseStudyJobly() {
           <h1>From WhatsApp and Excel to <em>one staffing platform</em></h1>
           <p className="lead">
             <a href="https://www.joblysolutions.com/" target="_blank" rel="noopener noreferrer">Jobly Solutions</a> is a US staffing company.
-            Vikku moved its day-to-day operations out of group chats and spreadsheets and into a single platform that covers the whole
+            Vikku Labs moved its day-to-day operations out of group chats and spreadsheets and into a single platform that covers the whole
             consultant lifecycle, from onboarding to the paid invoice.
           </p>
           <div className="ctas">

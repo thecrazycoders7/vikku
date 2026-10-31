@@ -162,7 +162,7 @@ export default function AdminLayout({ children, title }) {
           </button>
           <Link to="/admin" className="flex items-center gap-2 rounded-md">
             <img src="/logo-sm.png" alt="" width="28" height="28" className="h-7 w-7 object-contain" />
-            <span className="text-[15px] font-semibold tracking-tight text-slate-900">Vikku</span>
+            <span className="text-[15px] font-semibold tracking-tight text-slate-900">Vikku Labs</span>
           </Link>
           <span aria-hidden="true" className="hidden sm:block h-5 w-px bg-slate-200" />
           <span className="hidden sm:inline text-[13px] font-medium text-slate-500">Admin</span>
@@ -214,7 +214,7 @@ export default function AdminLayout({ children, title }) {
             <div className="absolute inset-0 bg-slate-900/30" onClick={() => setDrawer(false)} />
             <div className="absolute inset-y-0 left-0 w-72 max-w-[85vw] overflow-y-auto bg-white px-3 pb-6 shadow-xl">
               <div className="flex h-16 items-center justify-between px-2">
-                <span className="text-[15px] font-semibold text-slate-900">Vikku Admin</span>
+                <span className="text-[15px] font-semibold text-slate-900">Vikku Labs Admin</span>
                 <button type="button" onClick={() => setDrawer(false)} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100" aria-label="Close navigation"><X size={18} /></button>
               </div>
               <SideNav sections={navSections} onNavigate={() => setDrawer(false)} />

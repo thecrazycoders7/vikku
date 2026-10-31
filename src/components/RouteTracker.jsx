@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { trackPageView } from '../utils/analytics'
 
 const pageTitles = {
-  '/': 'Vikku - Software & Tech Agency',
+  '/': 'Vikku Labs - Software & Tech Agency',
 }
 
 export default function RouteTracker() {

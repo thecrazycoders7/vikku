@@ -21,8 +21,8 @@ export default function Signup() {
   const refCode = searchParams.get('ref')
 
   usePageMeta({
-    title:       'Sign Up - Vikku',
-    description: 'Create a free Vikku account to save tool results, track projects, and access your dashboard.',
+    title:       'Sign Up - Vikku Labs',
+    description: 'Create a free Vikku Labs account to save tool results, track projects, and access your dashboard.',
     url:         'https://vikku.in/signup',
   })
 
@@ -95,7 +95,7 @@ export default function Signup() {
 
             <div className="glass rounded-xl p-4 mb-6 text-left space-y-3">
               {[
-                'Open the email from Vikku',
+                'Open the email from Vikku Labs',
                 'Click the "Confirm your account" button',
                 "You'll be signed in automatically",
               ].map((step, i) => (

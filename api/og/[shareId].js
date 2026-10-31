@@ -23,37 +23,37 @@ function buildOg(tool, r) {
   switch (tool) {
     case 'cost_estimator':
       return {
-        title: `Cost Estimate: ${sym}${lakh(r.totalCostMin)}–${sym}${lakh(r.totalCostMax)} | Vikku`,
-        description: `AI project estimate · Timeline: ${r.timeline || 'TBD'} · Complexity: ${r.complexity || 'custom'}. See full breakdown on Vikku.`,
+        title: `Cost Estimate: ${sym}${lakh(r.totalCostMin)}–${sym}${lakh(r.totalCostMax)} | Vikku Labs`,
+        description: `AI project estimate · Timeline: ${r.timeline || 'TBD'} · Complexity: ${r.complexity || 'custom'}. See full breakdown on Vikku Labs.`,
       }
     case 'roi_calculator':
       return {
-        title: `ROI ${r.roiPercent}% · Losing ${sym}${lakh(r.monthlyRevenueLost)}/mo without a website | Vikku`,
+        title: `ROI ${r.roiPercent}% · Losing ${sym}${lakh(r.monthlyRevenueLost)}/mo without a website | Vikku Labs`,
         description: `${sym}${lakh(r.annualRevenueLost)} lost per year. Payback period: ${r.paybackPeriodMonths} months. See full ROI analysis.`,
       }
     case 'timeline_calculator': {
       const weeks = r.totalWeeksMin != null ? `${r.totalWeeksMin}–${r.totalWeeksMax} weeks` : (r.totalDuration || 'custom timeline')
       return {
-        title: `Project Timeline: ${weeks} | Vikku`,
-        description: `AI timeline estimate with ${r.phases?.length || 0} phases. See phase breakdown and milestones on Vikku.`,
+        title: `Project Timeline: ${weeks} | Vikku Labs`,
+        description: `AI timeline estimate with ${r.phases?.length || 0} phases. See phase breakdown and milestones on Vikku Labs.`,
       }
     }
     case 'tech_recommender': {
       const stack = r.recommendations?.[0]?.name || r.stack?.frontend || 'Custom Stack'
       return {
-        title: `Tech Stack: ${stack} recommended | Vikku`,
-        description: `AI-recommended tech stack for your project. See full stack breakdown and reasoning on Vikku.`,
+        title: `Tech Stack: ${stack} recommended | Vikku Labs`,
+        description: `AI-recommended tech stack for your project. See full stack breakdown and reasoning on Vikku Labs.`,
       }
     }
     case 'maintenance_calculator':
       return {
-        title: `Maintenance Cost: ${sym}${lakh(r.monthlyCostMin)}–${sym}${lakh(r.monthlyCostMax)}/mo | Vikku`,
+        title: `Maintenance Cost: ${sym}${lakh(r.monthlyCostMin)}–${sym}${lakh(r.monthlyCostMax)}/mo | Vikku Labs`,
         description: `Ongoing maintenance estimate. Annual: ${sym}${lakh(r.annualCostMin)}–${sym}${lakh(r.annualCostMax)}. See full breakdown.`,
       }
     default:
       return {
-        title: `AI Project Estimate | Vikku`,
-        description: `Free AI-powered project planning. See this estimate on Vikku.`,
+        title: `AI Project Estimate | Vikku Labs`,
+        description: `Free AI-powered project planning. See this estimate on Vikku Labs.`,
       }
   }
 }
@@ -62,8 +62,8 @@ export default async function handler(req, res) {
   const { shareId } = req.query
   if (!shareId) return res.redirect(302, '/')
 
-  let title = 'AI Project Estimate | Vikku'
-  let description = 'Free AI-powered project planning tools. See this estimate on Vikku.'
+  let title = 'AI Project Estimate | Vikku Labs'
+  let description = 'Free AI-powered project planning tools. See this estimate on Vikku Labs.'
 
   try {
     const supabase = createClient(
@@ -101,7 +101,7 @@ export default async function handler(req, res) {
   <meta property="og:description" content="${esc(description)}">
   <meta property="og:url" content="${esc(pageUrl)}">
   <meta property="og:image" content="${esc(ogImage)}">
-  <meta property="og:site_name" content="Vikku">
+  <meta property="og:site_name" content="Vikku Labs">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${esc(title)}">
   <meta name="twitter:description" content="${esc(description)}">

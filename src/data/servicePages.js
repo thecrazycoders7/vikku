@@ -2,7 +2,7 @@
 // Keep claims honest: no invented results, prices or timelines; experience claims match what Vikku has shipped.
 
 const stack = [
-  { label: 'AI and LLMs', items: 'OpenAI API (GPT-4o runs in production in Vikku\'s own products), structured outputs, prompt and evaluation pipelines; other models when a project needs them' },
+  { label: 'AI and LLMs', items: 'OpenAI API (GPT-4o runs in production in Vikku Labs\' own products), structured outputs, prompt and evaluation pipelines; other models when a project needs them' },
   { label: 'Automation', items: 'API integrations, webhooks, scheduled jobs, transactional email, event-driven workflows' },
   { label: 'Engineering', items: 'React, Next.js, TypeScript, Node.js, Python, PostgreSQL, MongoDB, Supabase, AWS, Vercel, Docker, React Native' },
 ]
@@ -34,8 +34,8 @@ export const servicePages = [
   {
     slug: 'ai-agents',
     navLabel: 'AI Agents',
-    title: 'AI Agent Development Company | Custom AI Agents for Business | Vikku',
-    description: 'Vikku builds custom AI agents that answer customers, qualify leads, process documents and update your CRM, with permissions and human oversight built in.',
+    title: 'AI Agent Development Company | Custom AI Agents for Business | Vikku Labs',
+    description: 'Vikku Labs builds custom AI agents that answer customers, qualify leads, process documents and update your CRM, with permissions and human oversight built in.',
     eyebrow: 'AI agent development',
     h1: ['Custom AI agents that', 'handle real work.'],
     intro: [
@@ -83,8 +83,8 @@ export const servicePages = [
   {
     slug: 'ai-automation',
     navLabel: 'AI Automation',
-    title: 'AI Automation Agency | Business Process Automation with AI | Vikku',
-    description: 'Vikku is an AI automation agency that removes repetitive work: lead handling, onboarding, data entry, documents, reporting and follow-ups across your existing tools.',
+    title: 'AI Automation Agency | Business Process Automation with AI | Vikku Labs',
+    description: 'Vikku Labs is an AI automation agency that removes repetitive work: lead handling, onboarding, data entry, documents, reporting and follow-ups across your existing tools.',
     eyebrow: 'AI business automation',
     h1: ['AI automation that removes', 'repetitive work.'],
     intro: [
@@ -132,8 +132,8 @@ export const servicePages = [
   {
     slug: 'ai-integration',
     navLabel: 'AI Integration',
-    title: 'AI Integration Services | Add AI to Your Apps and Systems | Vikku',
-    description: 'Vikku integrates AI into your existing website, app or internal systems: LLM APIs, RAG document search, data extraction, AI reporting and model evaluation.',
+    title: 'AI Integration Services | Add AI to Your Apps and Systems | Vikku Labs',
+    description: 'Vikku Labs integrates AI into your existing website, app or internal systems: LLM APIs, RAG document search, data extraction, AI reporting and model evaluation.',
     eyebrow: 'AI integration services',
     h1: ['Add AI to the software', 'you already run.'],
     intro: [
@@ -172,7 +172,7 @@ export const servicePages = [
     faqs: [
       { q: 'Can you add AI to our existing app without rebuilding it?', a: 'Yes, that is the most common case. We add AI features through your existing backend or a small secure service next to it, and connect them to your current interface.' },
       { q: 'What is RAG and do we need it?', a: 'Retrieval-augmented generation means the AI first finds the relevant parts of your documents or data, then answers using only those. You need it whenever answers must be based on your own information rather than general knowledge.' },
-      { q: 'Which AI model do you use?', a: 'We use OpenAI models in production today, including GPT-4o in Vikku\'s own products. We choose models per task based on accuracy, speed, cost and data requirements, and can compare alternatives on your real examples.' },
+      { q: 'Which AI model do you use?', a: 'We use OpenAI models in production today, including GPT-4o in Vikku Labs\' own products. We choose models per task based on accuracy, speed, cost and data requirements, and can compare alternatives on your real examples.' },
       { q: 'How do you stop the AI from making things up?', a: 'By grounding answers in your data with retrieval, asking for structured outputs we can validate, keeping calculations in code, and testing against known answers. When the AI has no good source, it should say so.' },
       commonFaqs.cost, commonFaqs.data, commonFaqs.ownership, commonFaqs.support,
     ],
@@ -181,13 +181,13 @@ export const servicePages = [
   {
     slug: 'ai-software-development',
     navLabel: 'AI Software Development',
-    title: 'AI Software Development Company | AI-Powered SaaS and Apps | Vikku',
-    description: 'Vikku designs and builds AI-powered software: SaaS platforms, intelligent dashboards, document intelligence and AI-assisted business apps, built to production standard.',
+    title: 'AI Software Development Company | AI-Powered SaaS and Apps | Vikku Labs',
+    description: 'Vikku Labs designs and builds AI-powered software: SaaS platforms, intelligent dashboards, document intelligence and AI-assisted business apps, built to production standard.',
     eyebrow: 'AI-powered software development',
     h1: ['AI-powered software,', 'built for production.'],
     intro: [
       'Some ideas need more than a feature: a full product with AI at the core of how it works. We design and build AI-powered SaaS platforms and business applications from the first sketch to launch, and keep improving them after.',
-      'Strong engineering comes first. Authentication, databases, payments, admin tools and security are what make an AI product dependable, and we have built all of them, including Vikku\'s own AI-powered project management app and free AI tools.',
+      'Strong engineering comes first. Authentication, databases, payments, admin tools and security are what make an AI product dependable, and we have built all of them, including Vikku Labs\' own AI-powered project management app and free AI tools.',
     ],
     outcomes: [
       { title: 'A complete product', desc: 'Frontend, backend, database, AI features, admin and deployment, delivered together.' },
@@ -219,7 +219,7 @@ export const servicePages = [
       { title: 'Full ownership', desc: 'Your code, your cloud accounts, your data.' },
     ],
     faqs: [
-      { q: 'Have you built AI products before?', a: 'Yes. Vikku runs its own AI-powered products in production, including an AI project planner inside Vikku PM and free AI tools like the AI Visibility Score, all using GPT-4o through secure, rate-limited server functions. You can try them on this site.' },
+      { q: 'Have you built AI products before?', a: 'Yes. Vikku Labs runs its own AI-powered products in production, including an AI project planner inside Vikku PM and free AI tools like the AI Visibility Score, all using GPT-4o through secure, rate-limited server functions. You can try them on this site.' },
       { q: 'Can you build an MVP first?', a: 'Yes, and we usually recommend it. A focused first version tests the idea with real users before you invest in every feature.' },
       { q: 'Which technologies do you use?', a: 'Mostly React and Next.js on the frontend, Node.js or Python on the backend, PostgreSQL or MongoDB for data, and AWS or Vercel for hosting, with React Native for mobile. AI features use the OpenAI API and other models where they fit.' },
       { q: 'Do you also build software without AI?', a: 'Yes. Custom web apps, dashboards, CRMs, HR and staffing platforms, e-commerce and client portals are the engineering foundation of everything we do, and not every product needs AI.' },
@@ -230,8 +230,8 @@ export const servicePages = [
   {
     slug: 'ai-voice-agents',
     navLabel: 'AI Voice Agents',
-    title: 'AI Voice Agents and Chatbots for Business | Vikku',
-    description: 'Vikku builds AI voice agents and chat assistants for inquiries, appointment scheduling, FAQs, lead qualification and follow-ups, with human escalation built in.',
+    title: 'AI Voice Agents and Chatbots for Business | Vikku Labs',
+    description: 'Vikku Labs builds AI voice agents and chat assistants for inquiries, appointment scheduling, FAQs, lead qualification and follow-ups, with human escalation built in.',
     eyebrow: 'AI voice and conversational systems',
     h1: ['Voice and chat assistants', 'your customers can use.'],
     intro: [

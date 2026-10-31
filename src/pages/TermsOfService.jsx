@@ -8,13 +8,13 @@ import usePageMeta from '../hooks/usePageMeta'
 const SECTIONS = [
   {
     title: '1. Acceptance of Terms',
-    body: `By accessing or using Vikku (vikku.in), you agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree to these terms, do not use our services.
+    body: `By accessing or using Vikku Labs (vikku.in), you agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree to these terms, do not use our services.
 
-These Terms constitute a legally binding agreement between you and Vikku ("we", "us", or "our"), a company registered in India.`,
+These Terms constitute a legally binding agreement between you and Vikku Labs ("we", "us", or "our"), a company registered in India.`,
   },
   {
     title: '2. Description of Services',
-    body: `Vikku provides:
+    body: `Vikku Labs provides:
 
 • A Project Management (PM) SaaS tool for managing tasks, milestones, team collaboration, and client communication.
 • Free AI-powered tools including a Cost Estimator, ROI Calculator, Timeline Calculator, and Tech Recommender.
@@ -70,13 +70,13 @@ If you delete your account, we will delete Your Content within 30 days.`,
   },
   {
     title: '7. Intellectual Property',
-    body: `All content on vikku.in - including the design, logos, software, text, graphics, and code - is the property of Vikku or its licensors and is protected under Indian and international intellectual property law.
+    body: `All content on vikku.in - including the design, logos, software, text, graphics, and code - is the property of Vikku Labs or its licensors and is protected under Indian and international intellectual property law.
 
 You may not copy, reproduce, distribute, or create derivative works from our content without express written permission.`,
   },
   {
     title: '8. Limitation of Liability',
-    body: `To the maximum extent permitted by applicable law, Vikku shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from:
+    body: `To the maximum extent permitted by applicable law, Vikku Labs shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from:
 
 • Your use of or inability to use our services.
 • Any unauthorised access to or alteration of your data.
@@ -95,7 +95,7 @@ We do not warrant that our services will be uninterrupted, error-free, or free o
   },
   {
     title: '10. Indemnification',
-    body: `You agree to indemnify and hold harmless Vikku, its officers, directors, employees, and agents from any claims, losses, damages, liabilities, and expenses (including legal fees) arising from your use of our services, Your Content, or your violation of these Terms.`,
+    body: `You agree to indemnify and hold harmless Vikku Labs, its officers, directors, employees, and agents from any claims, losses, damages, liabilities, and expenses (including legal fees) arising from your use of our services, Your Content, or your violation of these Terms.`,
   },
   {
     title: '11. Termination',
@@ -117,7 +117,7 @@ We encourage you to contact us first at connect@vikku.in to resolve any disputes
     title: '14. Contact',
     body: `If you have any questions about these Terms, please contact us:
 
-Vikku
+Vikku Labs
 Email: connect@vikku.in
 Website: https://vikku.in`,
   },
@@ -125,8 +125,8 @@ Website: https://vikku.in`,
 
 export default function TermsOfService() {
   usePageMeta({
-    title:       'Terms of Service - Vikku',
-    description: 'The terms governing your use of Vikku\'s website, PM tool, and services.',
+    title:       'Terms of Service - Vikku Labs',
+    description: 'The terms governing your use of Vikku Labs\' website, PM tool, and services.',
     url:         'https://vikku.in/terms',
   })
 
@@ -151,7 +151,7 @@ export default function TermsOfService() {
         </div>
 
         <p className="text-white/60 text-sm leading-relaxed mb-10">
-          Please read these Terms of Service carefully before using Vikku. These Terms govern your
+          Please read these Terms of Service carefully before using Vikku Labs. These Terms govern your
           access to and use of our website, products, and services. By creating an account or using
           our services, you confirm that you have read, understood, and agree to be bound by these Terms.
         </p>

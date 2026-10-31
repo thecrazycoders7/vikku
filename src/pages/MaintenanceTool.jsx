@@ -102,7 +102,7 @@ function Result({ r, navigate, onEdit, onRestart }) {
   const maxItem = Math.max(...r.items.map((i) => i.amount), 1)
   return (
     <div className="min-h-screen bg-black text-white">
-      <Seo title="Your Maintenance Cost — Vikku" description="Your monthly maintenance estimate." canonical="/tools/maintenance" />
+      <Seo title="Your Maintenance Cost — Vikku Labs" description="Your monthly maintenance estimate." canonical="/tools/maintenance" />
       <div className="sticky top-0 z-50 glass border-b border-white/[0.05] px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button onClick={onEdit} className="flex items-center gap-2 text-white hover:text-white/70 text-sm"><ArrowLeft size={16} /> Edit answers</button>
@@ -149,7 +149,7 @@ function Result({ r, navigate, onEdit, onRestart }) {
           <p className="text-white/60 text-sm mb-6 max-w-md mx-auto">Book a free call and we’ll put together a maintenance plan that fits your product and budget.</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <button {...CAL_ATTRS} className="btn-primary active:scale-95 px-7 py-3 rounded-xl text-sm">Get a maintenance plan</button>
-            <button {...CAL_ATTRS} className="px-7 py-3 rounded-xl text-sm border border-white/15 text-white hover:bg-white/5 transition-colors">Talk to a Vikku Expert</button>
+            <button {...CAL_ATTRS} className="px-7 py-3 rounded-xl text-sm border border-white/15 text-white hover:bg-white/5 transition-colors">Talk to a Vikku Labs Expert</button>
           </div>
         </div>
       </div>

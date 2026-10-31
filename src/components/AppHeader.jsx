@@ -42,10 +42,10 @@ export default function AppHeader({ breadcrumbs = [], actions, badge }) {
           <button
             onClick={() => navigate('/')}
             className="flex items-center gap-2 flex-shrink-0 rounded-md"
-            aria-label="Vikku home"
+            aria-label="Vikku Labs home"
           >
             <img src="/logo-sm.png" alt="" width="28" height="28" className="h-7 w-7 object-contain" />
-            <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-slate-900">Vikku</span>
+            <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-slate-900">Vikku Labs</span>
           </button>
           {breadcrumbs.map((crumb, i) => {
             const isLast = i === breadcrumbs.length - 1

@@ -20,8 +20,8 @@ async function copyText(text, el, button, label) {
 
 export default function Home3D() {
   usePageMeta({
-    title:       'Vikku | AI Agency for AI Agents, Business Automation & AI Software',
-    description: 'Vikku is an AI agency that builds AI agents, business automation and AI-powered software for companies in India and the USA. Book an AI discovery call.',
+    title:       'Vikku Labs | AI Agency for AI Agents, Business Automation & AI Software',
+    description: 'Vikku Labs is an AI agency that builds AI agents, business automation and AI-powered software for companies in India and the USA. Book an AI discovery call.',
     url:         'https://www.vikku.in/',
   })
 
@@ -63,9 +63,9 @@ export default function Home3D() {
 
           <section className="stop right" id="about">
             <div className="panel wide">
-              <p className="eyebrow">Lobby · Why Vikku</p>
+              <p className="eyebrow">Lobby · Why Vikku Labs</p>
               <h2>We turn complex business problems into <em>practical AI.</em></h2>
-              <p>Vikku builds AI-powered products, intelligent agents, and business automation systems that help companies work smarter, operate faster, and scale efficiently.</p>
+              <p>Vikku Labs builds AI-powered products, intelligent agents, and business automation systems that help companies work smarter, operate faster, and scale efficiently.</p>
               <ul className="cards">
                 {WHY_VIKKU.map(([title, desc]) => <li key={title}><strong>{title}</strong><span>{desc}</span></li>)}
               </ul>
@@ -118,7 +118,7 @@ export default function Home3D() {
               </ol>
               <p className="note">AI isn't finished at launch. Every system we ship is evaluated and monitored in real use.</p>
               <div className="stack">
-                <p><b>AI and LLMs</b>OpenAI API, running GPT-4o in production in Vikku's own products</p>
+                <p><b>AI and LLMs</b>OpenAI API, running GPT-4o in production in Vikku Labs' own products</p>
                 <p><b>Automation</b>API integrations, webhooks, scheduled jobs, transactional email</p>
                 <p><b>Engineering</b>React, Next.js, TypeScript, Tailwind CSS, Node.js, Python, PostgreSQL, MongoDB, AWS, Vercel, Docker, React Native</p>
               </div>
@@ -130,7 +130,7 @@ export default function Home3D() {
               <p className="eyebrow">Client lounge · Work</p>
               <h2>Work you can <em>try today</em></h2>
               <h3>AI we've shipped</h3>
-              <p>Vikku's own AI products, running GPT-4o in production behind rate-limited server functions. Try any of them free.</p>
+              <p>Vikku Labs' own AI products, running GPT-4o in production behind rate-limited server functions. Try any of them free.</p>
               <ul className="cards">
                 {AI_PRODUCTS.map(p => <li key={p.name}><strong>{p.name}</strong><span>{p.desc}</span><Link className="try" to={p.to}>Try it</Link></li>)}
               </ul>
@@ -173,7 +173,7 @@ export default function Home3D() {
               <div className="bio">
                 {FOUNDER.bio.map(p => <p key={p}>{p}</p>)}
               </div>
-              <h3>What we're building at Vikku</h3>
+              <h3>What we're building at Vikku Labs</h3>
               <ul className="cards">
                 <li><strong>AI Solutions</strong><span>Applying artificial intelligence to solve real business challenges.</span></li>
                 <li><strong>AI Automation</strong><span>Reducing manual work and streamlining business operations through intelligent workflows.</span></li>

@@ -8,7 +8,7 @@ import usePageMeta from '../hooks/usePageMeta'
 const SECTIONS = [
   {
     title: '1. Overview',
-    body: `This Refund & Cancellation Policy applies to paid subscriptions and services purchased from Vikku (vikku.in), including Vikku PM subscriptions. Payments are processed securely via Razorpay.`,
+    body: `This Refund & Cancellation Policy applies to paid subscriptions and services purchased from Vikku Labs (vikku.in), including Vikku PM subscriptions. Payments are processed securely via Razorpay.`,
   },
   {
     title: '2. Free Tools & Free Tier',
@@ -38,8 +38,8 @@ const SECTIONS = [
 
 export default function RefundPolicy() {
   usePageMeta({
-    title:       'Refund & Cancellation Policy - Vikku',
-    description: 'Vikku refund and cancellation terms for subscriptions and services.',
+    title:       'Refund & Cancellation Policy - Vikku Labs',
+    description: 'Vikku Labs refund and cancellation terms for subscriptions and services.',
     url:         'https://vikku.in/refunds',
   })
   useEffect(() => { window.scrollTo(0, 0) }, [])
@@ -56,7 +56,7 @@ export default function RefundPolicy() {
           <p className="text-white/40 text-sm">Last updated: September 2026</p>
         </div>
         <p className="text-white/60 text-sm leading-relaxed mb-10">
-          We want you to be happy with Vikku. This policy explains when and how refunds and cancellations work.
+          We want you to be happy with Vikku Labs. This policy explains when and how refunds and cancellations work.
         </p>
         <div className="space-y-8">
           {SECTIONS.map(({ title, body }) => (

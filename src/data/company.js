@@ -41,19 +41,19 @@ export const TESTIMONIALS = [
 
 export const FOUNDER = {
   name: 'Harsha Vardhan Reddy Sanikommu',
-  role: 'Founder, Vikku',
+  role: 'Founder, Vikku Labs',
   photo: '/home3d/founder-harsha.jpg',
   linkedin: 'https://www.linkedin.com/in/harsha-vardhan-reddy-sanikommu/',
   bio: [
-    "I'm Harsha Vardhan Reddy Sanikommu, Founder of Vikku — an AI agency helping businesses solve real-world problems through artificial intelligence, intelligent automation, and digital innovation.",
-    'I started Vikku with a simple belief: technology should do more than just work. It should solve meaningful problems, eliminate inefficiencies, and create opportunities for businesses to grow.',
+    "I'm Harsha Vardhan Reddy Sanikommu, Founder of Vikku Labs — an AI agency helping businesses solve real-world problems through artificial intelligence, intelligent automation, and digital innovation.",
+    'I started Vikku Labs with a simple belief: technology should do more than just work. It should solve meaningful problems, eliminate inefficiencies, and create opportunities for businesses to grow.',
     "Over the past few years, I've worked on 9 real-world projects across India and the USA, collaborating directly with businesses to understand their challenges, develop practical solutions, and turn ideas into reality.",
-    'As the founder of Vikku, I focus on identifying opportunities where AI can make a genuine difference—from automating repetitive operations and building AI-powered workflows to developing intelligent applications that help businesses work smarter.',
+    'As the founder of Vikku Labs, I focus on identifying opportunities where AI can make a genuine difference—from automating repetitive operations and building AI-powered workflows to developing intelligent applications that help businesses work smarter.',
     'My approach combines technical expertise with business thinking. Rather than adopting technology for the sake of innovation, I believe in finding the right problems to solve and delivering solutions that create measurable value.',
   ],
   vision: [
-    'I believe AI is changing how businesses operate, compete, and grow. My vision for Vikku is to help businesses move beyond experimenting with AI and start using it to solve meaningful problems.',
+    'I believe AI is changing how businesses operate, compete, and grow. My vision for Vikku Labs is to help businesses move beyond experimenting with AI and start using it to solve meaningful problems.',
     "I'm passionate about building, experimenting, and working alongside ambitious businesses to turn complex challenges into intelligent solutions.",
-    "For me, Vikku is about more than technology. It's about creating impact, building meaningful partnerships, and helping businesses unlock what's possible with AI.",
+    "For me, Vikku Labs is about more than technology. It's about creating impact, building meaningful partnerships, and helping businesses unlock what's possible with AI.",
   ],
 }

@@ -18,63 +18,63 @@ export const STACK_PRESETS = [
 // Per-tool SEO metadata (unique title + description + canonical path)
 export const TOOL_SEO = {
   cost_estimator: {
-    title: 'Free App & Website Cost Estimator (India) | Vikku',
+    title: 'Free App & Website Cost Estimator (India) | Vikku Labs',
     description: 'Get an instant, itemised cost estimate for your app, website, or software project in your local currency. Free AI estimator - no sales call.',
     canonical: '/tools/cost-estimator',
   },
   roi_calculator: {
-    title: 'Website ROI Calculator - How Much Are You Losing? | Vikku',
+    title: 'Website ROI Calculator - How Much Are You Losing? | Vikku Labs',
     description: 'See how much revenue your business loses to missed leads and how fast a website pays for itself. Free ROI calculator for any business type.',
     canonical: '/tools/roi-calculator',
   },
   timeline_calculator: {
-    title: 'Software Project Timeline Calculator | Vikku',
+    title: 'Software Project Timeline Calculator | Vikku Labs',
     description: 'Get a realistic, phase-by-phase timeline for building your software, app, or website - discovery to launch. Free AI estimate.',
     canonical: '/tools/timeline-calculator',
   },
   tech_recommender: {
-    title: 'Tech Stack Recommender - Which Stack Should You Use? | Vikku',
+    title: 'Tech Stack Recommender - Which Stack Should You Use? | Vikku Labs',
     description: 'Describe your product and get an opinionated, modern tech stack recommendation (frontend, backend, database, hosting) with reasoning. Free.',
     canonical: '/tools/tech-recommender',
   },
   maintenance_calculator: {
-    title: 'Software Maintenance Cost Calculator (India) | Vikku',
+    title: 'Software Maintenance Cost Calculator (India) | Vikku Labs',
     description: 'Find out how much it really costs to maintain your app or website every month - hosting, monitoring, bug fixes, security, and support. Free AI estimate.',
     canonical: '/tools/maintenance-calculator',
   },
   // The six tools in the sitemap. `h1` is the page's main heading (the step question is an h2).
   project_estimator: {
     h1: 'Free software project cost estimator',
-    title: 'Software Cost Calculator: Free Project Estimator | Vikku',
+    title: 'Software Cost Calculator: Free Project Estimator | Vikku Labs',
     description: 'How much will your app, website or AI product cost? Answer a few questions and get an effort range, cost drivers and risks in minutes. Free.',
     canonical: '/tools/project-estimator',
   },
   business_impact: {
     h1: 'Free business impact and ROI calculator',
-    title: 'Free ROI Calculator for Software and Automation | Vikku',
+    title: 'Free ROI Calculator for Software and Automation | Vikku Labs',
     description: 'Is your software, automation or marketing project worth it? Build a 3-year model with ROI, NPV, payback and total cost of ownership. Free.',
     canonical: '/tools/business-impact',
   },
   timeline: {
     h1: 'Free software project timeline calculator',
-    title: 'Software Project Timeline Calculator (Free) | Vikku',
+    title: 'Software Project Timeline Calculator (Free) | Vikku Labs',
     description: 'How long will your project take? Get a realistic phase-by-phase timeline with milestones, from discovery and design to testing and launch. Free.',
     canonical: '/tools/timeline',
   },
   stack_recommender: {
     h1: 'Free tech stack recommender',
-    title: 'Tech Stack Recommender: Which Stack Should You Use? | Vikku',
+    title: 'Tech Stack Recommender: Which Stack Should You Use? | Vikku Labs',
     description: 'Not sure what to build on? Answer a few questions and get a reasoned tech stack for each layer of your project, with alternatives. Free.',
     canonical: '/tools/stack-recommender',
   },
   maintenance: {
     h1: 'Free software maintenance cost calculator',
-    title: 'Software Maintenance Cost Calculator (Free) | Vikku',
+    title: 'Software Maintenance Cost Calculator (Free) | Vikku Labs',
     description: 'What does it cost to keep your app or website running? See monthly hosting, monitoring, security, fixes and support, with three support tiers. Free.',
     canonical: '/tools/maintenance',
   },
   ai_visibility_score: {
-    title: 'AI Visibility Score - Will ChatGPT Recommend Your Business? | Vikku',
+    title: 'AI Visibility Score - Will ChatGPT Recommend Your Business? | Vikku Labs',
     description: 'Paste your URL and see how likely AI assistants are to find and recommend your business - plus exactly what to fix. Free instant check.',
     canonical: '/tools/ai-visibility-score',
   },

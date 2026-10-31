@@ -60,7 +60,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-10">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <img src="/logo.png" alt="Vikku" className="h-6 w-auto object-contain mb-2.5" />
+            <img src="/logo.png" alt="Vikku Labs" className="h-6 w-auto object-contain mb-2.5" />
             <p className="text-white text-xs leading-relaxed mb-2.5 max-w-[200px]">
               AI agents, business automation and intelligent software.
             </p>
@@ -169,7 +169,7 @@ export default function Footer() {
         <hr className="divider mb-6" />
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] text-white">
-          <p>© {new Date().getFullYear()} Vikku. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Vikku Labs. All rights reserved.</p>
         </div>
       </div>
     </footer>

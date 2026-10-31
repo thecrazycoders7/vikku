@@ -48,8 +48,8 @@ If you decline, these are never loaded. We also never load analytics on non-prod
 
 export default function CookiePolicy() {
   usePageMeta({
-    title:       'Cookie Policy - Vikku',
-    description: 'How Vikku uses cookies and analytics, and how to manage your choice.',
+    title:       'Cookie Policy - Vikku Labs',
+    description: 'How Vikku Labs uses cookies and analytics, and how to manage your choice.',
     url:         'https://vikku.in/cookies',
   })
   useEffect(() => { window.scrollTo(0, 0) }, [])
@@ -66,7 +66,7 @@ export default function CookiePolicy() {
           <p className="text-white/40 text-sm">Last updated: September 2026</p>
         </div>
         <p className="text-white/60 text-sm leading-relaxed mb-10">
-          This Cookie Policy explains how Vikku ("we", "us") uses cookies and similar technologies on vikku.in.
+          This Cookie Policy explains how Vikku Labs ("we", "us") uses cookies and similar technologies on vikku.in.
           Analytics cookies are loaded only with your consent. See also our{' '}
           <Link to="/privacy" className="text-[var(--brand-primary)] hover:underline">Privacy Policy</Link>.
         </p>

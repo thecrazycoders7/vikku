@@ -6,30 +6,30 @@ import { FOUNDER, STATS, WHY_VIKKU } from '../data/company'
 import { servicePages } from '../data/servicePages'
 import './home3d.css'
 
-const DESCRIPTION = 'Vikku is an AI agency founded by Harsha Vardhan Reddy Sanikommu. We build AI agents, automation and AI software for businesses in India and the USA.'
+const DESCRIPTION = 'Vikku Labs is an AI agency founded by Harsha Vardhan Reddy Sanikommu. We build AI agents, automation and AI software for businesses in India and the USA.'
 
 const JSON_LD = {
   '@context': 'https://schema.org',
   '@type': 'AboutPage',
-  name: 'About Vikku',
+  name: 'About Vikku Labs',
   url: 'https://www.vikku.in/about',
   description: DESCRIPTION,
-  mainEntity: { '@type': 'Organization', name: 'Vikku', url: 'https://www.vikku.in' },
+  mainEntity: { '@type': 'Organization', name: 'Vikku Labs', url: 'https://www.vikku.in' },
 }
 
 export default function About() {
   return (
     <div className="v3d svc">
-      <Seo title="About Vikku | AI Agency Founded by Harsha Vardhan Reddy" description={DESCRIPTION} canonical="/about" jsonLd={JSON_LD} />
+      <Seo title="About Vikku Labs | AI Agency Founded by Harsha Vardhan Reddy" description={DESCRIPTION} canonical="/about" jsonLd={JSON_LD} />
       <SiteNav />
       <WhatsAppButton />
 
       <main className="svc-main">
         <header className="svc-hero">
           <nav className="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span><span>About</span></nav>
-          <p className="eyebrow">About Vikku</p>
+          <p className="eyebrow">About Vikku Labs</p>
           <h1>We turn complex business problems into <em>practical AI</em></h1>
-          <p className="lead">Vikku is an AI agency. We build AI-powered products, intelligent agents and business automation systems that help companies work smarter, operate faster and scale efficiently.</p>
+          <p className="lead">Vikku Labs is an AI agency. We build AI-powered products, intelligent agents and business automation systems that help companies work smarter, operate faster and scale efficiently.</p>
           <div className="ctas">
             <BookButton short="Book an AI Discovery Call" location="about" />
             <Link className="btn btn-ghost" to="/work">See our work</Link>
@@ -43,7 +43,7 @@ export default function About() {
         </section>
 
         <section className="svc-section">
-          <h2>Why <em>Vikku</em></h2>
+          <h2>Why <em>Vikku Labs</em></h2>
           <ul className="cards">
             {WHY_VIKKU.map(([title, desc]) => <li key={title}><strong>{title}</strong><span>{desc}</span></li>)}
           </ul>

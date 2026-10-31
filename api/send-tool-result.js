@@ -100,7 +100,7 @@ export default async function handler(req, res) {
     const html = `
       <div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:560px;margin:0 auto;padding:24px">
         <h1 style="font-size:20px;margin:0 0 4px">Your ${esc(label)}</h1>
-        <p style="color:#666;font-size:13px;margin:0 0 20px">From Vikku — here's the summary you generated.</p>
+        <p style="color:#666;font-size:13px;margin:0 0 20px">From Vikku Labs — here's the summary you generated.</p>
         <div style="border:1px solid #eee;border-radius:12px;padding:20px">${renderBody(tool, rowData.result || {})}</div>
         <a href="${shareUrl}" style="display:inline-block;margin-top:20px;color:#111;text-decoration:none;padding:11px 20px;border:1px solid #ddd;border-radius:10px;font-weight:600;font-size:14px">View full report &amp; download PDF</a>
         <div style="margin-top:28px;padding:20px;background:#faf8ff;border:1px solid #e7defb;border-radius:12px">
@@ -115,9 +115,9 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'Vikku <hello@vikku.in>',
+        from: 'Vikku Labs <hello@vikku.in>',
         to: [email.trim().toLowerCase()],
-        subject: `Your ${label} from Vikku`,
+        subject: `Your ${label} from Vikku Labs`,
         html,
       }),
     })
