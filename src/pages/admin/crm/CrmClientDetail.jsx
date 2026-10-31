@@ -10,11 +10,11 @@ import { useAuth } from '../../../contexts/AuthContext'
 import usePmBoards from './usePmBoards'
 import { useToast } from '../ui'
 import {
-  PROJECT_STAGES, createPmBoard, deleteClient, deletePayment, deleteProject, formatMoney, getClient, listPayments,
+  PROJECT_STAGES, createPmBoard, deleteClient, deletePayment, deleteProject, formatMoney, getClient, listClientDocs, listPayments,
   listProjects, listRetainers, moneySummary, moneyText, isoDay, pmShareLink, recordRetainerMonth, updatePayment, whatsappNumber,
 } from '../../../lib/crmService'
 
-const TABS = ['Timeline', 'Projects', 'Payments']
+const TABS = ['Timeline', 'Projects', 'Payments', 'Documents']
 
 export default function CrmClientDetail() {
   const { id } = useParams()
@@ -24,6 +24,7 @@ export default function CrmClientDetail() {
   const [projects, setProjects] = useState([])
   const [payments, setPayments] = useState([])
   const [retainers, setRetainers] = useState([])
+  const [docs, setDocs] = useState([])
   const [error, setError] = useState('')
   const [tab, setTab] = useState('Timeline')
   const [modal, setModal] = useState(null) // { type: 'client'|'project'|'payment'|'retainer', item? }
@@ -45,6 +46,7 @@ export default function CrmClientDetail() {
   useEffect(() => {
     getClient(id).then(setClient).catch(e => setError(e.message))
     loadMoney().catch(e => setError(e.message))
+    listClientDocs({ clientId: id }).then(setDocs).catch(() => setDocs([]))
   }, [id])
 
   const money = useMemo(() => moneySummary(projects, payments), [projects, payments])
@@ -113,10 +115,28 @@ export default function CrmClientDetail() {
           <div className="flex gap-1 border-b border-black/[0.06] mb-4 overflow-x-auto">
             {TABS.map(t => (
               <button key={t} onClick={() => setTab(t)} className={`px-4 py-2.5 text-xs font-medium border-b-2 -mb-px transition-colors ${tab === t ? 'border-orange-500 text-orange-600' : 'border-transparent text-white/50 hover:text-white'}`}>
-                {t}{t === 'Projects' ? ` (${projects.length})` : t === 'Payments' ? ` (${payments.length})` : ''}
+                {t}{t === 'Projects' ? ` (${projects.length})` : t === 'Payments' ? ` (${payments.length})` : t === 'Documents' ? ` (${docs.length})` : ''}
               </button>
             ))}
           </div>
+
+          {tab === 'Documents' && (
+            <section className="glass rounded-2xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-[10px] text-white/40 uppercase tracking-widest">Documents</h2>
+                <Link to={`/admin/documents?client=${id}`} className="act"><Plus size={12} className="mr-1" /> New document</Link>
+              </div>
+              {docs.length === 0 ? <p className="text-xs text-white/40">No documents yet. Pick a template to make the first one.</p> : (
+                <ul className="divide-y divide-black/[0.05]">
+                  {docs.map(d => (
+                    <li key={d.id}><Link to={`/admin/documents/${d.id}`} className="flex items-center justify-between gap-3 py-2.5 text-sm text-white hover:text-orange-700">
+                      <span className="min-w-0 truncate">{d.title}</span><span className="flex-none text-xs text-white/40">{fmtDate(d.updated_at)}</span>
+                    </Link></li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
 
           {tab === 'Timeline' && (
             <div className="grid lg:grid-cols-3 gap-5">
