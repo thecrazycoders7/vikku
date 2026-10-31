@@ -202,7 +202,7 @@ function Shell({ children }) {
   return (
     <div className="adm min-h-screen">
       <header className="h-16 flex items-center gap-2 border-b border-slate-200 bg-white px-4 sm:px-6">
-        <a href="/" className="flex items-center gap-2 rounded-md"><img src="/logo-sm.png" alt="" width="28" height="28" className="h-7 w-7" /><span className="text-[15px] font-semibold text-slate-900">Vikku Labs</span></a>
+        <a href="/" className="flex items-center gap-2 rounded-md"><img src="/logo-sm.png" alt="" width="28" height="28" className="h-7 w-7" /><span className="text-[15px] font-semibold text-slate-900">Vikku</span></a>
       </header>
       <main className="mx-auto max-w-3xl px-4 py-8 sm:py-12">{children}</main>
     </div>

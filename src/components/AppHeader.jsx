@@ -45,7 +45,7 @@ export default function AppHeader({ breadcrumbs = [], actions, badge }) {
             aria-label="Vikku Labs home"
           >
             <img src="/logo-sm.png" alt="" width="28" height="28" className="h-7 w-7 object-contain" />
-            <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-slate-900">Vikku Labs</span>
+            <span className="hidden sm:inline text-[15px] font-semibold tracking-tight text-slate-900">Vikku</span>
           </button>
           {breadcrumbs.map((crumb, i) => {
             const isLast = i === breadcrumbs.length - 1
