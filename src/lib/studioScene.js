@@ -155,8 +155,8 @@ export async function createStudio({ canvas, loadingEl, story, onReady }) {
 
   // ---------- printed textures ----------
   const signTex = tex(2048, 320, (x, w, h) => {
-    font(x, 700, 150, F.d);
-    const L = 290, gap = 50, a = 'VIKKU', b = '', wa = x.measureText(a).width, wb = x.measureText(b).width;
+    font(x, 700, 120, F.d);
+    const L = 240, gap = 44, a = 'VIKKU LABS', b = '', wa = x.measureText(a).width, wb = x.measureText(b).width;
     const sx = (w - L - gap - wa - wb) / 2;
     drawLogo(x, sx, (h - L) / 2, L, L);
     x.fillStyle = C.ink; x.fillText(a, sx + L + gap, h / 2);
@@ -164,8 +164,8 @@ export async function createStudio({ canvas, loadingEl, story, onReady }) {
   });
   const lobbyTex = tex(2048, 760, (x, w, h) => {
     drawLogo(x, 60, 40, 230, 230);
-    x.fillStyle = C.ink; font(x, 700, 110, F.d); x.fillText('VIKKU', 320, 155);
-    const wv = x.measureText('VIKKU').width;
+    x.fillStyle = C.ink; font(x, 700, 110, F.d); x.fillText('VIKKU LABS', 320, 155);
+    const wv = x.measureText('VIKKU LABS').width;
     x.fillStyle = C.orange; font(x, 500, 40, F.m); x.fillText('AI AGENCY', 370 + wv, 162);
     x.fillStyle = C.orange; font(x, 'italic 400', 96, F.s);
     x.fillText('We turn complex business problems', 90, 330); x.fillText('into practical AI solutions.', 90, 420);
@@ -177,7 +177,7 @@ export async function createStudio({ canvas, loadingEl, story, onReady }) {
   });
   const deskTex = tex(1024, 280, (x, w, h) => {
     drawLogo(x, 120, (h - 170) / 2, 170, 170);
-    x.fillStyle = C.ink; font(x, 700, 84, F.d); x.fillText('VIKKU', 315, h / 2 + 4);
+    x.fillStyle = C.ink; font(x, 700, 84, F.d); x.fillText('VIKKU LABS', 315, h / 2 + 4);
   });
   const studioTex = tex(1024, 200, (x, w, h) => {
     x.fillStyle = C.ink; font(x, 500, 64, F.m); x.textAlign = 'center'; x.fillText('AI LAB →', w / 2, h / 2);
