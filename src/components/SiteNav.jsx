@@ -81,7 +81,7 @@ export default function SiteNav() {
     <>
       <header className="top">
         <div className="top-inner">
-          <a className="logo" href="/#top" onClick={() => setMenuOpen(false)}><img className="logo-mark" src="/logo.png" alt="" />Vikku</a>
+          <a className="logo" href="/#top" onClick={() => setMenuOpen(false)}><img className="logo-mark" src="/logo.png" alt="" />Vikku Labs</a>
           <nav className="nav" aria-label="Main">
             <div className="nav-links">
               <Dropdown label="Services" items={serviceLinks} open={open === 'services'} setOpen={toggle('services')} go={go} />
