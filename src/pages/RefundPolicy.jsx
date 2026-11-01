@@ -8,15 +8,15 @@ import usePageMeta from '../hooks/usePageMeta'
 const SECTIONS = [
   {
     title: '1. Overview',
-    body: `This Refund & Cancellation Policy applies to paid subscriptions and services purchased from Vikku Labs (vikku.in), including Vikku PM subscriptions. Payments are processed securely via Razorpay.`,
+    body: `This Refund & Cancellation Policy applies to paid plans and services purchased from Vikku Labs (vikku.in), including Vikku PM plans. Payments are processed securely via Razorpay.`,
   },
   {
     title: '2. Free Tools & Free Tier',
     body: `Our AI tools and the free tier of Vikku PM are provided at no cost and require no payment, so no refunds apply to them.`,
   },
   {
-    title: '3. Subscription Refunds',
-    body: `If you purchase a paid subscription and are not satisfied, you may request a refund within 7 days of the initial payment, provided the service has not been substantially used. Renewal payments are not automatically refundable, but you can cancel at any time to stop future charges.`,
+    title: '3. Plan Refunds',
+    body: `If you buy a paid plan and are not satisfied, you may request a refund within 7 days of your first payment, provided the service has not been substantially used. After that, payments are not refundable, including payments made to keep a plan going.`,
   },
   {
     title: '4. Custom Project & Agency Work',
@@ -24,7 +24,7 @@ const SECTIONS = [
   },
   {
     title: '5. Cancellations',
-    body: `You can cancel a subscription at any time from your account or by emailing us. Cancellation stops future billing; it does not automatically refund the current period unless you qualify under Section 3.`,
+    body: `Paid plans are one-time payments and do not renew, so there is nothing to cancel. You keep access until the end of the period you paid for. If you have an older auto-renewing subscription, you can cancel it at any time from your account or by emailing us. Cancelling stops future billing but does not refund the current period unless you qualify under Section 3.`,
   },
   {
     title: '6. How to Request a Refund',
@@ -53,7 +53,7 @@ export default function RefundPolicy() {
         </Link>
         <div className="mb-10">
           <h1 className="font-display font-extrabold text-4xl text-white mb-3">Refund &amp; Cancellation Policy</h1>
-          <p className="text-white/40 text-sm">Last updated: September 2026</p>
+          <p className="text-white/40 text-sm">Last updated: November 2026</p>
         </div>
         <p className="text-white/60 text-sm leading-relaxed mb-10">
           We want you to be happy with Vikku Labs. This policy explains when and how refunds and cancellations work.

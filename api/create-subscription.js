@@ -3,7 +3,7 @@ import Razorpay from 'razorpay';
 // Map plan + billing cycle to a Razorpay Plan ID (created in the Razorpay
 // dashboard / API). Set these in your environment. If a plan ID is missing,
 // the endpoint reports `configured: false` and the client falls back to a
-// one-time GST-inclusive order.
+// one-time order.
 const PLAN_ENV = {
   'pro:monthly':  'RAZORPAY_PLAN_PRO_MONTHLY',
   'pro:annual':   'RAZORPAY_PLAN_PRO_ANNUAL',

@@ -42,6 +42,7 @@ export default function InvoiceGenerator() {
   const [agencyName, setAgencyName] = useState('Vikku Labs')
   const [currency, setCurrency] = useState('INR')
   const [notes, setNotes] = useState('')
+  const [chargeGst, setChargeGst] = useState(false)
   const [lines, setLines] = useState([])
   const [saving, setSaving] = useState(false)
   const [savedMsg, setSavedMsg] = useState('')
@@ -94,7 +95,7 @@ export default function InvoiceGenerator() {
   }
 
   const subtotal = lines.reduce((s, l) => s + lineTotal(l), 0)
-  const gst = currency === 'INR' ? subtotal * 0.18 : 0
+  const gst = chargeGst && currency === 'INR' ? subtotal * 0.18 : 0
   const total = subtotal + gst
 
   const fmtAmount = (n) => {
@@ -146,6 +147,7 @@ export default function InvoiceGenerator() {
     setCurrency(inv.currency || 'INR')
     setLines(inv.lines || [])
     setNotes(inv.notes || '')
+    setChargeGst(Number(inv.gst) > 0)
     setShowHistory(false)
   }
 
@@ -406,6 +408,12 @@ export default function InvoiceGenerator() {
             <div className="flex justify-between text-xs text-white/50">
               <span>Subtotal</span><span>{fmtAmount(subtotal)}</span>
             </div>
+            {currency === 'INR' && (
+              <label className="flex items-center gap-2 text-xs text-white/50">
+                <input type="checkbox" checked={chargeGst} onChange={e => setChargeGst(e.target.checked)} />
+                Add GST (18%), only if GST registered
+              </label>
+            )}
             {gst > 0 && (
               <div className="flex justify-between text-xs text-white/50">
                 <span>GST (18%)</span><span>{fmtAmount(gst)}</span>

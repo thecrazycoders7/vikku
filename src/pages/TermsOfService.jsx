@@ -36,13 +36,13 @@ You must be at least 18 years old to create an account. We reserve the right to 
   },
   {
     title: '4. Subscriptions and Payments',
-    body: `Certain features require a paid subscription (Pro or Team plan). By subscribing:
+    body: `Certain features require a paid plan (Pro or Team). By buying a plan:
 
-• You authorise us to charge your payment method via Razorpay at the then-current subscription price.
-• Subscriptions are billed monthly and automatically renew unless cancelled.
-• Prices are in Indian Rupees (INR) and inclusive of applicable taxes.
-• We do not offer refunds for partial subscription periods. If you cancel, you retain access until the end of your current billing period.
-• We reserve the right to change pricing with 30 days' notice. Continued use after the effective date constitutes acceptance.
+• You authorise us to charge your payment method via Razorpay at the price shown at checkout.
+• Each plan is a one-time payment for one month or one year, as you choose. Plans do not renew automatically. To keep your plan, pay again before it ends.
+• Prices are in Indian Rupees (INR). No GST is charged.
+• You can request a refund within 7 days of your first payment, as set out in our Refund Policy. Otherwise, we do not refund part of a paid period, and you keep access until it ends.
+• We reserve the right to change pricing with 30 days' notice. A new price applies only to payments made after it takes effect.
 
 Free plan limitations: Free accounts may create up to 3 active projects and have limited access to Pro features.`,
   },
@@ -147,7 +147,7 @@ export default function TermsOfService() {
 
         <div className="mb-10">
           <h1 className="font-display font-extrabold text-4xl text-white mb-3">Terms of Service</h1>
-          <p className="text-white/40 text-sm">Last updated: June 2025</p>
+          <p className="text-white/40 text-sm">Last updated: November 2026</p>
         </div>
 
         <p className="text-white/60 text-sm leading-relaxed mb-10">
