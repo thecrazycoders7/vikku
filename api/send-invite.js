@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { createClient } from '@supabase/supabase-js';
+import { adminClient, callerOf } from './_auth.js';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const ALLOWED_URL_PREFIX = 'https://vikku.in/pm/';
@@ -11,12 +11,9 @@ export default async function handler(req, res) {
 
   try {
     // Authenticate caller
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const anonKey = process.env.SUPABASE_ANON_KEY;
-    if (!supabaseUrl || !anonKey) return res.status(500).json({ error: 'Server misconfigured' });
-    const authHeader = req.headers['authorization'] || '';
-    const callerClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } });
-    const { data: { user: caller } } = await callerClient.auth.getUser();
+    const admin = adminClient();
+    if (!admin) return res.status(500).json({ error: 'Server misconfigured' });
+    const caller = await callerOf(req, admin);
     if (!caller) return res.status(401).json({ error: 'Unauthorized' });
 
     const { email, projectName, projectUrl, inviterName, role } = req.body;
