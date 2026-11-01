@@ -1,15 +1,12 @@
 import { supabase } from './supabaseClient'
 
-// India GST on SaaS subscriptions
-export const GST_RATE = 0.18
-
-// Base (pre-GST) prices in rupees
+// Prices in rupees. Vikku Labs is not GST registered, so no tax is added. api/verify-payment.js mirrors these.
 export const PLAN_PRICING = {
   pro:  { monthly: 299, annual: 2999 },
   team: { monthly: 999, annual: 9999 },
 }
 
-// Normalized monthly recurring revenue (pre-GST) for a subscription.
+// Normalized monthly recurring revenue for a subscription.
 // Annual plans are divided by 12 so MRR is comparable across cycles.
 export function monthlyRevenue(plan, billingCycle = 'monthly') {
   const p = PLAN_PRICING[plan]
@@ -20,23 +17,6 @@ export function monthlyRevenue(plan, billingCycle = 'monthly') {
 const PLAN_META = {
   pro:  { name: 'Vikku PM Pro',  description: 'Unlimited projects, AI planning, client share links' },
   team: { name: 'Vikku PM Team', description: 'Everything in Pro + unlimited team members' },
-}
-
-/**
- * GST-inclusive price breakdown for a plan + billing cycle.
- * All rupee values; `totalPaise` is what we actually charge.
- */
-export function priceBreakdown(plan, billingCycle = 'monthly') {
-  const cycle = billingCycle === 'annual' ? 'annual' : 'monthly'
-  const basePaise = (PLAN_PRICING[plan]?.[cycle] ?? 0) * 100
-  const gstPaise = Math.round(basePaise * GST_RATE)
-  const totalPaise = basePaise + gstPaise
-  return {
-    base: basePaise / 100,
-    gst: gstPaise / 100,
-    total: totalPaise / 100,
-    totalPaise,
-  }
 }
 
 function loadRazorpayScript() {
@@ -61,7 +41,7 @@ export async function openRazorpayCheckout({ plan, billingCycle = 'monthly', mod
   if (!meta) { onFailure?.('Invalid plan'); return }
 
   const cycle = billingCycle === 'annual' ? 'annual' : 'monthly'
-  const { totalPaise } = priceBreakdown(plan, cycle)
+  const totalPaise = PLAN_PRICING[plan][cycle] * 100
 
   // ── Try an auto-renewing subscription first ──────────────────────────────
   // Needs Razorpay Plan IDs configured server-side. If not configured, the
@@ -85,7 +65,7 @@ export async function openRazorpayCheckout({ plan, billingCycle = 'monthly', mod
     }
   }
 
-  // ── Fallback: one-time order (GST-inclusive) ─────────────────────────────
+  // ── Fallback: one-time order ─────────────────────────────
   let orderId = null
   if (!subscriptionId) {
     try {
@@ -117,7 +97,7 @@ export async function openRazorpayCheckout({ plan, billingCycle = 'monthly', mod
   const options = {
     key: import.meta.env.VITE_RAZORPAY_KEY_ID,
     name: 'Vikku PM',
-    description: `${meta.description} (incl. 18% GST)`,
+    description: meta.description,
     image: '/logo.png',
     prefill: { email: user?.email || '' },
     theme: { color: '#ffffff' },
