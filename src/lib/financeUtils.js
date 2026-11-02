@@ -22,6 +22,7 @@ export function financePeriods(now = new Date()) {
   ]
 }
 
+const dayAfter = (date) => { const [y, m, d] = date.split('-').map(Number); return dayOf(y, m - 1, d + 1) }
 const within = (date, { from, to }) => !!date && date.slice(0, 10) >= from && date.slice(0, 10) <= to
 const total = (items) => items.reduce((sum, it) => sum + Number(it.amount || 0), 0)
 const received = (payments) => payments.filter(p => p.status === 'received')
@@ -85,6 +86,32 @@ export function financeView(data, period, currency = 'INR', now = new Date()) {
     byCategory, byClient,
   }
 }
+
+// A regular cost as a monthly figure, so yearly costs compare fairly.
+export const monthlyCost = (r) => Number(r.amount || 0) / (r.every === 'year' ? 12 : 1)
+
+// The last balance entered, plus money in and minus money out dated after it.
+export function cashNow(balance, { payments, expenses }, currency = 'INR') {
+  if (!balance) return null
+  const after = { from: dayAfter(balance.as_of), to: '9999-12-31' }
+  const money = (it) => (it.currency || 'INR') === currency
+  const moneyIn = total(received(payments).filter(p => money(p) && within(p.paid_on, after)))
+  const moneyOut = total(expenses.filter(e => money(e) && within(e.spent_on, after)))
+  return { amount: Number(balance.amount) + moneyIn - moneyOut, moneyIn, moneyOut, asOf: balance.as_of }
+}
+
+// Monthly spending: the higher of the last 3 full months' average and the regular costs, so a new cost
+// counts straight away and a quiet month doesn't flatter the runway.
+export function burnRate({ expenses }, recurring, currency = 'INR', now = new Date()) {
+  const y = now.getFullYear(), m = now.getMonth()
+  const range = { from: dayOf(y, m - 3, 1), to: dayOf(y, m, 0) }
+  const average = total(expenses.filter(e => (e.currency || 'INR') === currency && within(e.spent_on, range))) / 3
+  const regular = recurring.filter(r => r.status === 'active' && (r.currency || 'INR') === currency).reduce((sum, r) => sum + monthlyCost(r), 0)
+  return { monthly: Math.max(average, regular), average, regular }
+}
+
+// How long the money lasts if nothing new comes in. Null when there is no spending to measure.
+export const runwayMonths = (cash, monthly) => monthly > 0 ? Math.max(0, cash / monthly) : null
 
 // A round top for the chart's scale, so its axis labels are easy to read.
 export function niceMax(value) {
