@@ -1,5 +1,5 @@
 import Razorpay from 'razorpay';
-import { createClient } from '@supabase/supabase-js';
+import { adminClient, callerOf } from './_auth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -7,24 +7,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const anonKey = process.env.SUPABASE_ANON_KEY;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!supabaseUrl || !anonKey || !serviceKey) {
+    const admin = adminClient();
+    if (!admin) {
       return res.status(500).json({ error: 'Server misconfigured' });
     }
 
     // Authenticate caller via JWT — never trust userId from request body
-    const authHeader = req.headers['authorization'] || '';
-    const callerClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } });
-    const { data: { user: caller } } = await callerClient.auth.getUser();
+    const caller = await callerOf(req, admin);
     if (!caller) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
     const userId = caller.id;
 
     const { subscription_id } = req.body || {};
-    const admin = createClient(supabaseUrl, serviceKey);
 
     // Stop auto-renewal at Razorpay (best-effort; access stays until period end)
     if (subscription_id && process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {

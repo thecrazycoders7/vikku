@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import Razorpay from 'razorpay'
+import { adminClient, callerOf } from './_auth.js'
 
 // Price floor per plan/cycle in rupees — mirrors PLAN_PRICING in src/lib/razorpayService.js
 const BASE = {
@@ -14,16 +15,11 @@ export default async function handler(req, res) {
   }
 
   // ── 0. Authenticate caller via Supabase JWT ──────────────────────────────
-  const supabaseUrl = process.env.SUPABASE_URL
-  const anonKey = process.env.SUPABASE_ANON_KEY
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!supabaseUrl || !anonKey || !serviceKey) {
+  const admin = adminClient()
+  if (!admin) {
     return res.status(500).json({ success: false, error: 'Server misconfigured' })
   }
-  const authHeader = req.headers['authorization'] || ''
-  const { createClient: _create } = await import('@supabase/supabase-js')
-  const callerClient = _create(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } })
-  const { data: { user: caller } } = await callerClient.auth.getUser()
+  const caller = await callerOf(req, admin)
   if (!caller) {
     return res.status(401).json({ success: false, error: 'Unauthorized' })
   }
@@ -104,7 +100,6 @@ export default async function handler(req, res) {
   }
   if (razorpay_subscription_id) row.razorpay_subscription_id = razorpay_subscription_id
 
-  const admin = _create(supabaseUrl, serviceKey)
   const { error } = await admin.from('user_subscriptions').upsert(row, { onConflict: 'user_id' })
   if (error) {
     console.error('subscription grant failed:', error)
