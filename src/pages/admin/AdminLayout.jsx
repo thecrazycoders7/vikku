@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Users, CreditCard, BarChart2, Megaphone, Settings, Mail, Activity, Search, X, Target, Briefcase,
-  PieChart, FolderKanban, Wallet, CalendarDays, FileText, FileSignature, CalendarClock, Menu as MenuIcon,
+  PieChart, FolderKanban, Wallet, Landmark, CalendarDays, FileText, FileSignature, CalendarClock, Menu as MenuIcon,
   LogOut, Globe, LayoutGrid, BellRing, ChevronDown,
 } from 'lucide-react'
 import NotificationBell from '../../components/pm/NotificationBell'
@@ -24,6 +24,7 @@ const sections = [
   { title: 'Operations', items: [
     { label: 'Meetings',   path: '/admin/crm/meetings',              icon: CalendarDays },
     { label: 'Follow-ups', path: '/admin/crm/leads?view=followups',  icon: CalendarClock },
+    { label: 'Finances',   path: '/admin/finances',                  icon: Landmark },
     { label: 'Payments',   path: '/admin/crm/payments',              icon: Wallet },
     { label: 'Quotes',     path: '/admin/crm/quotes',                icon: FileText },
     { label: 'Documents',  path: '/admin/documents',                 icon: FileSignature },
