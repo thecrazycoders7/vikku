@@ -67,6 +67,15 @@ export const listExpenses = async () => check(await list('crm_expenses', 'spent_
 export const createExpense = async (fields) => check(await supabase.from('crm_expenses').insert(fields).select().single())
 export const deleteExpense = async (id) => check(await supabase.from('crm_expenses').delete().eq('id', id))
 
+// Regular costs and bank balance for /admin/finances (20261103_crm_finance_cash.sql).
+export const listRecurring = async () => check(await list('crm_recurring_expenses', 'next_due', {}, true))
+export const createRecurring = async (fields) => check(await supabase.from('crm_recurring_expenses').insert(fields).select().single())
+export const updateRecurring = async (id, fields) => check(await supabase.from('crm_recurring_expenses').update(fields).eq('id', id).select().single())
+export const deleteRecurring = async (id) => check(await supabase.from('crm_recurring_expenses').delete().eq('id', id))
+export const postRecurringExpenses = async () => check(await supabase.rpc('crm_post_recurring_expenses'))
+export const listCashBalances = async () => check(await supabase.from('crm_cash_balances').select('*'))
+export const saveCashBalance = async (fields) => check(await supabase.from('crm_cash_balances').upsert(fields).select().single())
+
 // Creates a Vikku PM board for a CRM project (owned by the signed-in admin) and links it.
 export async function createPmBoard(project, client, userId) {
   if (!userId) throw new Error('Your session has expired. Sign in again to create a PM board.')

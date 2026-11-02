@@ -3,7 +3,7 @@ import { X } from 'lucide-react'
 import useLockBodyScroll from '../../../hooks/useLockBodyScroll'
 import {
   EXPENSE_CATEGORIES, PAYMENT_KINDS, PAYMENT_METHODS, PROJECT_STAGES, SERVICES, formatMoney, isoDay,
-  createExpense, createPayment, createProject, createRetainer, updatePayment, updateProject, updateRetainer,
+  createExpense, createPayment, createProject, createRecurring, createRetainer, saveCashBalance, updatePayment, updateProject, updateRecurring, updateRetainer,
 } from '../../../lib/crmService'
 import { Field, inputCls } from './LeadPanel'
 
@@ -205,6 +205,55 @@ export function ExpenseForm({ clients, onClose, onSaved }) {
       </Field>
       <Field label="For client (optional)"><ClientSelect clients={clients} value={f.form.client_id} onChange={f.set('client_id')} /></Field>
       <Field label="Description" wide><input className={inputCls} value={f.form.description} onChange={f.set('description')} placeholder="e.g. OpenAI API, freelancer for UI" /></Field>
+    </Modal>
+  )
+}
+
+// -------------------------------------------------------- regular cost ------
+export function RecurringForm({ item, clients, onClose, onSaved }) {
+  const defaults = { title: '', amount: '', currency: 'INR', category: 'tools', every: 'month', next_due: isoDay(), client_id: '' }
+  const f = useForm(pick(item, Object.keys(defaults), defaults), (form) => {
+    const data = nullIfEmpty({ ...form, title: form.title.trim(), amount: Number(form.amount), anchor_day: Number(form.next_due.slice(8, 10)) })
+    return item ? updateRecurring(item.id, data) : createRecurring(data)
+  }, onSaved, (form) => !form.title.trim() ? 'Add a name.' : !(Number(form.amount) > 0) ? 'Enter an amount above zero.' : !form.next_due ? 'Choose the next payment date.' : null)
+  return (
+    <Modal title={item ? 'Edit regular cost' : 'Add regular cost'} onClose={onClose} onSubmit={f.submit} saving={f.saving} error={f.error} submitLabel={item ? 'Save changes' : 'Add cost'}>
+      <Field label="Name *" wide><input className={inputCls} value={f.form.title} onChange={f.set('title')} placeholder="e.g. Vercel, office rent, salary" autoFocus /></Field>
+      <Field label="Amount *">
+        <div className="flex gap-2">
+          <select className={`${inputCls} !w-24`} value={f.form.currency} onChange={f.set('currency')}>
+            <option value="INR" className="bg-black">₹ INR</option><option value="USD" className="bg-black">$ USD</option>
+          </select>
+          <input className={inputCls} type="number" min="0" step="0.01" value={f.form.amount} onChange={f.set('amount')} />
+        </div>
+      </Field>
+      <Field label="Repeats">
+        <select className={inputCls} value={f.form.every} onChange={f.set('every')}>
+          <option value="month" className="bg-black">Every month</option><option value="year" className="bg-black">Every year</option>
+        </select>
+      </Field>
+      <Field label="Next payment date *"><input className={inputCls} type="date" value={f.form.next_due} onChange={f.set('next_due')} /></Field>
+      <Field label="Category">
+        <select className={inputCls} value={f.form.category} onChange={f.set('category')}>
+          {EXPENSE_CATEGORIES.map(c => <option key={c.id} value={c.id} className="bg-black">{c.label}</option>)}
+        </select>
+      </Field>
+      <Field label="For client (optional)" wide><ClientSelect clients={clients} value={f.form.client_id} onChange={f.set('client_id')} /></Field>
+    </Modal>
+  )
+}
+
+// --------------------------------------------------------- bank balance ------
+export function BalanceForm({ currency, balance, onClose, onSaved }) {
+  const defaults = { amount: '', as_of: isoDay() }
+  const f = useForm(balance ? { amount: balance.amount, as_of: isoDay() } : defaults,
+    (form) => saveCashBalance({ currency, amount: Number(form.amount), as_of: form.as_of }), onSaved,
+    (form) => form.amount === '' || Number.isNaN(Number(form.amount)) ? 'Enter your balance.' : !form.as_of ? 'Choose a date.' : null)
+  return (
+    <Modal title={`Bank balance (${currency})`} onClose={onClose} onSubmit={f.submit} saving={f.saving} error={f.error} submitLabel="Save balance">
+      <Field label="Balance *"><input className={inputCls} type="number" step="0.01" value={f.form.amount} onChange={f.set('amount')} autoFocus /></Field>
+      <Field label="As of"><input className={inputCls} type="date" value={f.form.as_of} onChange={f.set('as_of')} /></Field>
+      <p className="sm:col-span-2 text-xs text-white/50">Enter what your bank shows at the end of this day. Payments and expenses dated after it adjust the balance automatically, so update it when it stops matching your bank.</p>
     </Modal>
   )
 }

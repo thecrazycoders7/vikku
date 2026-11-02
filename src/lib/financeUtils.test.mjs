@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { currenciesIn, financeCsv, financePeriods, financeView, monthlyTotals, niceMax } from './financeUtils.js'
+import { burnRate, cashNow, currenciesIn, financeCsv, financePeriods, financeView, monthlyCost, monthlyTotals, niceMax, runwayMonths } from './financeUtils.js'
 
 const now = new Date(2026, 10, 2)
 const [thisMonth, lastMonth, thisFy, lastFy, all] = financePeriods(now)
@@ -62,4 +62,24 @@ const rows = csv.split('\n')
 assert.equal(rows[0], 'Date,Type,Client,Category,Description,Reference,Currency,Amount')
 assert.equal(rows.length, 6, 'header + 2 payments in both currencies + 3 expenses')
 assert.ok(csv.includes(`"'=HYPERLINK(""x""), test"`), 'formulas are kept as text')
+// The balance covers its own day: only what is dated after it moves the number.
+const cash = cashNow({ amount: 100000, as_of: '2026-10-31' }, data, 'INR')
+assert.deepEqual([cash.moneyIn, cash.moneyOut, cash.amount], [100000, 28000, 172000])
+assert.equal(cashNow(null, data), null)
+assert.equal(cashNow({ amount: '500', as_of: '2026-12-31' }, data).amount, 500)
+assert.equal(cashNow({ amount: 0, as_of: '2026-11-30' }, data, 'USD').moneyIn, 0, 'USD on its own')
+
+assert.equal(monthlyCost({ amount: 1200, every: 'year' }), 100)
+assert.equal(monthlyCost({ amount: 1200, every: 'month' }), 1200)
+const spend = (on, amount) => ({ spent_on: on, amount, currency: 'INR' })
+const costs = { expenses: [spend('2026-08-01', 30000), spend('2026-09-01', 30000), spend('2026-10-31', 30000), spend('2026-07-31', 999999), spend('2026-11-01', 999999)] }
+assert.equal(burnRate(costs, [], 'INR', now).average, 30000, 'three full months, ignoring this month and older ones')
+const regular = [{ amount: 50000, status: 'active', currency: 'INR' }, { amount: 12000, every: 'year', status: 'active', currency: 'INR' }, { amount: 9, status: 'paused', currency: 'INR' }, { amount: 7, status: 'active', currency: 'USD' }]
+assert.equal(burnRate(costs, regular, 'INR', now).regular, 51000)
+assert.equal(burnRate(costs, regular, 'INR', now).monthly, 51000, 'regular costs win when higher')
+assert.equal(burnRate(costs, [], 'INR', now).monthly, 30000)
+assert.equal(runwayMonths(90000, 30000), 3)
+assert.equal(runwayMonths(-100, 30000), 0)
+assert.equal(runwayMonths(90000, 0), null)
+
 console.log('financeUtils: all checks passed')

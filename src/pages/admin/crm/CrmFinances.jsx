@@ -1,15 +1,22 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Download, Plus, Wallet } from 'lucide-react'
+import { Download, Pause, Pencil, Play, Plus, Trash2, Wallet } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
-import { ExpenseForm } from './Forms'
-import { EmptyState, KpiCard, Panel } from '../ui'
-import { EXPENSE_CATEGORIES, PAYMENT_KINDS, formatMoney, labelOf, listClients, listExpenses, listPayments, listProjects, listRetainers } from '../../../lib/crmService'
-import { currenciesIn, financeCsv, financePeriods, financeView, monthlyTotals, niceMax } from '../../../lib/financeUtils'
+import { BalanceForm, ExpenseForm, RecurringForm } from './Forms'
+import { fmtDate } from './Lists'
+import { EmptyState, KpiCard, Panel, useToast } from '../ui'
+import {
+  EXPENSE_CATEGORIES, PAYMENT_KINDS, deleteRecurring, formatMoney, labelOf, listCashBalances, listClients, listExpenses, listPayments,
+  listProjects, listRecurring, listRetainers, postRecurringExpenses, updateRecurring,
+} from '../../../lib/crmService'
+import {
+  burnRate, cashNow, currenciesIn, financeCsv, financePeriods, financeView, monthlyCost, monthlyTotals, niceMax, runwayMonths,
+} from '../../../lib/financeUtils'
 
 // Series colours are checked for contrast and colour blindness; money in is blue, money out orange everywhere.
 const IN = '#2A78D6', OUT = '#EA580C'
-const EMPTY = { payments: [], expenses: [], retainers: [], clients: [], projects: [] }
+const EMPTY = { payments: [], expenses: [], retainers: [], clients: [], projects: [], recurring: [], balances: [] }
+const SETUP = 'Regular costs and bank balance need the database update. Run supabase/migrations/20261103_crm_finance_cash.sql.'
 
 const compact = (n, currency) => new Intl.NumberFormat(currency === 'USD' ? 'en-US' : 'en-IN', { style: 'currency', currency, notation: 'compact', maximumFractionDigits: 2 }).format(n)
 
@@ -84,17 +91,26 @@ export default function CrmFinances() {
   const [periodId, setPeriodId] = useState('this-fy')
   const [currency, setCurrency] = useState('INR')
   const [asTable, setAsTable] = useState(false)
-  const [adding, setAdding] = useState(false)
+  const [modal, setModal] = useState(null) // { type: 'expense'|'recurring'|'balance', item? }
+  const [setupNeeded, setSetupNeeded] = useState(false)
+  const [toast, setToast] = useToast()
 
+  // Costs that have come due are added first, so every number below includes them.
   const load = async () => {
     setError('')
     try {
+      const posted = await postRecurringExpenses().catch(() => 0)
+      if (posted > 0) setToast({ text: `${posted} regular cost${posted === 1 ? '' : 's'} added to expenses.` })
+      const extras = await Promise.all([listRecurring(), listCashBalances()]).catch(() => null)
+      setSetupNeeded(!extras)
       const [payments, expenses, retainers, clients, projects] = await Promise.all([listPayments(), listExpenses(), listRetainers(), listClients(), listProjects()])
-      setData({ payments, expenses, retainers, clients, projects })
+      setData({ payments, expenses, retainers, clients, projects, recurring: extras?.[0] || [], balances: extras?.[1] || [] })
     } catch (err) { setError(err.message) }
     finally { setLoading(false) }
   }
-  useEffect(() => { load() }, [])
+  useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const saved = () => { setModal(null); load() }
+  const run = async (fn) => { setError(''); try { await fn(); await load() } catch (err) { setError(err.message) } }
 
   const period = periods.find(p => p.id === periodId)
   const view = useMemo(() => financeView(data, period, currency), [data, period, currency])
@@ -103,6 +119,12 @@ export default function CrmFinances() {
   const money = (n) => formatMoney(n, currency)
   const nothingYet = !loading && !data.payments.length && !data.expenses.length
   const biggest = view.byCategory[0]?.amount || 1
+  const balance = data.balances.find(b => b.currency === currency)
+  const cash = useMemo(() => cashNow(balance, data, currency), [balance, data, currency])
+  const burn = useMemo(() => burnRate(data, data.recurring, currency), [data, currency])
+  const runway = cash ? runwayMonths(cash.amount, burn.monthly) : null
+  const costs = data.recurring.filter(r => (r.currency || 'INR') === currency)
+  const removeCost = (r) => { if (window.confirm(`Delete "${r.title}"? Expenses already added stay in your records.`)) run(() => deleteRecurring(r.id)) }
 
   const exportCsv = () => {
     const blob = new Blob([financeCsv(data, period, (c) => labelOf([...EXPENSE_CATEGORIES, ...PAYMENT_KINDS], c))], { type: 'text/csv' })
@@ -129,7 +151,7 @@ export default function CrmFinances() {
           </select>
         )}
         <button type="button" onClick={exportCsv} className="act h-8"><Download size={13} className="mr-1" /> Export CSV</button>
-        <button type="button" onClick={() => setAdding(true)} className="btn-primary flex h-8 items-center gap-1.5 rounded-lg px-3 text-xs"><Plus size={13} /> Add expense</button>
+        <button type="button" onClick={() => setModal({ type: 'expense' })} className="btn-primary flex h-8 items-center gap-1.5 rounded-lg px-3 text-xs"><Plus size={13} /> Add expense</button>
       </div>
 
       {error && <p className="mb-3 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700">{error}</p>}
@@ -140,6 +162,44 @@ export default function CrmFinances() {
         <KpiCard label="Profit" value={money(view.profit)} sub={view.margin === null ? 'No money in yet' : `${view.margin}% of money in`} />
         <KpiCard label="Still to collect" value={money(view.toCollect)} to="/admin/crm/payments" sub={view.overdueCount ? `${money(view.overdue)} overdue · ${view.overdueCount} payment${view.overdueCount === 1 ? '' : 's'}` : 'Nothing overdue'} />
       </div>
+
+      <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <KpiCard label="Bank balance" value={cash ? money(cash.amount) : 'Not set'} sub={
+          <button type="button" disabled={setupNeeded} onClick={() => setModal({ type: 'balance' })} className="underline hover:text-slate-900 disabled:no-underline disabled:opacity-60">{cash ? `Based on ${fmtDate(cash.asOf)} · Update` : 'Add your balance'}</button>
+        } />
+        <KpiCard label="Runway" value={runway === null ? '-' : `${runway.toFixed(1)} months`} sub={burn.monthly > 0 ? `At ${money(Math.round(burn.monthly))} a month, with no new money` : 'Add expenses to see this'} />
+        <KpiCard label="Regular costs" value={`${money(Math.round(burn.regular))}/mo`} sub={`${costs.filter(r => r.status === 'active').length} active`} />
+      </div>
+
+      {setupNeeded && <p className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">{SETUP}</p>}
+
+      {!setupNeeded && !loading && (
+        <div className="mb-4">
+          <Panel title="Regular costs" count={costs.length} action={<button type="button" className="act" onClick={() => setModal({ type: 'recurring' })}><Plus size={12} className="mr-1" /> Add regular cost</button>}>
+            {costs.length === 0 ? <EmptyState icon={Wallet} title="No regular costs yet">Add tools, hosting, rent or salaries once. They're added to your expenses each time they come due.</EmptyState> : (
+              <>
+                <ul className="divide-y divide-slate-100">
+                  {costs.map(r => (
+                    <li key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-5 py-2.5">
+                      <div className="min-w-[150px] flex-1">
+                        <p className={`truncate text-sm font-medium ${r.status === 'paused' ? 'text-slate-400' : 'text-slate-900'}`}>{r.title}</p>
+                        <p className="truncate text-xs text-slate-500">{labelOf(EXPENSE_CATEGORIES, r.category)} · {r.status === 'paused' ? 'Paused' : `Next on ${fmtDate(r.next_due)}`}</p>
+                      </div>
+                      <p className="text-right text-sm tabular-nums text-slate-900">{money(r.amount)}<span className="text-xs text-slate-500">/{r.every === 'year' ? `yr (${money(Math.round(monthlyCost(r)))}/mo)` : 'mo'}</span></p>
+                      <div className="flex">
+                        <button type="button" className="icon-act" aria-label={`${r.status === 'paused' ? 'Resume' : 'Pause'} ${r.title}`} onClick={() => run(() => updateRecurring(r.id, { status: r.status === 'paused' ? 'active' : 'paused' }))}>{r.status === 'paused' ? <Play size={14} /> : <Pause size={14} />}</button>
+                        <button type="button" className="icon-act" aria-label={`Edit ${r.title}`} onClick={() => setModal({ type: 'recurring', item: r })}><Pencil size={14} /></button>
+                        <button type="button" className="icon-act" aria-label={`Delete ${r.title}`} onClick={() => removeCost(r)}><Trash2 size={14} /></button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <p className="border-t border-slate-100 px-5 py-2.5 text-xs text-slate-500">Costs that have come due are added when you open this page, with their correct dates.</p>
+              </>
+            )}
+          </Panel>
+        </div>
+      )}
 
       {nothingYet ? (
         <Panel><EmptyState icon={Wallet} title="No money recorded yet">Record payments on the Payments page and add your expenses here. Your profit and charts will build from those.</EmptyState></Panel>
@@ -193,7 +253,10 @@ export default function CrmFinances() {
         </div>
       )}
 
-      {adding && <ExpenseForm clients={data.clients} onClose={() => setAdding(false)} onSaved={() => { setAdding(false); load() }} />}
+      {modal?.type === 'expense' && <ExpenseForm clients={data.clients} onClose={() => setModal(null)} onSaved={saved} />}
+      {modal?.type === 'recurring' && <RecurringForm item={modal.item} clients={data.clients} onClose={() => setModal(null)} onSaved={saved} />}
+      {modal?.type === 'balance' && <BalanceForm currency={currency} balance={balance} onClose={() => setModal(null)} onSaved={saved} />}
+      {toast}
     </AdminLayout>
   )
 }

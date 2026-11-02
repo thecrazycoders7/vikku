@@ -82,7 +82,8 @@ export const PAYMENT_METHODS = [
   { id: 'card', label: 'Card' }, { id: 'cash', label: 'Cash' }, { id: 'other', label: 'Other' },
 ]
 export const EXPENSE_CATEGORIES = [
-  { id: 'tools', label: 'Tools & software' }, { id: 'freelancer', label: 'Freelancers' }, { id: 'hosting', label: 'Hosting' },
+  { id: 'tools', label: 'Tools & software' }, { id: 'freelancer', label: 'Freelancers' }, { id: 'salaries', label: 'Salaries' },
+  { id: 'office', label: 'Office & rent' }, { id: 'hosting', label: 'Hosting' },
   { id: 'ads', label: 'Ads' }, { id: 'travel', label: 'Travel' }, { id: 'other', label: 'Other' },
 ]
 export const labelOf = (list, id) => list.find(x => x.id === id)?.label || id
