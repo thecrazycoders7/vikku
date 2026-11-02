@@ -70,6 +70,7 @@ const CrmPayments            = lazy(() => import('./pages/admin/crm/CrmPayments'
 const CrmMeetings            = lazy(() => import('./pages/admin/crm/CrmMeetings'))
 const CrmDocuments           = lazy(() => import('./pages/admin/crm/CrmDocuments'))
 const CrmDocTemplates        = lazy(() => import('./pages/admin/crm/CrmDocTemplates'))
+const CrmFinances            = lazy(() => import('./pages/admin/crm/CrmFinances'))
 const CrmDocEditor           = lazy(() => import('./pages/admin/crm/CrmDocEditor'))
 
 function PMRedirect() {
@@ -169,6 +170,7 @@ export default function App() {
               <Route path="/admin/crm/payments"  element={<AdminGate><CrmPayments /></AdminGate>} />
               <Route path="/admin/crm/meetings"  element={<AdminGate><CrmMeetings /></AdminGate>} />
               <Route path="/admin/crm/quotes"    element={<AdminGate><CrmDocuments /></AdminGate>} />
+              <Route path="/admin/finances"      element={<AdminGate><CrmFinances /></AdminGate>} />
               <Route path="/admin/documents"     element={<AdminGate><CrmDocTemplates /></AdminGate>} />
               <Route path="/admin/documents/new" element={<AdminGate><CrmDocEditor /></AdminGate>} />
               <Route path="/admin/documents/:id" element={<AdminGate><CrmDocEditor /></AdminGate>} />
