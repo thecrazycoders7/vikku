@@ -16,10 +16,10 @@ function Blank({ seg, value, onChange, inCell }) {
   const label = hintText(seg.hint)
   const shared = { value, 'aria-label': label, placeholder: label, onChange: e => onChange(e.target.value) }
   const cls = `rounded border-b px-1 text-sm outline-none focus:border-orange-500 ${value ? 'border-slate-300 bg-orange-50/60 text-slate-900' : 'border-sky-300 bg-sky-50 text-slate-900 placeholder-sky-500/70'}`
-  if (seg.hint.length > 34 || value.length > 44) {
+  const choices = choicesOf(seg.hint)
+  if (!choices && (seg.hint.length > 34 || value.length > 44)) {
     return <textarea rows={Math.min(5, Math.ceil(Math.max(value.length, seg.hint.length) / (inCell ? 24 : 64)) + 1)} {...shared} className={`${cls} block w-full resize-y py-0.5`} />
   }
-  const choices = choicesOf(seg.hint)
   const width = Math.min(Math.max((value || label).length, 5) + 3, 46)
   return (
     <>

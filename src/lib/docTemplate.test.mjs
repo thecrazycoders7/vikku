@@ -6,7 +6,7 @@ import { templatePdf } from './docTemplatePdf.js'
 
 const { jsPDF } = createRequire(import.meta.url)('jspdf')
 
-assert.equal(DOC_TEMPLATES.length, 15)
+assert.equal(DOC_TEMPLATES.length, 16)
 
 const blocks = parseTemplate(`**[PROJECT NAME]** for [CLIENT], [N] weeks and [N] months
 ### Scope

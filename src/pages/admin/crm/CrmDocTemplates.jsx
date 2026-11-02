@@ -9,7 +9,7 @@ import { DOC_TEMPLATES } from '../../../data/docTemplates'
 import { COMPANY_FIELDS } from '../../../lib/docTemplate'
 import { deleteClientDoc, getDocSettings, listClientDocs, listClients, setDocSetting } from '../../../lib/crmService'
 
-const CATEGORIES = ['Sales', 'Contracts', 'Delivery', 'Billing', 'Hiring', 'Policies']
+const CATEGORIES = ['Sales', 'Contracts', 'Delivery', 'Support', 'Billing', 'Hiring', 'Policies']
 const inputCls = 'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-orange-400 focus:outline-none'
 
 export default function CrmDocTemplates() {
