@@ -2,12 +2,16 @@ import crypto from 'crypto'
 import Razorpay from 'razorpay'
 import { adminClient, callerOf } from './_auth.js'
 
-// Price floor per plan/cycle in rupees — mirrors PLAN_PRICING in src/lib/razorpayService.js
+// GST-inclusive price floor per plan/cycle (paise) — mirrors priceBreakdown()
+const GST = 0.18
 const BASE = {
   pro:  { monthly: 299, annual: 2999 },
   team: { monthly: 999, annual: 9999 },
 }
-const expectedPaise = (plan, cycle) => (BASE[plan]?.[cycle] ?? 0) * 100
+function expectedPaise(plan, cycle) {
+  const base = (BASE[plan]?.[cycle] ?? 0) * 100
+  return base + Math.round(base * GST)
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
