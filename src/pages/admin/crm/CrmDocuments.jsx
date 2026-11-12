@@ -23,7 +23,7 @@ function Builder({ doc, leads, clients, onBack, onSaved }) {
     link: doc?.client_id ? `c:${doc.client_id}` : doc?.lead_id ? `l:${doc.lead_id}` : '',
     title: doc?.title || '', currency: doc?.currency || 'INR',
     items: doc?.items?.length ? doc.items : [{ description: '', qty: 1, rate: '' }],
-    tax_percent: doc?.tax_percent ?? 0, discount: doc?.discount || '', valid_until: doc?.valid_until || plusDays(15),
+    tax_percent: doc?.tax_percent ?? 18, discount: doc?.discount || '', valid_until: doc?.valid_until || plusDays(15),
     notes: doc?.notes || '', terms: doc?.terms ?? DEFAULT_TERMS,
   }))
   const [saving, setSaving] = useState(false)

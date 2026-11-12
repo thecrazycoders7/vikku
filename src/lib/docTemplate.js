@@ -14,6 +14,7 @@ export const COMPANY_FIELDS = [
   { key: 'LEGAL FORM', label: 'Legal form', hint: 'Proprietorship, LLP or Pvt Ltd' },
   { key: 'REGISTERED ADDRESS', label: 'Registered address', hint: 'As on your registration' },
   { key: 'VIKKU PAN', label: 'PAN' },
+  { key: 'VIKKU GSTIN', label: 'GSTIN', hint: 'Leave empty if not registered' },
   { key: 'ACCOUNT NAME', label: 'Bank account name' },
   { key: 'ACCOUNT NUMBER', label: 'Bank account number' },
   { key: 'IFSC', label: 'IFSC' },
