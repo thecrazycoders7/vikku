@@ -9,7 +9,7 @@ import { calBooking } from './_crm.js'
 
 export const config = { api: { bodyParser: false } }
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+const supabase = createClient(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
 
 // The signature covers the exact bytes Cal sent, so read the raw body rather than a re-serialised object.
 async function rawBody(req) {
@@ -45,8 +45,11 @@ async function findOrCreatePerson(person) {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
   const secret = process.env.CAL_WEBHOOK_SECRET
+  // The admin Meetings page asks this so a missing secret shows as a warning instead of bookings quietly failing.
+  // It only says whether one is set, never what it is.
+  if (req.method === 'GET') return res.status(200).json({ ready: Boolean(secret) })
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
   if (!secret) return res.status(500).json({ error: 'Webhook secret not configured' })
 
   const raw = await rawBody(req)

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Video, ChevronLeft, ChevronRight, Pencil, Trash2, CalendarCheck } from 'lucide-react'
+import { Plus, Video, ChevronLeft, ChevronRight, Pencil, Trash2, CalendarCheck, AlertTriangle } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import { Modal } from './Forms'
 import useOpenOnParam from '../../../hooks/useOpenOnParam'
@@ -86,6 +86,12 @@ export default function CrmMeetings() {
     finally { setLoading(false) }
   }
   useEffect(() => { load() }, [])
+  // null until known: the check only runs on the deployed site, so a dev server shows no warning.
+  const [calReady, setCalReady] = useState(null)
+  useEffect(() => {
+    fetch('/api/cal-webhook').then(r => (r.ok ? r.json() : null)).then(d => setCalReady(typeof d?.ready === 'boolean' ? d.ready : null)).catch(() => {})
+  }, [])
+  const lastCal = meetings.filter(m => m.source === 'cal').map(m => m.created_at).sort().pop()
   const run = async (fn) => { setError(''); try { await fn(); await load() } catch (err) { setError(err.message) } }
 
   const leadsById = useMemo(() => Object.fromEntries(leads.map(l => [l.id, l])), [leads])
@@ -165,10 +171,20 @@ export default function CrmMeetings() {
         <button onClick={() => setModal({})} className="btn-primary flex items-center gap-1.5 text-xs px-4 py-2.5 rounded-xl"><Plus size={13} /> Schedule</button>
       </div>
 
-      <div className="glass rounded-2xl p-4 mb-4 flex items-start gap-3 text-xs">
-        <CalendarCheck size={16} className="text-orange-600 flex-shrink-0 mt-0.5" />
-        <p className="text-white/60">Bookings from your Cal.com page appear here automatically and create a lead for new people. Connect it once in Cal.com → Settings → Developer → Webhooks with the URL <span className="font-mono text-white select-all">https://www.vikku.in/api/cal-webhook</span>.</p>
-      </div>
+      {calReady === false ? (
+        <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-4 mb-4 flex items-start gap-3 text-xs text-red-800">
+          <AlertTriangle size={16} className="flex-shrink-0 mt-0.5" />
+          <p><strong>Cal.com bookings can't reach your admin.</strong> The site is missing <code>CAL_WEBHOOK_SECRET</code>, so every booking is turned away. Add it in Vercel → Settings → Environment Variables for Production, use the same secret on your Cal.com webhook, then redeploy. Bookings made before then won't come through, so add them with Schedule.</p>
+        </div>
+      ) : (
+        <div className="glass rounded-2xl p-4 mb-4 flex items-start gap-3 text-xs">
+          <CalendarCheck size={16} className="text-orange-600 flex-shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="text-white/60">Bookings from your Cal.com page appear here automatically and create a lead for new people. Connect it once in Cal.com → Settings → Developer → Webhooks with the URL <span className="font-mono text-white select-all">https://www.vikku.in/api/cal-webhook</span>.</p>
+            {!loading && <p className="text-white/40">{lastCal ? `Last Cal.com booking received ${new Date(lastCal).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: IST })}.` : 'No Cal.com bookings received yet. If someone has booked, check the webhook URL and secret in Cal.com.'}</p>}
+          </div>
+        </div>
+      )}
 
       {error && <div className="text-sm text-red-500 mb-3">{error}</div>}
 
