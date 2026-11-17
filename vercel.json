@@ -23,6 +23,10 @@
       "destination": "/app.html"
     },
     {
+      "source": "/blog/:slug",
+      "destination": "/app.html"
+    },
+    {
       "source": "/tools/(cost-estimator|roi-calculator|timeline-calculator|tech-recommender|maintenance-calculator)",
       "destination": "/app.html"
     }

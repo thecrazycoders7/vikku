@@ -85,6 +85,7 @@ export default function SiteNav() {
           <nav className="nav" aria-label="Main">
             <div className="nav-links">
               <a className="nav-link" href="/products">Products</a>
+              <a className="nav-link" href="/blog">Blog</a>
               <Dropdown label="Services" items={serviceLinks} open={open === 'services'} setOpen={toggle('services')} go={go} />
               <a className="nav-link" href="/about">About</a>
               <Dropdown label="Free tools" items={toolLinks} open={open === 'tools'} setOpen={toggle('tools')} go={go} />
@@ -102,6 +103,7 @@ export default function SiteNav() {
       {menuOpen && (
         <div className="mobile-menu">
           <a className="menu-item" href="/products" onClick={() => setMenuOpen(false)}>Products</a>
+          <a className="menu-item" href="/blog" onClick={() => setMenuOpen(false)}>Blog</a>
           <a className="menu-item" href="/about" onClick={() => setMenuOpen(false)}>About</a>
           <a className="menu-item" href="/#contact" onClick={() => setMenuOpen(false)}>Contact</a>
           <p className="label">Services</p>
