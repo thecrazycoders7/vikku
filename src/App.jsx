@@ -17,6 +17,7 @@ const Blog                  = lazy(() => import('./pages/Blog'))
 const BlogPost              = lazy(() => import('./pages/BlogPost'))
 const ProductReceptionist   = lazy(() => import('./pages/ProductReceptionist'))
 const CaseStudyHarshaFarms  = lazy(() => import('./pages/CaseStudyHarshaFarms'))
+const CaseStudyRestaurant   = lazy(() => import('./pages/CaseStudyRestaurant'))
 const Login                 = lazy(() => import('./pages/Login'))
 const Signup                = lazy(() => import('./pages/Signup'))
 const ForgotPassword        = lazy(() => import('./pages/ForgotPassword'))
@@ -111,6 +112,7 @@ export default function App() {
               <Route path="/blog/:slug"              element={<BlogPost />} />
               <Route path="/products/hospital-receptionist" element={<ProductReceptionist />} />
               <Route path="/products/harsha-farms"   element={<CaseStudyHarshaFarms />} />
+              <Route path="/products/restaurant-management-system" element={<CaseStudyRestaurant />} />
               <Route path="/work/jobly-solutions"    element={<CaseStudyJobly />} />
               <Route path="/login"                   element={<Login />} />
               <Route path="/signup"                  element={<Signup />} />

@@ -28,6 +28,7 @@ const lines = [
   '## Products',
   link('Vikku AI receptionist for hospitals', '/products/hospital-receptionist', 'answers calls in Telugu, English and Hindi; in testing'),
   link('Harsha Farms', '/products/harsha-farms', 'dairy subscription and delivery app; pre-launch'),
+  link('Restaurant management system', '/products/restaurant-management-system', 'POS, kitchen display, recipes and food cost, stock and delivery for Indian restaurants; front-end demo'),
   '',
   '## Free tools',
   link('Project Estimator', '/tools/project-estimator', 'software and app cost ranges in India'),
