@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Lock, CheckCircle, AlertCircle } from 'lucide-react'
 import AdminLayout from './AdminLayout'
+import { Badge, PageHead } from './ui'
 import { supabase } from '../../lib/supabaseClient'
 import { getAdminOverview } from '../../lib/adminService'
 
@@ -33,77 +34,61 @@ export default function AdminProfile() {
   const joined   = user?.created_at ? new Date(user.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'
 
   return (
-    <AdminLayout title="Admin Profile">
-      <div className="max-w-xl space-y-5">
-        {/* Avatar + info */}
-        <div className="glass rounded-2xl p-6 flex items-center gap-5">
-          <div className="w-16 h-16 rounded-2xl bg-violet-500/30 flex items-center justify-center flex-shrink-0">
-            <span className="font-display font-bold text-xl text-violet-300">{initials}</span>
+    <AdminLayout>
+      <PageHead title="Admin Profile" />
+      <div className="max-w-xl space-y-4">
+        <div className="card p-4 sm:p-5 flex items-center gap-4">
+          <div aria-hidden="true" className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0">
+            <span className="font-semibold text-lg text-slate-700">{initials}</span>
           </div>
-          <div>
-            <p className="font-semibold text-white text-sm">{user?.email || '-'}</p>
-            <p className="text-xs text-white/40 mt-0.5">Joined {joined}</p>
-            <span className="mt-2 inline-block text-[10px] font-medium px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300">Admin</span>
+          <div className="min-w-0">
+            <p className="font-semibold text-slate-900 text-[14px] break-all">{user?.email || '-'}</p>
+            <p className="text-[12.5px] text-slate-500 mt-0.5 tabular-nums">Joined {joined}</p>
+            <span className="mt-2 inline-block"><Badge tone="violet">Admin</Badge></span>
           </div>
         </div>
 
-        {/* Quick stats */}
         {overview && (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-4">
             {[
-              { label: 'MRR', value: `₹${overview.mrr.toLocaleString('en-IN')}`, color: 'text-green-400' },
-              { label: 'Total Users', value: overview.totalUsers, color: 'text-white' },
-              { label: 'Paid', value: overview.proUsers + overview.teamUsers, color: 'text-violet-400' },
-            ].map(({ label, value, color }) => (
-              <div key={label} className="glass rounded-xl p-4 text-center">
-                <p className={`font-display font-bold text-xl ${color}`}>{value}</p>
-                <p className="text-[10px] text-white/40 mt-0.5">{label}</p>
+              { label: 'MRR', value: `₹${overview.mrr.toLocaleString('en-IN')}` },
+              { label: 'Total Users', value: overview.totalUsers },
+              { label: 'Paid', value: overview.proUsers + overview.teamUsers },
+            ].map(({ label, value }) => (
+              <div key={label} className="card kpi">
+                <p className="kpi-label">{label}</p>
+                <p className="kpi-value">{value}</p>
               </div>
             ))}
           </div>
         )}
 
-        {/* Change password */}
-        <div className="glass rounded-2xl p-6">
-          <p className="text-xs text-white/40 uppercase tracking-widest mb-5">Change Password</p>
-          {msg && (
-            <div className={`flex items-center gap-2 text-sm mb-4 ${msg.type === 'ok' ? 'text-green-400' : 'text-red-400'}`}>
-              {msg.type === 'ok' ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
-              {msg.text}
-            </div>
-          )}
-          <form onSubmit={handlePassword} className="space-y-3">
-            <div className="relative">
-              <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="New password"
-                className="w-full glass rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none"
-                required
-              />
-            </div>
-            <div className="relative">
-              <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
-              <input
-                type="password"
-                value={confirm}
-                onChange={e => setConfirm(e.target.value)}
-                placeholder="Confirm new password"
-                className="w-full glass rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={saving}
-              className="w-full bg-white text-black text-sm font-semibold py-2.5 rounded-xl hover:bg-white/90 transition-colors disabled:opacity-50"
-            >
-              {saving ? 'Updating…' : 'Update Password'}
-            </button>
-          </form>
-        </div>
+        <section className="card">
+          <header className="card-head"><h2>Change Password</h2></header>
+          <div className="p-4">
+            {msg && (
+              <div role={msg.type === 'ok' ? 'status' : 'alert'} className={`flex items-center gap-2 text-[13px] mb-3 ${msg.type === 'ok' ? 'text-[var(--green)]' : 'text-[var(--red)]'}`}>
+                {msg.type === 'ok' ? <CheckCircle size={16} aria-hidden="true" /> : <AlertCircle size={16} aria-hidden="true" />}
+                {msg.text}
+              </div>
+            )}
+            <form onSubmit={handlePassword} className="space-y-3">
+              <label className="input-group">
+                <Lock aria-hidden="true" />
+                <span className="sr-only">New password</span>
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="New password" autoComplete="new-password" className="input" required />
+              </label>
+              <label className="input-group">
+                <Lock aria-hidden="true" />
+                <span className="sr-only">Confirm new password</span>
+                <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Confirm new password" autoComplete="new-password" className="input" required />
+              </label>
+              <button type="submit" disabled={saving} className="btn btn-primary w-full !h-10">
+                {saving ? 'Updating…' : 'Update Password'}
+              </button>
+            </form>
+          </div>
+        </section>
       </div>
     </AdminLayout>
   )

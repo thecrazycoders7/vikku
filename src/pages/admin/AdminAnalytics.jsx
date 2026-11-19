@@ -2,18 +2,28 @@ import { useEffect, useState } from 'react'
 import { useAutoRefresh } from '../../hooks/useAutoRefresh'
 import { RefreshCw, TrendingUp, Users, IndianRupee, BarChart2 } from 'lucide-react'
 import AdminLayout from './AdminLayout'
+import { ErrorState, KpiSkeletons, PageHead } from './ui'
 import { getAdminAnalytics, getAdminMrrHistory, getAdminUserGrowth } from '../../lib/adminService'
 
-function StatCard({ icon: Icon, label, value, sub, color = 'text-white' }) {
+export function StatCard({ icon: Icon, label, value, sub }) {
   return (
-    <div className="glass rounded-2xl p-5">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] text-white/40 uppercase tracking-widest">{label}</span>
-        <Icon size={14} className="text-white/20" />
+    <div className="card kpi">
+      <div className="flex items-center justify-between">
+        <span className="kpi-label">{label}</span>
+        <Icon size={16} aria-hidden="true" className="text-slate-400" />
       </div>
-      <p className={`font-display font-bold text-2xl ${color}`}>{value}</p>
-      {sub && <p className="text-[11px] text-white/40 mt-1">{sub}</p>}
+      <p className="kpi-value">{value}</p>
+      {sub && <p className="kpi-foot">{sub}</p>}
     </div>
+  )
+}
+
+export function Section({ title, children, className = 'mb-4' }) {
+  return (
+    <section className={`card ${className}`}>
+      <header className="card-head"><h2>{title}</h2></header>
+      <div className="p-4">{children}</div>
+    </section>
   )
 }
 
@@ -25,16 +35,16 @@ function BarChart({ data, valueKey, labelKey, color, height = 80, prefix = '', f
         {data.map((d, i) => (
           <div key={i} className="relative flex-1 group flex flex-col justify-end">
             <div
-              className={`w-full ${color} rounded-t-sm transition-all hover:opacity-80`}
+              className={`w-full ${color} rounded-t-sm transition-opacity hover:opacity-80`}
               style={{ height: `${Math.max((d[valueKey] / max) * height, d[valueKey] > 0 ? 4 : 2)}px` }}
             />
-            <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-black/90 text-white text-[9px] px-1.5 py-0.5 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+            <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-[var(--primary)] text-[var(--primary-fg)] text-[11px] px-1.5 py-0.5 rounded tabular-nums whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
               {d[labelKey]}: {prefix}{formatVal ? formatVal(d[valueKey]) : d[valueKey]}
             </div>
           </div>
         ))}
       </div>
-      <div className="flex justify-between mt-1 text-[9px] text-white/25">
+      <div className="flex justify-between mt-1 text-[11px] text-slate-400">
         <span>{data[0]?.[labelKey]}</span>
         <span>{data[data.length - 1]?.[labelKey]}</span>
       </div>
@@ -62,7 +72,7 @@ function LineChart({ data, valueKey, labelKey, color, height = 80 }) {
           <circle key={i} cx={i * w} cy={100 - ((d[valueKey] - min) / range) * 90} r="1.5" fill={color} vectorEffect="non-scaling-stroke" />
         ))}
       </svg>
-      <div className="flex justify-between mt-1 text-[9px] text-white/25">
+      <div className="flex justify-between mt-1 text-[11px] text-slate-400">
         <span>{data[0]?.[labelKey]}</span>
         <span>{data[data.length - 1]?.[labelKey]}</span>
       </div>
@@ -107,150 +117,121 @@ export default function AdminAnalytics() {
   })() : null
 
   return (
-    <AdminLayout title="Analytics">
-      <div className="flex items-center justify-between mb-5">
-        <p className="text-xs text-white/40">Aggregated from live data</p>
-        <button onClick={load} disabled={loading} className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors">
-          <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
-          Refresh
+    <AdminLayout>
+      <PageHead title="Analytics" sub="Aggregated from live data">
+        <button onClick={load} disabled={loading} className="btn btn-ghost text-slate-600">
+          <RefreshCw className={loading ? 'animate-spin' : ''} /> Refresh
         </button>
-      </div>
+      </PageHead>
 
-      {error && <div className="glass rounded-xl p-4 mb-5 text-sm text-red-400 border border-red-500/20">{error}</div>}
+      {error && data && <div role="alert" className="mb-4 rounded-ui border border-[var(--red-bd)] bg-[var(--red-bg)] px-4 py-2.5 text-[13px] text-[var(--red)]">{error}</div>}
 
-      {loading && !data ? (
-        <div className="flex items-center justify-center h-48">
-          <div className="w-5 h-5 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
-        </div>
+      {error && !data ? (
+        <div className="card"><ErrorState title="Couldn't load analytics" onRetry={load}>{error}</ErrorState></div>
+      ) : loading && !data ? (
+        <KpiSkeletons />
       ) : data ? (
         <>
-          {/* Stat cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-            <StatCard icon={IndianRupee} label="ARR" value={`₹${(data.arr / 100000).toFixed(1)}L`} sub={`MRR ₹${data.mrr.toLocaleString('en-IN')}`} color="text-green-400" />
-            <StatCard icon={Users} label="Active 7d" value={data.activeUsers} sub={`of ${data.totalUsers} total`} color="text-cyan-400" />
-            <StatCard icon={TrendingUp} label="Conversion" value={`${data.conversionPct}%`} sub={`${data.paidUsers} paid`} color="text-violet-400" />
-            <StatCard icon={BarChart2} label="Churn MTD" value={data.churnedThisMonth} sub="cancelled this month" color="text-red-400" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <StatCard icon={IndianRupee} label="ARR" value={`₹${(data.arr / 100000).toFixed(1)}L`} sub={`MRR ₹${data.mrr.toLocaleString('en-IN')}`} />
+            <StatCard icon={Users} label="Active 7d" value={data.activeUsers} sub={`of ${data.totalUsers} total`} />
+            <StatCard icon={TrendingUp} label="Conversion" value={`${data.conversionPct}%`} sub={`${data.paidUsers} paid`} />
+            <StatCard icon={BarChart2} label="Churn MTD" value={data.churnedThisMonth} sub="cancelled this month" />
           </div>
 
-          {/* Revenue over time + User growth side by side */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
             {mrrHist?.months?.length > 0 && (
-              <div className="glass rounded-2xl p-5">
-                <p className="text-xs text-white/40 uppercase tracking-widest mb-4">MRR - Last 6 Months</p>
-                <LineChart
-                  data={mrrHist.months}
-                  valueKey="mrr"
-                  labelKey="label"
-                  color="#a78bfa"
-                  height={80}
-                />
-                <div className="flex justify-between mt-3 text-xs">
-                  <span className="text-white/40">₹{mrrHist.months[0]?.mrr?.toLocaleString('en-IN') || 0}</span>
-                  <span className="text-violet-400 font-medium">₹{mrrHist.months[mrrHist.months.length - 1]?.mrr?.toLocaleString('en-IN') || 0}</span>
+              <Section title="MRR - Last 6 Months" className="">
+                <LineChart data={mrrHist.months} valueKey="mrr" labelKey="label" color="var(--series-1)" height={80} />
+                <div className="flex justify-between mt-3 text-[12.5px] tabular-nums">
+                  <span className="text-slate-500">₹{mrrHist.months[0]?.mrr?.toLocaleString('en-IN') || 0}</span>
+                  <span className="text-slate-900 font-medium">₹{mrrHist.months[mrrHist.months.length - 1]?.mrr?.toLocaleString('en-IN') || 0}</span>
                 </div>
-              </div>
+              </Section>
             )}
 
             {growth?.months?.length > 0 && (
-              <div className="glass rounded-2xl p-5">
-                <p className="text-xs text-white/40 uppercase tracking-widest mb-4">User Growth - Last 6 Months</p>
-                <BarChart
-                  data={growth.months}
-                  valueKey="new"
-                  labelKey="label"
-                  color="bg-cyan-500/60"
-                  height={80}
-                />
-                <div className="flex justify-between mt-3 text-xs">
-                  <span className="text-white/40">Total: {growth.months[growth.months.length - 1]?.total || 0}</span>
-                  <span className="text-cyan-400 font-medium">+{growth.months[growth.months.length - 1]?.new || 0} this month</span>
+              <Section title="User Growth - Last 6 Months" className="">
+                <BarChart data={growth.months} valueKey="new" labelKey="label" color="bg-[var(--series-1)]" height={80} />
+                <div className="flex justify-between mt-3 text-[12.5px] tabular-nums">
+                  <span className="text-slate-500">Total: {growth.months[growth.months.length - 1]?.total || 0}</span>
+                  <span className="text-[var(--green)] font-medium">+{growth.months[growth.months.length - 1]?.new || 0} this month</span>
                 </div>
-              </div>
+              </Section>
             )}
           </div>
 
-          {/* Revenue forecast */}
           {forecast && (
-            <div className="glass rounded-2xl p-5 mb-4">
-              <p className="text-xs text-white/40 uppercase tracking-widest mb-4">Revenue Forecast</p>
+            <Section title="Revenue Forecast">
               <div className="grid grid-cols-3 gap-3">
-                <div className="text-center bg-white/[0.03] rounded-xl py-4">
-                  <p className="font-display font-bold text-lg text-emerald-400">₹{forecast.next1.toLocaleString('en-IN')}</p>
-                  <p className="text-[10px] text-white/40 mt-1">Next Month MRR</p>
-                </div>
-                <div className="text-center bg-white/[0.03] rounded-xl py-4">
-                  <p className="font-display font-bold text-lg text-emerald-400">₹{forecast.next3.toLocaleString('en-IN')}</p>
-                  <p className="text-[10px] text-white/40 mt-1">3-Month MRR</p>
-                </div>
-                <div className="text-center bg-white/[0.03] rounded-xl py-4">
-                  <p className="font-display font-bold text-lg text-emerald-400">₹{(forecast.next12arr / 100000).toFixed(1)}L</p>
-                  <p className="text-[10px] text-white/40 mt-1">12-Month ARR</p>
-                </div>
+                {[[`₹${forecast.next1.toLocaleString('en-IN')}`, 'Next Month MRR'], [`₹${forecast.next3.toLocaleString('en-IN')}`, '3-Month MRR'], [`₹${(forecast.next12arr / 100000).toFixed(1)}L`, '12-Month ARR']].map(([v, l]) => (
+                  <div key={l} className="rounded-ui bg-slate-100 px-3 py-3">
+                    <p className="text-[18px] font-semibold text-slate-900 tabular-nums break-words">{v}</p>
+                    <p className="text-[12px] text-slate-500 mt-0.5">{l}</p>
+                  </div>
+                ))}
               </div>
-              <p className="text-[10px] text-white/20 mt-3 text-center">Based on last 2 months' growth trend with {data.churnedThisMonth > 0 ? '3% churn adjustment' : 'no churn adjustment'}</p>
-            </div>
+              <p className="text-[12px] text-slate-500 mt-3">Based on last 2 months' growth trend with {data.churnedThisMonth > 0 ? '3% churn adjustment' : 'no churn adjustment'}</p>
+            </Section>
           )}
 
           {/* Conversion funnel */}
-          <div className="glass rounded-2xl p-5 mb-4">
-            <p className="text-xs text-white/40 uppercase tracking-widest mb-4">Conversion Funnel</p>
+          <Section title="Conversion Funnel">
             <div className="space-y-3">
               {[
-                { label: 'Total Users', count: data.totalUsers, pct: 100, color: 'bg-white/20' },
-                { label: 'Free Users',  count: data.freeUsers,  pct: data.totalUsers > 0 ? Math.round(data.freeUsers / data.totalUsers * 100) : 0, color: 'bg-white/30' },
-                { label: 'Paid Users',  count: data.paidUsers,  pct: data.conversionPct, color: 'bg-violet-500' },
+                { label: 'Total Users', count: data.totalUsers, pct: 100, color: 'bg-slate-300' },
+                { label: 'Free Users',  count: data.freeUsers,  pct: data.totalUsers > 0 ? Math.round(data.freeUsers / data.totalUsers * 100) : 0, color: 'bg-slate-400' },
+                { label: 'Paid Users',  count: data.paidUsers,  pct: data.conversionPct, color: 'bg-[var(--series-1)]' },
               ].map(({ label, count, pct, color }) => (
                 <div key={label}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs text-white/60">{label}</span>
-                    <span className="text-xs text-white/40">{count} ({pct}%)</span>
+                    <span className="text-[13px] text-slate-700">{label}</span>
+                    <span className="text-[12.5px] text-slate-500 tabular-nums">{count} ({pct}%)</span>
                   </div>
-                  <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden">
+                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                     <div className={`h-full ${color} rounded-full transition-all duration-700`} style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </Section>
 
           {/* Signup trend */}
-          <div className="glass rounded-2xl p-5 mb-4">
-            <p className="text-xs text-white/40 uppercase tracking-widest mb-4">Signups - Last 30 Days</p>
+          <Section title="Signups - Last 30 Days">
             <div className="flex items-end gap-0.5 h-24">
               {data.signupsByDay.map(({ date, count }) => (
                 <div key={date} className="relative flex-1 group">
                   <div
-                    className="w-full bg-violet-500/50 hover:bg-violet-500/80 rounded-t-sm transition-colors"
+                    className="w-full bg-[var(--series-1)] hover:opacity-80 rounded-t-sm transition-opacity"
                     style={{ height: `${Math.max((count / maxSignup) * 96, count > 0 ? 6 : 2)}px` }}
                   />
                   {count > 0 && (
-                    <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                    <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-[var(--primary)] text-[var(--primary-fg)] text-[11px] tabular-nums px-1.5 py-0.5 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                       {date.slice(5)}: {count}
                     </div>
                   )}
                 </div>
               ))}
             </div>
-            <div className="flex justify-between mt-1 text-[9px] text-white/25">
+            <div className="flex justify-between mt-1 text-[11px] text-slate-400 tabular-nums">
               <span>{data.signupsByDay[0]?.date?.slice(5)}</span>
               <span>{data.signupsByDay[data.signupsByDay.length - 1]?.date?.slice(5)}</span>
             </div>
-          </div>
+          </Section>
 
           {/* Top users */}
           {data.topUsers?.length > 0 && (
-            <div className="glass rounded-2xl p-5">
-              <p className="text-xs text-white/40 uppercase tracking-widest mb-4">Top Users by Projects</p>
-              <div className="space-y-2">
+            <Section title="Top Users by Projects" className="">
+              <ol className="divide-y divide-slate-200 -my-2">
                 {data.topUsers.map((u, i) => (
-                  <div key={u.email} className="flex items-center gap-3">
-                    <span className="text-[10px] text-white/30 w-4">{i + 1}</span>
-                    <span className="text-xs text-white/70 font-mono flex-1 truncate">{u.email}</span>
-                    <span className="text-xs text-white/50">{u.projectCount} projects</span>
-                  </div>
+                  <li key={u.email} className="flex items-center gap-3 py-2">
+                    <span className="text-[12px] text-slate-400 w-4 tabular-nums">{i + 1}</span>
+                    <span className="text-[12.5px] text-slate-900 font-mono flex-1 truncate">{u.email}</span>
+                    <span className="text-[12.5px] text-slate-500 tabular-nums">{u.projectCount} projects</span>
+                  </li>
                 ))}
-              </div>
-            </div>
+              </ol>
+            </Section>
           )}
         </>
       ) : null}

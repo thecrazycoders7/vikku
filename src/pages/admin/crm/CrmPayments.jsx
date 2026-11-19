@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Plus, Trash2 } from 'lucide-react'
+import { CheckCircle2, Pencil, Plus, Receipt, Trash2, Wallet } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import { ExpenseForm, PaymentForm, RetainerForm } from './Forms'
-import { MoneyTile, PaymentRows, RetainerRows, fmtDate } from './Lists'
-import { useSort } from '../ui'
+import { MoneyTile, RetainerRows, fmtDate } from './Lists'
+import { Badge, DataTable, EmptyState, PageHead, Tabs } from '../ui'
 import {
-  EXPENSE_CATEGORIES, activeMrr, deleteExpense, deletePayment, formatMoney, isoDay, labelOf, listClients, listExpenses,
+  EXPENSE_CATEGORIES, PAYMENT_KINDS, PAYMENT_METHODS, activeMrr, deleteExpense, deletePayment, formatMoney, isoDay, labelOf, listClients, listExpenses,
   listPayments, listProjects, listRetainers, monthStats, overduePayments, recordRetainerMonth, sumByCurrency, updatePayment,
 } from '../../../lib/crmService'
 
@@ -16,7 +16,6 @@ export default function CrmPayments() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [tab, setTab] = useState('Payments')
-  const [status, setStatus] = useState('')
   const [modal, setModal] = useState(null) // { type: 'payment'|'retainer'|'expense', item? }
 
   const load = async () => {
@@ -37,86 +36,78 @@ export default function CrmPayments() {
   const month = useMemo(() => monthStats({ projects, payments, expenses }), [projects, payments, expenses])
   const pending = payments.filter(p => p.status === 'pending')
   const overdue = overduePayments(payments)
-  const shown = status ? payments.filter(p => status === 'overdue' ? overdue.includes(p) : p.status === status) : payments
-  const { sorted, sort, setSort } = useSort(shown, { key: 'added', dir: 'desc' }, {
-    added: p => p.created_at, due: p => p.due_on, amount: p => Number(p.amount) || 0, paid: p => p.paid_on,
-  })
-  const SORTS = { newest: { key: 'added', dir: 'desc' }, due: { key: 'due', dir: 'asc' }, amount: { key: 'amount', dir: 'desc' }, paid: { key: 'paid', dir: 'desc' } }
-  const sortId = Object.keys(SORTS).find(k => SORTS[k].key === sort.key && SORTS[k].dir === sort.dir)
+  const paymentColumns = [
+    { key: 'amount', label: 'Amount', num: true, sort: p => Number(p.amount) || 0, render: p => <span className="font-semibold text-slate-900">{formatMoney(p.amount, p.currency)}</span> },
+    { key: 'status', label: 'Status', render: p => <Badge tone={p.status === 'received' ? 'green' : overdue.includes(p) ? 'red' : 'amber'}>{p.status === 'received' ? 'Received' : overdue.includes(p) ? 'Overdue' : 'Pending'}</Badge> },
+    { key: 'client', label: 'Client', sort: p => clientsById[p.client_id]?.name?.toLowerCase(), render: p => <span className="text-slate-900">{clientsById[p.client_id]?.name || '—'}</span> },
+    { key: 'details', label: 'Details', className: 'max-lg:hidden', render: p => <span className="text-slate-600">{[projectsById[p.project_id]?.name, labelOf(PAYMENT_KINDS, p.kind), p.method && labelOf(PAYMENT_METHODS, p.method), p.reference].filter(Boolean).join(' · ') || '—'}</span> },
+    { key: 'date', label: 'Date', sort: p => p.paid_on || p.due_on, render: p => <span className="text-slate-600 tabular-nums">{p.status === 'received' ? `Received ${fmtDate(p.paid_on)}` : p.due_on ? `Due ${fmtDate(p.due_on)}` : 'No due date'}</span> },
+    { key: 'added', label: 'Added', className: 'max-xl:hidden', sort: p => p.created_at, render: p => <span className="text-slate-500 tabular-nums">{fmtDate(p.created_at)}</span> },
+    { key: 'actions', label: <span className="sr-only">Actions</span>, render: p => (
+      <span className="flex items-center justify-end gap-1">
+        {p.status === 'pending' && <button onClick={() => run(() => updatePayment(p.id, { status: 'received', paid_on: isoDay() }))} className="act" title="Mark as received today"><CheckCircle2 size={14} /> Received</button>}
+        <button onClick={() => setModal({ type: 'payment', item: p })} className="icon-act" aria-label="Edit payment"><Pencil size={15} /></button>
+        <button onClick={() => confirm(`Delete this ${formatMoney(p.amount, p.currency)} payment?`) && run(() => deletePayment(p.id))} className="icon-act hover:!text-[var(--red)] hover:!bg-[var(--red-bg)]" aria-label="Delete payment"><Trash2 size={15} /></button>
+      </span>
+    ) },
+  ]
+  const statusFilter = { key: 'status', label: 'Status', all: 'All payments', options: [{ value: 'received', label: 'Received' }, { value: 'pending', label: 'Pending' }, { value: 'overdue', label: 'Overdue' }],
+    test: (p, v) => v === 'overdue' ? overdue.includes(p) : p.status === v }
+  const expenseColumns = [
+    { key: 'amount', label: 'Amount', num: true, sort: e => Number(e.amount) || 0, render: e => <span className="font-semibold text-slate-900">{formatMoney(e.amount, e.currency)}</span> },
+    { key: 'category', label: 'Category', render: e => <Badge tone="slate">{labelOf(EXPENSE_CATEGORIES, e.category)}</Badge> },
+    { key: 'description', label: 'Description', render: e => <span className="text-slate-700 block max-w-[320px] truncate">{e.description || 'No description'}</span> },
+    { key: 'client', label: 'Client', className: 'max-md:hidden', render: e => <span className="text-slate-600">{clientsById[e.client_id]?.name || '—'}</span> },
+    { key: 'date', label: 'Date', sort: e => e.spent_on, render: e => <span className="text-slate-600 tabular-nums">{fmtDate(e.spent_on)}</span> },
+    { key: 'actions', label: <span className="sr-only">Actions</span>, render: e => (
+      <span className="flex justify-end"><button onClick={() => confirm('Delete this expense?') && run(() => deleteExpense(e.id))} className="icon-act hover:!text-[var(--red)] hover:!bg-[var(--red-bg)]" aria-label="Delete expense"><Trash2 size={15} /></button></span>
+    ) },
+  ]
+  const categoryFilter = { key: 'category', label: 'Category', all: 'All categories', options: EXPENSE_CATEGORIES.map(c => ({ value: c.id, label: c.label })), test: (e, v) => e.category === v }
 
   return (
     <AdminLayout>
-      <div className="flex flex-wrap items-center gap-3 mb-5">
-        <div className="mr-auto">
-          <h1 className="font-display font-bold text-lg text-white">Payments</h1>
-          <p className="text-xs text-white/40">Money in, retainers and expenses</p>
-        </div>
-        {tab === 'Payments' && <button onClick={() => setModal({ type: 'payment' })} disabled={!clients.length} className="btn-primary flex items-center gap-1.5 text-xs px-4 py-2.5 rounded-xl disabled:opacity-50"><Plus size={13} /> Record payment</button>}
-        {tab === 'Retainers' && <button onClick={() => setModal({ type: 'retainer' })} disabled={!clients.length} className="btn-primary flex items-center gap-1.5 text-xs px-4 py-2.5 rounded-xl disabled:opacity-50"><Plus size={13} /> New retainer</button>}
-        {tab === 'Expenses' && <button onClick={() => setModal({ type: 'expense' })} className="btn-primary flex items-center gap-1.5 text-xs px-4 py-2.5 rounded-xl"><Plus size={13} /> Add expense</button>}
-      </div>
+      <PageHead title="Payments" sub="Money in, retainers and expenses">
+        {tab === 'Payments' && <button onClick={() => setModal({ type: 'payment' })} disabled={!clients.length} className="btn btn-primary"><Plus /> Record payment</button>}
+        {tab === 'Retainers' && <button onClick={() => setModal({ type: 'retainer' })} disabled={!clients.length} className="btn btn-primary"><Plus /> New retainer</button>}
+        {tab === 'Expenses' && <button onClick={() => setModal({ type: 'expense' })} className="btn btn-primary"><Plus /> Add expense</button>}
+      </PageHead>
 
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-5">
-        <MoneyTile label="Received this month" sums={month.received} tone="text-emerald-600" />
-        <MoneyTile label="Pending" sums={sumByCurrency(pending)} tone="text-amber-600" hint={overdue.length ? `${overdue.length} overdue` : 'None overdue'} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+        <MoneyTile label="Received this month" sums={month.received} tone="!text-[var(--green)]" />
+        <MoneyTile label="Pending" sums={sumByCurrency(pending)} tone="!text-[var(--amber)]" hint={overdue.length ? `${overdue.length} overdue` : 'None overdue'} />
         <MoneyTile label="Retainers (monthly)" sums={activeMrr(retainers)} hint={`${retainers.filter(r => r.status === 'active').length} active`} />
-        <MoneyTile label="Expenses this month" sums={month.expenses} tone="text-rose-600" />
+        <MoneyTile label="Expenses this month" sums={month.expenses} tone="!text-[var(--red)]" />
       </div>
 
-      {error && <div className="text-sm text-red-500 mb-3">{error}</div>}
-      {!loading && !clients.length && <div className="glass rounded-2xl p-6 text-center text-sm text-white/50 mb-4">Add or convert a client first to record their payments.</div>}
+      {error && (
+        <div role="alert" className="mb-4 flex items-center gap-3 rounded-ui border border-[var(--red-bd)] bg-[var(--red-bg)] px-4 py-2.5 text-[13px] text-[var(--red)]">
+          {error}<button type="button" onClick={load} className="btn btn-sm ml-auto">Try again</button>
+        </div>
+      )}
+      {!loading && !clients.length && <div className="card mb-4"><EmptyState title="No clients yet">Add or convert a client first to record their payments.</EmptyState></div>}
 
-      <div className="flex gap-1 border-b border-black/[0.06] mb-4 overflow-x-auto">
-        {TABS.map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`px-4 py-2.5 text-xs font-medium border-b-2 -mb-px ${tab === t ? 'border-orange-500 text-orange-600' : 'border-transparent text-white/50 hover:text-white'}`}>{t}</button>
-        ))}
-      </div>
+      <Tabs tabs={TABS} value={tab} onChange={setTab} label="Payment sections" />
 
       {tab === 'Payments' && (
-        <section className="glass rounded-2xl p-5">
-          <div className="flex flex-wrap justify-end gap-2 mb-2">
-            <select value={sortId} onChange={e => setSort(SORTS[e.target.value])} aria-label="Sort payments" className="glass rounded-xl px-3 py-1.5 text-xs text-white bg-transparent focus:outline-none">
-              <option value="newest" className="bg-black">Newest first</option>
-              <option value="due" className="bg-black">Due date (soonest)</option>
-              <option value="amount" className="bg-black">Amount (largest)</option>
-              <option value="paid" className="bg-black">Received (latest)</option>
-            </select>
-            <select value={status} onChange={e => setStatus(e.target.value)} className="glass rounded-xl px-3 py-1.5 text-xs text-white bg-transparent focus:outline-none">
-              <option value="" className="bg-black">All payments</option>
-              <option value="received" className="bg-black">Received</option>
-              <option value="pending" className="bg-black">Pending</option>
-              <option value="overdue" className="bg-black">Overdue</option>
-            </select>
-          </div>
-          <PaymentRows payments={sorted} clientsById={clientsById} projectsById={projectsById} showClient
-            onReceived={p => run(() => updatePayment(p.id, { status: 'received', paid_on: isoDay() }))}
-            onEdit={p => setModal({ type: 'payment', item: p })}
-            onDelete={p => confirm(`Delete this ${formatMoney(p.amount, p.currency)} payment?`) && run(() => deletePayment(p.id))} />
+        <section className="card overflow-hidden">
+          <DataTable rows={payments} columns={paymentColumns} loading={loading} filters={[statusFilter]} initialSort={{ key: 'added', dir: 'desc' }}
+            search={p => [clientsById[p.client_id]?.name, projectsById[p.project_id]?.name, p.reference, p.notes].filter(Boolean).join(' ')} searchLabel="Search client, project, reference"
+            empty={<EmptyState icon={Wallet} title="No payments yet" />} />
         </section>
       )}
 
       {tab === 'Retainers' && (
-        <section className="glass rounded-2xl p-5">
+        <section className="card px-4">
           <RetainerRows retainers={retainers} clientsById={clientsById} showClient onRecord={r => run(() => recordRetainerMonth(r))} onEdit={r => setModal({ type: 'retainer', item: r })} />
         </section>
       )}
 
       {tab === 'Expenses' && (
-        <section className="glass rounded-2xl p-5">
-          {expenses.length === 0 ? <p className="text-xs text-white/30 py-4">No expenses yet.</p> : (
-            <div className="divide-y divide-black/[0.05]">
-              {expenses.map(e => (
-                <div key={e.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-white">{formatMoney(e.amount, e.currency)} <span className="ml-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">{labelOf(EXPENSE_CATEGORIES, e.category)}</span></p>
-                    <p className="text-[11px] text-white/40 truncate">{[e.description, clientsById[e.client_id]?.name].filter(Boolean).join(' · ') || 'No description'}</p>
-                  </div>
-                  <p className="text-[11px] text-white/50">{fmtDate(e.spent_on)}</p>
-                  <button onClick={() => confirm('Delete this expense?') && run(() => deleteExpense(e.id))} className="p-1.5 rounded-lg text-white/30 hover:text-red-500 hover:bg-red-50" aria-label="Delete expense"><Trash2 size={13} /></button>
-                </div>
-              ))}
-            </div>
-          )}
+        <section className="card overflow-hidden">
+          <DataTable rows={expenses} columns={expenseColumns} loading={loading} filters={[categoryFilter]} initialSort={{ key: 'date', dir: 'desc' }}
+            search={e => [e.description, clientsById[e.client_id]?.name].filter(Boolean).join(' ')} searchLabel="Search expenses"
+            empty={<EmptyState icon={Receipt} title="No expenses yet" />} />
         </section>
       )}
 

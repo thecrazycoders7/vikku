@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Plus, Video, ChevronLeft, ChevronRight, Pencil, Trash2, CalendarCheck, AlertTriangle } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
+import { Badge, EmptyState, PageHead, Skeleton } from '../ui'
 import { Modal } from './Forms'
 import useOpenOnParam from '../../../hooks/useOpenOnParam'
 import { Field, inputCls } from './LeadPanel'
@@ -122,34 +123,34 @@ export default function CrmMeetings() {
   }
 
   const who = (m) => {
-    if (m.client_id && clientsById[m.client_id]) return <Link to={`/admin/crm/clients/${m.client_id}`} className="text-white/70 hover:text-white underline underline-offset-2">{clientsById[m.client_id].name}</Link>
-    if (m.lead_id && leadsById[m.lead_id]) return <Link to="/admin/crm/leads" className="text-white/70 hover:text-white underline underline-offset-2">{leadsById[m.lead_id].name} (lead)</Link>
+    if (m.client_id && clientsById[m.client_id]) return <Link to={`/admin/crm/clients/${m.client_id}`} className="text-slate-700 hover:text-slate-900 underline underline-offset-2">{clientsById[m.client_id].name}</Link>
+    if (m.lead_id && leadsById[m.lead_id]) return <Link to="/admin/crm/leads" className="text-slate-700 hover:text-slate-900 underline underline-offset-2">{leadsById[m.lead_id].name} (lead)</Link>
     return m.attendee_name || m.attendee_email || 'Not linked'
   }
 
   const Row = ({ m, compact }) => {
     const st = statusOf(m.status)
     return (
-      <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 ${compact ? 'bg-[var(--surface)] rounded-xl p-2.5 shadow-sm border border-black/[0.04]' : 'py-3'}`}>
-        <span className="text-xs font-semibold text-white w-16 flex-shrink-0">{timeText(m.starts_at)}</span>
+      <div className={`flex flex-wrap items-center gap-x-3 gap-y-1.5 ${compact ? 'bg-white rounded-ui p-2.5 shadow-ui-sm border border-slate-200 hover:border-slate-300' : 'py-3'}`}>
+        <span className="text-[12.5px] font-semibold text-slate-900 w-16 flex-shrink-0 tabular-nums">{timeText(m.starts_at)}</span>
         <div className={`flex-1 ${compact ? 'basis-full order-last min-w-0' : 'min-w-[12rem]'}`}>
-          <p className="text-sm font-medium text-white truncate">{m.title}</p>
-          <p className="text-[11px] text-white/40 truncate">{who(m)}{m.outcome ? ` · ${m.outcome}` : ''}</p>
+          <p className="text-[13px] font-medium text-slate-900 truncate">{m.title}</p>
+          <p className="text-[12px] text-slate-500 truncate">{who(m)}{m.outcome ? ` · ${m.outcome}` : ''}</p>
         </div>
-        <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${st?.tone}`}>{st?.label}</span>
-        {m.source === 'cal' && <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-50 text-orange-700">Cal.com</span>}
+        <Badge tone={st?.tone}>{st?.label}</Badge>
+        {m.source === 'cal' && <Badge tone="violet">Cal.com</Badge>}
         {!compact && (
           <div className="flex items-center gap-1">
-            {m.location && m.status === 'scheduled' && <a href={m.location} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700"><Video size={12} /> Join</a>}
+            {m.location && m.status === 'scheduled' && <a href={m.location} target="_blank" rel="noopener noreferrer" className="act"><Video size={14} /> Join</a>}
             {m.status === 'scheduled' ? (
               <>
-                <button onClick={() => setStatus(m, 'completed')} className="text-[11px] font-medium px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700">Done</button>
-                <button onClick={() => setStatus(m, 'no_show')} className="text-[11px] px-2.5 py-1.5 rounded-lg text-white/50 hover:text-white">No-show</button>
-                <button onClick={() => setStatus(m, 'cancelled')} className="text-[11px] px-2.5 py-1.5 rounded-lg text-white/50 hover:text-red-500">Cancel</button>
+                <button onClick={() => setStatus(m, 'completed')} className="act">Done</button>
+                <button onClick={() => setStatus(m, 'no_show')} className="btn btn-ghost btn-sm text-slate-600">No-show</button>
+                <button onClick={() => setStatus(m, 'cancelled')} className="btn btn-ghost btn-sm text-slate-600 hover:!text-[var(--red)]">Cancel</button>
               </>
-            ) : <button onClick={() => setStatus(m, 'scheduled')} className="text-[11px] px-2.5 py-1.5 rounded-lg text-white/50 hover:text-white">Reopen</button>}
-            <button onClick={() => setModal({ item: m })} className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/[0.06]" aria-label="Edit meeting"><Pencil size={13} /></button>
-            <button onClick={() => confirm(`Delete "${m.title}"?`) && run(() => deleteMeeting(m.id))} className="p-1.5 rounded-lg text-white/30 hover:text-red-500 hover:bg-red-50" aria-label="Delete meeting"><Trash2 size={13} /></button>
+            ) : <button onClick={() => setStatus(m, 'scheduled')} className="btn btn-ghost btn-sm text-slate-600">Reopen</button>}
+            <button onClick={() => setModal({ item: m })} className="icon-act" aria-label="Edit meeting"><Pencil size={15} /></button>
+            <button onClick={() => confirm(`Delete "${m.title}"?`) && run(() => deleteMeeting(m.id))} className="icon-act hover:!text-[var(--red)] hover:!bg-[var(--red-bg)]" aria-label="Delete meeting"><Trash2 size={15} /></button>
           </div>
         )}
       </div>
@@ -158,53 +159,54 @@ export default function CrmMeetings() {
 
   return (
     <AdminLayout>
-      <div className="flex flex-wrap items-center gap-3 mb-4">
-        <div className="mr-auto">
-          <h1 className="font-display font-bold text-lg text-white">Meetings</h1>
-          <p className="text-xs text-white/40">Your schedule in India time (IST)</p>
-        </div>
-        <div className="flex rounded-xl glass p-1 text-xs">
+      <PageHead title="Meetings" sub="Your schedule in India time (IST)">
+        <div className="inline-flex p-[3px] bg-slate-100 border border-slate-200 rounded-ui" role="group" aria-label="View">
           {[['upcoming', 'Upcoming'], ['week', 'Week'], ['past', 'Past']].map(([id, label]) => (
-            <button key={id} onClick={() => setView(id)} className={`px-3 py-1.5 rounded-lg ${view === id ? 'bg-white text-white font-medium shadow-sm' : 'text-white/50 hover:text-white'}`}>{label}</button>
+            <button key={id} onClick={() => setView(id)} aria-pressed={view === id}
+              className={`h-7 px-3 rounded-ui-sm text-[13px] font-medium ${view === id ? 'bg-white text-slate-900 shadow-ui' : 'text-slate-500 hover:text-slate-900'}`}>{label}</button>
           ))}
         </div>
-        <button onClick={() => setModal({})} className="btn-primary flex items-center gap-1.5 text-xs px-4 py-2.5 rounded-xl"><Plus size={13} /> Schedule</button>
-      </div>
+        <button onClick={() => setModal({})} className="btn btn-primary"><Plus /> Schedule</button>
+      </PageHead>
 
       {calReady === false ? (
-        <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-4 mb-4 flex items-start gap-3 text-xs text-red-800">
+        <div role="alert" className="rounded-ui-lg border border-[var(--red-bd)] bg-[var(--red-bg)] p-4 mb-4 flex items-start gap-3 text-[13px] text-[var(--red)]">
           <AlertTriangle size={16} className="flex-shrink-0 mt-0.5" />
           <p><strong>Cal.com bookings can't reach your admin.</strong> The site is missing <code>CAL_WEBHOOK_SECRET</code>, so every booking is turned away. Add it in Vercel → Settings → Environment Variables for Production, use the same secret on your Cal.com webhook, then redeploy. Bookings made before then won't come through, so add them with Schedule.</p>
         </div>
       ) : (
-        <div className="glass rounded-2xl p-4 mb-4 flex items-start gap-3 text-xs">
-          <CalendarCheck size={16} className="text-orange-600 flex-shrink-0 mt-0.5" />
+        <div className="card p-4 mb-4 flex items-start gap-3 text-[13px]">
+          <CalendarCheck size={16} aria-hidden="true" className="text-slate-500 flex-shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <p className="text-white/60">Bookings from your Cal.com page appear here automatically and create a lead for new people. Connect it once in Cal.com → Settings → Developer → Webhooks with the URL <span className="font-mono text-white select-all">https://www.vikku.in/api/cal-webhook</span>.</p>
-            {!loading && <p className="text-white/40">{lastCal ? `Last Cal.com booking received ${new Date(lastCal).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: IST })}.` : 'No Cal.com bookings received yet. If someone has booked, check the webhook URL and secret in Cal.com.'}</p>}
+            <p className="text-slate-600">Bookings from your Cal.com page appear here automatically and create a lead for new people. Connect it once in Cal.com → Settings → Developer → Webhooks with the URL <span className="font-mono text-[12px] text-slate-900 select-all">https://www.vikku.in/api/cal-webhook</span>.</p>
+            {!loading && <p className="text-slate-500">{lastCal ? `Last Cal.com booking received ${new Date(lastCal).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: IST })}.` : 'No Cal.com bookings received yet. If someone has booked, check the webhook URL and secret in Cal.com.'}</p>}
           </div>
         </div>
       )}
 
-      {error && <div className="text-sm text-red-500 mb-3">{error}</div>}
+      {error && (
+        <div role="alert" className="mb-4 flex items-center gap-3 rounded-ui border border-[var(--red-bd)] bg-[var(--red-bg)] px-4 py-2.5 text-[13px] text-[var(--red)]">
+          {error}<button type="button" onClick={load} className="btn btn-sm ml-auto">Try again</button>
+        </div>
+      )}
 
       {view === 'week' ? (
         <>
           <div className="flex items-center gap-2 mb-3">
-            <p className="text-sm font-semibold text-white mr-auto">{dayText(weekDays[0])} – {dayText(weekDays[6])}</p>
-            <button onClick={() => setWeekOffset(0)} className="text-xs px-3 py-1.5 rounded-lg glass text-white/70">Today</button>
-            <button onClick={() => setWeekOffset(w => w - 1)} className="p-1.5 rounded-lg glass text-white/70" aria-label="Previous week"><ChevronLeft size={14} /></button>
-            <button onClick={() => setWeekOffset(w => w + 1)} className="p-1.5 rounded-lg glass text-white/70" aria-label="Next week"><ChevronRight size={14} /></button>
+            <p className="text-[14px] font-semibold text-slate-900 mr-auto tabular-nums">{dayText(weekDays[0])} – {dayText(weekDays[6])}</p>
+            <button onClick={() => setWeekOffset(0)} className="btn btn-sm">Today</button>
+            <button onClick={() => setWeekOffset(w => w - 1)} className="btn btn-sm btn-icon" aria-label="Previous week"><ChevronLeft size={16} /></button>
+            <button onClick={() => setWeekOffset(w => w + 1)} className="btn btn-sm btn-icon" aria-label="Next week"><ChevronRight size={16} /></button>
           </div>
           <div className="flex gap-2 overflow-x-auto pb-3">
             {weekDays.map(d => {
               const items = meetings.filter(m => istDay(m.starts_at) === d).sort((a, b) => a.starts_at.localeCompare(b.starts_at))
               return (
-                <section key={d} className={`w-48 flex-shrink-0 rounded-2xl border p-2.5 min-h-[260px] ${d === today ? 'bg-orange-50 border-orange-100' : 'bg-black/[0.02] border-black/[0.04]'}`}>
-                  <p className={`text-xs font-semibold mb-2 ${d === today ? 'text-orange-600' : 'text-white/60'}`}>{dayText(d)}</p>
+                <section key={d} className={`w-48 flex-shrink-0 rounded-ui-lg border p-2.5 min-h-[260px] ${d === today ? 'bg-white border-slate-300 shadow-ui-sm' : 'bg-slate-100/70 border-slate-200'}`}>
+                  <p className={`text-[12.5px] font-semibold mb-2 tabular-nums ${d === today ? 'text-slate-900' : 'text-slate-500'}`}>{d === today ? 'Today · ' : ''}{dayText(d)}</p>
                   <div className="space-y-1.5">
                     {items.map(m => <div key={m.id} onClick={() => setModal({ item: m })} className="cursor-pointer"><Row m={m} compact /></div>)}
-                    {!items.length && <p className="text-[11px] text-white/25 text-center py-4">Free</p>}
+                    {!items.length && <p className="text-[12px] text-slate-400 text-center py-4">Free</p>}
                   </div>
                 </section>
               )
@@ -212,15 +214,15 @@ export default function CrmMeetings() {
           </div>
         </>
       ) : loading ? (
-        <div className="flex items-center justify-center h-32"><div className="w-5 h-5 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" /></div>
+        <div className="card p-4 space-y-4">{[0, 1, 2].map(i => <div key={i} className="flex items-center gap-4"><Skeleton className="h-4 w-14" /><Skeleton className="h-4 flex-1 max-w-xs" /><Skeleton className="ml-auto h-6 w-20 rounded-full" /></div>)}</div>
       ) : agenda.length === 0 ? (
-        <div className="glass rounded-2xl p-8 text-center text-sm text-white/40">{view === 'past' ? 'No past meetings.' : 'No upcoming meetings.'}</div>
+        <div className="card"><EmptyState icon={CalendarCheck} title={view === 'past' ? 'No past meetings.' : 'No upcoming meetings.'} /></div>
       ) : (
         <div className="space-y-4">
           {agenda.map(([d, ms]) => (
-            <section key={d} className="glass rounded-2xl px-5 py-3">
-              <h2 className={`text-xs font-semibold pt-1 ${d === today ? 'text-orange-600' : 'text-white/50'}`}>{d === today ? 'Today · ' : ''}{dayText(d)}</h2>
-              <div className="divide-y divide-black/[0.05]">{ms.map(m => <Row key={m.id} m={m} />)}</div>
+            <section key={d} className="card">
+              <h2 className="card-head !min-h-0 !py-3 text-[13px] font-semibold text-slate-900 tabular-nums">{d === today ? 'Today · ' : ''}{dayText(d)}</h2>
+              <div className="divide-y divide-slate-200 px-4">{ms.map(m => <Row key={m.id} m={m} />)}</div>
             </section>
           ))}
         </div>

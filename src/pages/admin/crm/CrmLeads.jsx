@@ -4,14 +4,14 @@ import { Plus, Search, Phone, MapPin, Building2, CalendarClock, MessageCircle, R
 import AdminLayout from '../AdminLayout'
 import LeadPanel from './LeadPanel'
 import useOpenOnParam from '../../../hooks/useOpenOnParam'
-import { Menu, MenuItem, useToast } from '../ui'
+import { Badge, Menu, MenuItem, PageHead, useToast } from '../ui'
 import { LEAD_SOURCES, LEAD_STAGES, convertLead, deleteLeads, formatMoney, listLeads, pipelineStats, sourceLabel, updateLead, updateLeads, whatsappNumber } from '../../../lib/crmService'
 
 function Stat({ label, children }) {
   return (
-    <div className="glass rounded-xl px-4 py-2.5">
-      <p className="text-[10px] text-white/40">{label}</p>
-      <p className="text-sm font-semibold text-white font-display">{children}</p>
+    <div className="card px-4 py-3 min-w-0">
+      <p className="text-[12.5px] font-medium text-slate-500">{label}</p>
+      <p className="mt-0.5 text-[16px] font-semibold text-slate-900 tabular-nums break-words">{children}</p>
     </div>
   )
 }
@@ -21,33 +21,33 @@ function LeadCard({ lead, today, onOpen, onDragStart, selecting, selected, onTog
   const overdue = lead.next_follow_up && lead.next_follow_up <= today && !['won', 'lost'].includes(lead.stage)
   return (
     <div draggable={!selecting} onDragStart={e => onDragStart(e, lead)} onClick={() => selecting ? onToggle(lead) : onOpen(lead)}
-      className={`bg-[var(--surface)] rounded-xl p-3 shadow-sm border cursor-pointer hover:shadow-md transition-shadow ${selected ? 'border-orange-400 ring-2 ring-orange-200' : 'border-black/[0.04]'}`}>
+      className={`bg-white rounded-ui p-3 shadow-ui-sm border cursor-pointer hover:border-slate-300 transition-colors ${selected ? 'border-slate-900 ring-1 ring-slate-900' : 'border-slate-200'}`}>
       <div className="flex items-start justify-between gap-2">
-        {selecting && <input type="checkbox" checked={selected} readOnly tabIndex={-1} aria-label={`Select ${lead.name}`} className="mt-0.5 h-4 w-4 flex-none accent-orange-600" />}
-        <p className="flex-1 min-w-0 text-sm font-semibold text-white truncate">{lead.name}</p>
-        {Number(lead.value) > 0 && <p className="text-xs font-semibold text-white flex-shrink-0">{formatMoney(lead.value, lead.currency)}</p>}
+        {selecting && <input type="checkbox" checked={selected} readOnly tabIndex={-1} aria-label={`Select ${lead.name}`} className="mt-0.5 h-4 w-4 flex-none accent-[var(--primary)]" />}
+        <p className="flex-1 min-w-0 text-[13px] font-semibold text-slate-900 truncate">{lead.name}</p>
+        {Number(lead.value) > 0 && <p className="text-[12.5px] font-semibold text-slate-900 flex-shrink-0 tabular-nums">{formatMoney(lead.value, lead.currency)}</p>}
       </div>
-      <div className="mt-1.5 space-y-1 text-[11px] text-white/50">
-        {lead.company && <p className="flex items-center gap-1.5 truncate"><Building2 size={11} /> {lead.company}</p>}
+      <div className="mt-1.5 space-y-1 text-[12px] text-slate-500">
+        {lead.company && <p className="flex items-center gap-1.5 truncate"><Building2 size={12} aria-hidden="true" /> {lead.company}</p>}
         {(lead.phone || lead.city) && (
           <p className="flex items-center gap-3 flex-wrap">
-            {lead.phone && <span className="flex items-center gap-1.5"><Phone size={11} /> {lead.phone}</span>}
-            {lead.city && <span className="flex items-center gap-1.5"><MapPin size={11} /> {lead.city}</span>}
+            {lead.phone && <span className="flex items-center gap-1.5 tabular-nums"><Phone size={12} aria-hidden="true" /> {lead.phone}</span>}
+            {lead.city && <span className="flex items-center gap-1.5"><MapPin size={12} aria-hidden="true" /> {lead.city}</span>}
           </p>
         )}
       </div>
       <div className="mt-2.5 flex items-center gap-1.5 flex-wrap">
-        <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">{sourceLabel(lead.source)}</span>
+        <Badge tone="blue">{sourceLabel(lead.source)}</Badge>
         {lead.next_follow_up && (
-          <span className={`text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 ${overdue ? 'bg-red-50 text-red-600' : 'bg-white/[0.06] text-white/50'}`}>
-            <CalendarClock size={10} /> {new Date(lead.next_follow_up).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
-          </span>
+          <Badge tone={overdue ? 'red' : 'slate'}>
+            <span className="tabular-nums">{overdue ? 'Due ' : ''}{new Date(lead.next_follow_up).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</span>
+          </Badge>
         )}
-        {lead.client_id && <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Client</span>}
+        {lead.client_id && <Badge tone="green">Client</Badge>}
         {wa && (
           <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
-            className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-green-50 text-green-700 flex items-center gap-1" aria-label={`WhatsApp ${lead.name}`}>
-            <MessageCircle size={10} /> WhatsApp
+            className="icon-act ml-auto" aria-label={`WhatsApp ${lead.name}`} title="WhatsApp">
+            <MessageCircle size={15} />
           </a>
         )}
       </div>
@@ -187,21 +187,17 @@ export default function CrmLeads() {
 
   return (
     <AdminLayout>
-      <div className="flex flex-wrap items-center gap-3 mb-5">
-        <div className="mr-auto">
-          <h1 className="font-display font-bold text-lg text-white">{followUps ? 'Follow-ups' : 'Leads'}</h1>
-          <p className="text-xs text-white/40">{followUps ? 'Open leads with a follow-up date' : 'Your sales pipeline'}</p>
-        </div>
+      <PageHead title={followUps ? 'Follow-ups' : 'Leads'} sub={followUps ? 'Open leads with a follow-up date' : 'Your sales pipeline'}>
         <button type="button" onClick={() => selecting ? stopSelecting() : setSelecting(true)} aria-pressed={selecting}
-          className={`flex items-center gap-1.5 text-xs font-medium px-3.5 py-2.5 rounded-xl border ${selecting ? 'border-orange-200 bg-orange-50 text-orange-800' : 'glass text-white/70 hover:text-white'}`}>
-          {selecting ? <><X size={13} /> Done selecting</> : <><CheckSquare size={13} /> Select</>}
+          className={`btn ${selecting ? '!bg-slate-100 !border-slate-300' : ''}`}>
+          {selecting ? <><X /> Done selecting</> : <><CheckSquare /> Select</>}
         </button>
-        <button onClick={() => setPanel({ stage: 'new' })} className="btn-primary flex items-center gap-1.5 text-xs px-4 py-2.5 rounded-xl">
-          <Plus size={13} /> New lead
+        <button onClick={() => setPanel({ stage: 'new' })} className="btn btn-primary">
+          <Plus /> New lead
         </button>
-      </div>
+      </PageHead>
 
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-4">
         <Stat label="Open">{stats.open}</Stat>
         <Stat label="Pipeline">{pipelineText}</Stat>
         <Stat label="Won this month">{stats.wonThisMonth}</Stat>
@@ -210,26 +206,30 @@ export default function CrmLeads() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-2 mb-4">
-        <div className="flex-1 flex items-center gap-2 glass rounded-xl px-3">
-          <Search size={13} className="text-white/30" />
-          <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search name, company, phone, city…"
-            className="flex-1 bg-transparent py-2 text-sm text-white placeholder-white/30 focus:outline-none" />
-        </div>
-        <select value={source} onChange={e => setSource(e.target.value)} className="glass rounded-xl px-3 py-2 text-sm text-white bg-transparent focus:outline-none">
+        <label className="input-group flex-1 sm:max-w-sm">
+          <Search aria-hidden="true" />
+          <span className="sr-only">Search leads</span>
+          <input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Search name, company, phone, city…" className="input" />
+        </label>
+        <select value={source} onChange={e => setSource(e.target.value)} aria-label="Source" className="input sm:!w-44">
           <option value="" className="bg-black">All sources</option>
           {LEAD_SOURCES.map(s => <option key={s.id} value={s.id} className="bg-black">{s.label}</option>)}
         </select>
         <button type="button" aria-pressed={followUps}
           onClick={() => { const next = new URLSearchParams(params); followUps ? next.delete('view') : next.set('view', 'followups'); setParams(next) }}
-          className={`rounded-xl px-3 py-2 text-xs font-medium border ${followUps ? 'border-orange-200 bg-orange-50 text-orange-800' : 'glass text-white/60 hover:text-white'}`}>
+          className={`btn h-9 ${followUps ? '!bg-[var(--primary)] !border-[var(--primary)] !text-[var(--primary-fg)]' : ''}`}>
           Follow-ups only
         </button>
-        <button onClick={load} className="flex items-center justify-center gap-1.5 text-xs text-white/50 hover:text-white px-3">
-          <RefreshCw size={12} className={loading ? 'animate-spin' : ''} /> Refresh
+        <button onClick={load} className="btn btn-ghost h-9 text-slate-600">
+          <RefreshCw className={loading ? 'animate-spin' : ''} /> Refresh
         </button>
       </div>
 
-      {error && <div className="text-sm text-red-500 mb-3">{error}</div>}
+      {error && (
+        <div role="alert" className="mb-4 flex items-center gap-3 rounded-ui border border-[var(--red-bd)] bg-[var(--red-bg)] px-4 py-2.5 text-[13px] text-[var(--red)]">
+          {error}<button type="button" onClick={load} className="btn btn-sm ml-auto">Try again</button>
+        </div>
+      )}
 
       <div className={`flex gap-3 overflow-x-auto -mx-1 px-1 ${selecting ? 'pb-28' : 'pb-4'}`}>
         {LEAD_STAGES.map(stage => {
@@ -239,24 +239,25 @@ export default function CrmLeads() {
               onDragOver={e => { e.preventDefault(); setDragOver(stage.id) }}
               onDragLeave={() => setDragOver(d => d === stage.id ? null : d)}
               onDrop={e => onDrop(e, stage.id)}
-              className={`w-72 flex-shrink-0 rounded-2xl border p-3 min-h-[420px] transition-shadow ${stage.tint} ${dragOver === stage.id ? 'ring-2 ring-orange-400' : ''}`}>
+              className={`w-72 flex-shrink-0 rounded-ui-lg border border-slate-200 bg-slate-100/70 p-3 min-h-[420px] transition-shadow ${dragOver === stage.id ? 'ring-2 ring-[var(--ring)]' : ''}`}>
               <header className="flex items-center gap-2 mb-3">
                 {selecting && items.length > 0 ? (
-                  <input type="checkbox" aria-label={`Select all leads in ${stage.label}`} className="h-4 w-4 accent-orange-600"
+                  <input type="checkbox" aria-label={`Select all leads in ${stage.label}`} className="h-4 w-4 accent-[var(--primary)]"
                     checked={items.every(l => selected.has(l.id))}
                     ref={el => { if (el) el.indeterminate = items.some(l => selected.has(l.id)) && !items.every(l => selected.has(l.id)) }}
                     onChange={e => setMany(items, e.target.checked)} />
                 ) : <span className={`w-2 h-2 rounded-full ${stage.dot}`} />}
-                <h2 className="text-sm font-semibold text-white">{stage.label}</h2>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white text-white/50">{items.length}</span>
-                <button onClick={() => setPanel({ stage: stage.id })} className="ml-auto p-1 rounded-lg text-white/40 hover:text-white hover:bg-white/60" aria-label={`Add lead to ${stage.label}`}>
-                  <Plus size={14} />
+                <h2 className="text-[13px] font-semibold text-slate-900">{stage.label}</h2>
+                <span className="count">{items.length}</span>
+                <button onClick={() => setPanel({ stage: stage.id })} className="icon-act ml-auto hover:!bg-white" aria-label={`Add lead to ${stage.label}`}>
+                  <Plus size={16} />
                 </button>
               </header>
               <div className="space-y-2">
                 {items.map(l => <LeadCard key={l.id} lead={l} today={today} onOpen={lead => setPanel({ lead })} onDragStart={onDragStart}
                   selecting={selecting} selected={selected.has(l.id)} onToggle={toggle} />)}
-                {!loading && items.length === 0 && <p className="text-[11px] text-white/30 text-center py-6">No leads</p>}
+                {loading && items.length === 0 && [0, 1].map(i => <div key={i} className="skel h-20" />)}
+                {!loading && items.length === 0 && <p className="text-[12px] text-slate-500 text-center py-6">No leads</p>}
               </div>
             </section>
           )
@@ -265,9 +266,9 @@ export default function CrmLeads() {
 
       {selecting && (
         <div role="toolbar" aria-label="Bulk actions"
-          className="fixed bottom-4 left-1/2 z-40 -translate-x-1/2 w-[calc(100%-2rem)] max-w-3xl flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 shadow-lg shadow-slate-900/10">
+          className="fixed bottom-4 left-1/2 lg:left-[calc(50%+124px)] z-40 -translate-x-1/2 w-[calc(100%-2rem)] max-w-3xl flex flex-wrap items-center gap-2 rounded-ui-lg border border-slate-200 bg-white px-3 py-2.5 shadow-ui-lg">
           <span className="text-[13px] font-medium text-slate-900 tabular-nums px-1">{chosen.length} selected</span>
-          <button type="button" onClick={() => setMany(visible, chosen.length < visible.length)} className="text-[12px] font-medium text-orange-700 hover:underline px-1">
+          <button type="button" onClick={() => setMany(visible, chosen.length < visible.length)} className="btn btn-ghost btn-sm">
             {chosen.length < visible.length ? `Select all ${visible.length}` : 'Clear'}
           </button>
           <div className="ml-auto flex flex-wrap items-center gap-1.5">
@@ -282,7 +283,7 @@ export default function CrmLeads() {
             )}>
               <MenuItem onClick={() => bulkUpdate({ next_follow_up: plus(1) }, 'Follow-up set to tomorrow for')}>Tomorrow</MenuItem>
               <MenuItem onClick={() => bulkUpdate({ next_follow_up: plus(7) }, 'Follow-up set to next week for')}>Next week</MenuItem>
-              <label className="flex items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-[13px] text-slate-700 hover:bg-slate-50" onClick={e => e.stopPropagation()}>
+              <label className="pop-item justify-between" onClick={e => e.stopPropagation()}>
                 Pick a date
                 <input type="date" min={plus(0)} className="text-[12px] text-slate-700 bg-transparent"
                   onChange={e => e.target.value && bulkUpdate({ next_follow_up: e.target.value }, `Follow-up set to ${e.target.value} for`)} />
@@ -295,7 +296,7 @@ export default function CrmLeads() {
               {LEAD_SOURCES.map(s => <MenuItem key={s.id} onClick={() => bulkUpdate({ source: s.id }, `Source set to ${s.label} for`)}>{s.label}</MenuItem>)}
             </Menu>
             <button type="button" onClick={bulkDelete} disabled={!chosen.length || busy}
-              className="act gap-1 !border-red-200 !text-red-700 hover:!bg-red-50 disabled:opacity-40"><Trash2 size={13} /> Delete</button>
+              className="act gap-1 !border-[var(--red-bd)] !text-[var(--red)] hover:!bg-[var(--red-bg)] disabled:opacity-40"><Trash2 size={13} /> Delete</button>
           </div>
         </div>
       )}

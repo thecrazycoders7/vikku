@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Mail, Send, Users, CheckCircle, AlertCircle } from 'lucide-react'
 import AdminLayout from './AdminLayout'
+import { PageHead } from './ui'
 import { adminSendEmail } from '../../lib/adminService'
 
 const AUDIENCES = [
@@ -31,70 +32,65 @@ export default function AdminEmail() {
   }
 
   return (
-    <AdminLayout title="Email Users">
+    <AdminLayout>
+      <PageHead title="Email Users" />
       <div className="max-w-xl">
         {result && (
-          <div className={`flex items-center gap-2 text-sm mb-5 p-4 glass rounded-xl border ${
-            result.ok ? 'text-green-400 border-green-500/20' : 'text-red-400 border-red-500/20'
+          <div role={result.ok ? 'status' : 'alert'} className={`flex items-center gap-2 text-[13px] mb-4 px-4 py-2.5 rounded-ui border ${
+            result.ok ? 'text-[var(--green)] bg-[var(--green-bg)] border-[var(--green-bd)]' : 'text-[var(--red)] bg-[var(--red-bg)] border-[var(--red-bd)]'
           }`}>
-            {result.ok ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
+            {result.ok ? <CheckCircle size={16} aria-hidden="true" /> : <AlertCircle size={16} aria-hidden="true" />}
             {result.ok ? `Sent to ${result.count} users successfully` : result.error}
           </div>
         )}
 
         <form onSubmit={handleSend} className="space-y-4">
-          {/* Audience */}
-          <div className="glass rounded-2xl p-5">
-            <p className="text-xs text-white/40 uppercase tracking-widest mb-3 flex items-center gap-2">
-              <Users size={11} /> Audience
-            </p>
-            <div className="grid grid-cols-3 gap-2">
+          <fieldset className="card p-4">
+            <legend className="sr-only">Audience</legend>
+            <p className="section-title flex items-center gap-2"><Users size={16} aria-hidden="true" className="text-slate-400" /> Audience</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {AUDIENCES.map(a => (
                 <button
                   key={a.value}
                   type="button"
+                  aria-pressed={form.audience === a.value}
                   onClick={() => setForm(f => ({ ...f, audience: a.value }))}
-                  className={`p-3 rounded-xl text-left border transition-all ${
+                  className={`p-3 rounded-ui text-left border transition-colors ${
                     form.audience === a.value
-                      ? 'border-white/20 bg-white/10'
-                      : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05]'
+                      ? 'border-slate-900 bg-white ring-1 ring-slate-900'
+                      : 'border-slate-200 bg-white hover:bg-slate-100'
                   }`}
                 >
-                  <p className="text-xs font-medium text-white">{a.label}</p>
-                  <p className="text-[10px] text-white/40 mt-0.5">{a.desc}</p>
+                  <p className="text-[13px] font-medium text-slate-900">{a.label}</p>
+                  <p className="text-[12px] text-slate-500 mt-0.5">{a.desc}</p>
                 </button>
               ))}
             </div>
-          </div>
+          </fieldset>
 
-          {/* Compose */}
-          <div className="glass rounded-2xl p-5 space-y-3">
-            <p className="text-xs text-white/40 uppercase tracking-widest flex items-center gap-2">
-              <Mail size={11} /> Compose
-            </p>
+          <div className="card p-4 space-y-3">
+            <p className="section-title flex items-center gap-2 !mb-0"><Mail size={16} aria-hidden="true" className="text-slate-400" /> Compose</p>
             <input
               value={form.subject}
               onChange={e => setForm(f => ({ ...f, subject: e.target.value }))}
               placeholder="Subject"
-              className="w-full glass rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none"
+              aria-label="Subject"
+              className="input"
               required
             />
             <textarea
               value={form.body}
               onChange={e => setForm(f => ({ ...f, body: e.target.value }))}
               placeholder="Email body (plain text or HTML)…"
+              aria-label="Email body"
               rows={10}
-              className="w-full glass rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none resize-none font-mono"
+              className="input resize-none font-mono !text-[12.5px]"
               required
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={sending}
-            className="w-full flex items-center justify-center gap-2 bg-white text-black text-sm font-semibold py-3 rounded-xl hover:bg-white/90 transition-colors disabled:opacity-50"
-          >
-            <Send size={14} />
+          <button type="submit" disabled={sending} className="btn btn-primary w-full !h-10">
+            <Send />
             {sending ? 'Sending…' : `Send to ${AUDIENCES.find(a => a.value === form.audience)?.label}`}
           </button>
         </form>

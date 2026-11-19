@@ -1,94 +1,60 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search, ChevronRight } from 'lucide-react'
+import { Plus, Users } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
 import ClientForm from './ClientForm'
-import { useSort } from '../ui'
+import { fmtDate } from './Lists'
+import { Badge, DataTable, EmptyState, ErrorState, PageHead } from '../ui'
 import useOpenOnParam from '../../../hooks/useOpenOnParam'
 import { listClients } from '../../../lib/crmService'
+
+const COLUMNS = [
+  { key: 'name', label: 'Client', sort: c => c.name?.toLowerCase(), render: c => (
+    <span className="flex items-center gap-3 min-w-0">
+      <span aria-hidden="true" className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-semibold text-[13px] flex items-center justify-center flex-shrink-0">{c.name.trim()[0]?.toUpperCase()}</span>
+      <span className="min-w-0">
+        <span className="block font-medium text-slate-900 truncate max-w-[260px]">{c.name}</span>
+        {c.company && <span className="block text-[12px] text-slate-500 truncate max-w-[260px]">{c.company}</span>}
+      </span>
+    </span>
+  ) },
+  { key: 'contact', label: 'Contact', className: 'max-md:hidden', render: c => <span className="text-slate-600">{[c.phone, c.email].filter(Boolean).join(' · ') || 'No contact details'}</span> },
+  { key: 'city', label: 'City', className: 'max-lg:hidden', render: c => <span className="text-slate-600">{c.city || '—'}</span> },
+  { key: 'status', label: 'Status', render: c => <Badge tone={c.status === 'active' ? 'green' : 'slate'}>{c.status === 'active' ? 'Active' : 'Past'}</Badge> },
+  { key: 'currency', label: 'Currency', className: 'max-sm:hidden', render: c => <span className="text-slate-600">{c.currency}</span> },
+  { key: 'added', label: 'Added', className: 'max-sm:hidden', sort: c => c.created_at, render: c => <span className="text-slate-600 tabular-nums">{fmtDate(c.created_at)}</span> },
+]
+const STATUS = { key: 'status', label: 'Status', all: 'All clients', options: [{ value: 'active', label: 'Active' }, { value: 'past', label: 'Past' }], test: (c, v) => c.status === v }
 
 export default function CrmClients() {
   const navigate = useNavigate()
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [query, setQuery] = useState('')
-  const [status, setStatus] = useState('active')
   const [adding, setAdding] = useState(false)
   useOpenOnParam('new', () => setAdding(true))
 
-  useEffect(() => {
+  const load = () => {
+    setLoading(true); setError('')
     listClients().then(setClients).catch(e => setError(e.message)).finally(() => setLoading(false))
-  }, [])
-
-  const visible = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return clients.filter(c => (!status || c.status === status) &&
-      (!q || [c.name, c.company, c.phone, c.email, c.city].some(v => v?.toLowerCase().includes(q))))
-  }, [clients, query, status])
-  const { sorted, sort, setSort } = useSort(visible, { key: 'name', dir: 'asc' }, {
-    name: c => c.name?.toLowerCase(), added: c => c.created_at,
-  })
-  const SORTS = { name: { key: 'name', dir: 'asc' }, newest: { key: 'added', dir: 'desc' }, oldest: { key: 'added', dir: 'asc' } }
-  const sortId = Object.keys(SORTS).find(k => SORTS[k].key === sort.key && SORTS[k].dir === sort.dir)
+  }
+  useEffect(load, [])
 
   return (
     <AdminLayout>
-      <div className="flex flex-wrap items-center gap-3 mb-5">
-        <div className="mr-auto">
-          <h1 className="font-display font-bold text-lg text-white">Clients</h1>
-          <p className="text-xs text-white/40">{clients.filter(c => c.status === 'active').length} active · {clients.length} total</p>
-        </div>
-        <button onClick={() => setAdding(true)} className="btn-primary flex items-center gap-1.5 text-xs px-4 py-2.5 rounded-xl">
-          <Plus size={13} /> New client
-        </button>
+      <PageHead title="Clients" sub={`${clients.filter(c => c.status === 'active').length} active · ${clients.length} total`}>
+        <button onClick={() => setAdding(true)} className="btn btn-primary"><Plus /> New client</button>
+      </PageHead>
+
+      <div className="card overflow-hidden">
+        {error ? <ErrorState title="Couldn't load clients" onRetry={load}>{error}</ErrorState> : (
+          <DataTable rows={clients} columns={COLUMNS} loading={loading}
+            search={c => [c.name, c.company, c.phone, c.email, c.city].filter(Boolean).join(' ')} searchLabel="Search name, company, phone, email"
+            filters={[STATUS]} initialFilters={{ status: 'active' }} initialSort={{ key: 'name', dir: 'asc' }}
+            onRowClick={c => navigate(`/admin/crm/clients/${c.id}`)}
+            empty={<EmptyState icon={Users} title="No clients yet">Convert a won lead, or add a client directly.</EmptyState>} />
+        )}
       </div>
-
-      <div className="flex flex-col sm:flex-row gap-2 mb-4">
-        <div className="flex-1 flex items-center gap-2 glass rounded-xl px-3">
-          <Search size={13} className="text-white/30" />
-          <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search name, company, phone, email…"
-            className="flex-1 bg-transparent py-2 text-sm text-white placeholder-white/30 focus:outline-none" />
-        </div>
-        <select value={status} onChange={e => setStatus(e.target.value)} className="glass rounded-xl px-3 py-2 text-sm text-white bg-transparent focus:outline-none">
-          <option value="active" className="bg-black">Active</option>
-          <option value="past" className="bg-black">Past</option>
-          <option value="" className="bg-black">All</option>
-        </select>
-        <select value={sortId} onChange={e => setSort(SORTS[e.target.value])} aria-label="Sort clients" className="glass rounded-xl px-3 py-2 text-sm text-white bg-transparent focus:outline-none">
-          <option value="name" className="bg-black">Name A–Z</option>
-          <option value="newest" className="bg-black">Newest first</option>
-          <option value="oldest" className="bg-black">Oldest first</option>
-        </select>
-      </div>
-
-      {error && <div className="text-sm text-red-500 mb-3">{error}</div>}
-
-      {loading ? (
-        <div className="flex items-center justify-center h-32"><div className="w-5 h-5 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" /></div>
-      ) : visible.length === 0 ? (
-        <div className="glass rounded-2xl p-8 text-center">
-          <p className="text-sm text-white/50">{clients.length ? 'No clients match your search.' : 'No clients yet.'}</p>
-          {!clients.length && <p className="text-xs text-white/30 mt-1">Convert a won lead, or add a client directly.</p>}
-        </div>
-      ) : (
-        <div className="glass rounded-2xl divide-y divide-black/[0.05] overflow-hidden">
-          {sorted.map(c => (
-            <button key={c.id} onClick={() => navigate(`/admin/crm/clients/${c.id}`)}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.04] transition-colors">
-              <span className="w-9 h-9 rounded-full bg-orange-50 text-orange-600 font-semibold text-sm flex items-center justify-center flex-shrink-0">
-                {c.name.trim()[0]?.toUpperCase()}
-              </span>
-              <span className="flex-1 min-w-0">
-                <span className="block text-sm font-medium text-white truncate">{c.name}{c.company ? <span className="text-white/40 font-normal"> · {c.company}</span> : null}</span>
-                <span className="block text-[11px] text-white/40 truncate">{[c.phone, c.email, c.city].filter(Boolean).join(' · ') || 'No contact details'}</span>
-              </span>
-              <span className="hidden sm:block text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-white/50">{c.currency}</span>
-              <ChevronRight size={14} className="text-white/30 flex-shrink-0" />
-            </button>
-          ))}
-        </div>
-      )}
 
       {adding && <ClientForm onClose={() => setAdding(false)} onSaved={(c) => navigate(`/admin/crm/clients/${c.id}`)} />}
     </AdminLayout>

@@ -1,34 +1,26 @@
 import { useEffect, useState } from 'react'
 import { useAutoRefresh } from '../../hooks/useAutoRefresh'
-import { RefreshCw, Copy, Check } from 'lucide-react'
+import { RefreshCw, Copy, Check, CreditCard } from 'lucide-react'
 import AdminLayout from './AdminLayout'
-import { SortHeader, useSort } from './ui'
+import { Badge, DataTable, EmptyState, ErrorState, PageHead } from './ui'
 import { getAdminBilling } from '../../lib/adminService'
 import { monthlyRevenue } from '../../lib/razorpayService'
 
-const PLAN_STYLES = {
-  free:  'bg-white/10 text-white/50',
-  pro:   'bg-violet-500/20 text-violet-300',
-  team:  'bg-blue-500/20 text-blue-300',
-}
-const STATUS_STYLES = {
-  active:    'bg-green-500/15 text-green-400',
-  cancelled: 'bg-red-500/15 text-red-400',
-  expired:   'bg-yellow-500/15 text-yellow-400',
-}
+const PLAN_TONE = { free: 'slate', pro: 'violet', team: 'blue' }
+const STATUS_TONE = { active: 'green', cancelled: 'red', expired: 'amber', cancelling: 'amber' }
 
 function CopyBtn({ text }) {
   const [copied, setCopied] = useState(false)
-  if (!text) return <span className="text-white/20">-</span>
+  if (!text) return <span className="text-slate-400">-</span>
   const copy = () => {
     navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
   }
   return (
-    <button onClick={copy} className="flex items-center gap-1 text-[10px] text-white/40 hover:text-white/70 transition-colors font-mono">
+    <button onClick={copy} aria-label={`Copy Razorpay ID ${text}`} className="btn btn-ghost btn-sm font-mono !text-[12px] text-slate-600">
       {text.slice(0, 12)}…
-      {copied ? <Check size={9} className="text-green-400" /> : <Copy size={9} />}
+      {copied ? <Check size={14} className="text-[var(--green)]" /> : <Copy size={14} />}
     </button>
   )
 }
@@ -42,7 +34,6 @@ export default function AdminBilling() {
   const [subs, setSubs]       = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState('')
-  const [filter, setFilter]   = useState('all')
 
   const load = async () => {
     setLoading(true)
@@ -69,116 +60,44 @@ export default function AdminBilling() {
   const thisMonth   = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
   const netNew      = subs.filter(s => s.status === 'active' && s.updated_at >= thisMonth).length
 
-  const filtered = filter === 'all' ? subs : subs.filter(s =>
-    filter === 'active' ? s.status === 'active' :
-    filter === 'cancelled' ? s.status === 'cancelled' : true
-  )
-  const { sorted, sort, toggle } = useSort(filtered, { key: 'updated', dir: 'desc' }, {
-    email: s => s.email?.toLowerCase(), plan: s => ({ free: 0, pro: 1, team: 2 })[s.plan] ?? 0, status: s => s.status,
-    period: s => s.current_period_end, updated: s => s.updated_at,
-  })
+  const columns = [
+    { key: 'email', label: 'Email', sort: s => s.email?.toLowerCase(), render: s => <span className="font-mono text-[12.5px] text-slate-900 block max-w-[300px] truncate">{s.email}</span> },
+    { key: 'plan', label: 'Plan', sort: s => ({ free: 0, pro: 1, team: 2 })[s.plan] ?? 0, render: s => <Badge tone={PLAN_TONE[s.plan] || 'slate'}><span className="capitalize">{s.plan}</span></Badge> },
+    { key: 'status', label: 'Status', sort: s => s.status, render: s => <Badge tone={STATUS_TONE[s.status] || 'slate'}><span className="capitalize">{s.status}</span></Badge> },
+    { key: 'razorpay', label: 'Razorpay ID', className: 'max-lg:hidden', render: s => <CopyBtn text={s.razorpay_payment_id} /> },
+    { key: 'period', label: 'Period end', className: 'max-sm:hidden', sort: s => s.current_period_end, render: s => <span className="text-slate-600">{fmt(s.current_period_end)}</span> },
+    { key: 'updated', label: 'Updated', className: 'max-md:hidden', sort: s => s.updated_at, render: s => <span className="text-slate-600">{fmt(s.updated_at)}</span> },
+  ]
+  const statusFilter = { key: 'status', label: 'Status', all: 'All', options: [{ value: 'active', label: 'Active' }, { value: 'cancelled', label: 'Cancelled' }], test: (s, v) => s.status === v }
+  const kpis = [
+    ['MRR', `₹${mrr.toLocaleString('en-IN')}`], ['ARR', `₹${(arr / 100000).toFixed(1)}L`], ['Active Paid', activePro.length + activeTeam.length],
+    ['Net New MTD', netNew], ['Cancelled', cancelled], ['Churn (all-time)', `${churnRate}%`],
+  ]
 
   return (
-    <AdminLayout title="Billing">
-      {/* Summary */}
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-5">
-        <div className="glass rounded-xl p-4 text-center">
-          <p className="font-display font-bold text-xl text-green-400">₹{mrr.toLocaleString('en-IN')}</p>
-          <p className="text-[10px] text-white/40 mt-0.5">MRR</p>
-        </div>
-        <div className="glass rounded-xl p-4 text-center">
-          <p className="font-display font-bold text-xl text-emerald-400">₹{(arr / 100000).toFixed(1)}L</p>
-          <p className="text-[10px] text-white/40 mt-0.5">ARR</p>
-        </div>
-        <div className="glass rounded-xl p-4 text-center">
-          <p className="font-display font-bold text-xl text-violet-400">{activePro.length + activeTeam.length}</p>
-          <p className="text-[10px] text-white/40 mt-0.5">Active Paid</p>
-        </div>
-        <div className="glass rounded-xl p-4 text-center">
-          <p className="font-display font-bold text-xl text-blue-400">{netNew}</p>
-          <p className="text-[10px] text-white/40 mt-0.5">Net New MTD</p>
-        </div>
-        <div className="glass rounded-xl p-4 text-center">
-          <p className="font-display font-bold text-xl text-red-400">{cancelled}</p>
-          <p className="text-[10px] text-white/40 mt-0.5">Cancelled</p>
-        </div>
-        <div className="glass rounded-xl p-4 text-center">
-          <p className="font-display font-bold text-xl text-orange-400">{churnRate}%</p>
-          <p className="text-[10px] text-white/40 mt-0.5">Churn (all-time)</p>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2 mb-4">
-        {['all', 'active', 'cancelled'].map(f => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`text-xs px-3 py-1.5 rounded-lg transition-colors capitalize ${
-              filter === f ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/70'
-            }`}
-          >
-            {f}
-          </button>
-        ))}
-        <button
-          onClick={load}
-          disabled={loading}
-          className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors ml-auto"
-        >
-          <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
-          Refresh
+    <AdminLayout>
+      <PageHead title="Billing">
+        <button onClick={load} disabled={loading} className="btn btn-ghost text-slate-600">
+          <RefreshCw className={loading ? 'animate-spin' : ''} /> Refresh
         </button>
+      </PageHead>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4 mb-5">
+        {kpis.map(([label, value]) => (
+          <div key={label} className="card kpi">
+            <p className="kpi-label">{label}</p>
+            <p className="kpi-value">{value}</p>
+          </div>
+        ))}
       </div>
 
-      {error && (
-        <div className="glass rounded-xl p-4 mb-4 text-sm text-red-400 border border-red-500/20">{error}</div>
-      )}
-
-      {loading && !subs.length ? (
-        <div className="flex items-center justify-center h-48">
-          <div className="w-5 h-5 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
-        </div>
-      ) : (
-        <div className="glass rounded-2xl overflow-hidden">
-          {/* Header */}
-          <div className="grid grid-cols-[1fr_84px_100px_140px_116px_104px] gap-3 px-4 py-2.5 border-b border-white/[0.06] text-[10px] text-white/30 uppercase tracking-widest">
-            <SortHeader label="Email" k="email" sort={sort} onSort={toggle} />
-            <SortHeader label="Plan" k="plan" sort={sort} onSort={toggle} />
-            <SortHeader label="Status" k="status" sort={sort} onSort={toggle} />
-            <span>Razorpay ID</span>
-            <SortHeader label="Period end" k="period" sort={sort} onSort={toggle} />
-            <SortHeader label="Updated" k="updated" sort={sort} onSort={toggle} />
-          </div>
-
-          {filtered.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm text-white/30">No subscriptions yet</div>
-          ) : (
-            sorted.map((s, i) => (
-              <div
-                key={s.id}
-                className={`grid grid-cols-[1fr_84px_100px_140px_116px_104px] gap-3 px-4 py-3 items-center ${
-                  i !== filtered.length - 1 ? 'border-b border-white/[0.04]' : ''
-                } hover:bg-white/[0.02] transition-colors`}
-              >
-                <span className="text-xs text-white/80 truncate font-mono">{s.email}</span>
-                <span>
-                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${PLAN_STYLES[s.plan] || PLAN_STYLES.free}`}>
-                    {s.plan}
-                  </span>
-                </span>
-                <span>
-                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${STATUS_STYLES[s.status] || ''}`}>
-                    {s.status}
-                  </span>
-                </span>
-                <CopyBtn text={s.razorpay_payment_id} />
-                <span className="text-xs text-white/40">{fmt(s.current_period_end)}</span>
-                <span className="text-xs text-white/40">{fmt(s.updated_at)}</span>
-              </div>
-            ))
-          )}
-        </div>
-      )}
+      <div className="card overflow-hidden">
+        {error && !subs.length ? <ErrorState title="Couldn't load billing" onRetry={load}>{error}</ErrorState> : (
+          <DataTable rows={subs} columns={columns} loading={loading && !subs.length} filters={[statusFilter]} initialSort={{ key: 'updated', dir: 'desc' }}
+            search={s => [s.email, s.razorpay_payment_id].filter(Boolean).join(' ')} searchLabel="Search email or Razorpay ID"
+            empty={<EmptyState icon={CreditCard} title="No subscriptions yet" />} />
+        )}
+      </div>
     </AdminLayout>
   )
 }
