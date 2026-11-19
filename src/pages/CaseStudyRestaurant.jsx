@@ -15,7 +15,6 @@ const AT_A_GLANCE = [
   { label: 'Built for', value: 'Indian restaurants with dine-in, takeaway and delivery' },
   { label: 'Users', value: '7 roles: owner, manager, cashier, waiter, kitchen, inventory and accounts' },
   { label: 'Size', value: 'About 20 screens and 5,700 lines of code, plus a customer ordering page' },
-  { label: 'Status', value: 'Working front-end demo with sample data; no backend or live restaurant yet' },
 ]
 
 const PROBLEMS = [
