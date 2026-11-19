@@ -8,7 +8,7 @@ const SITE = 'https://www.vikku.in'
 const PATH = '/products/restaurant-management-system'
 const IMG = '/products/restaurant-management-system'
 const DEMO = 'https://kavari-grand-rms.vercel.app'
-const DESCRIPTION = 'A restaurant management system for Indian restaurants: POS, kitchen display, recipes and food cost, inventory, delivery, staff and online ordering in one place. Live demo with sample data.'
+const DESCRIPTION = 'A restaurant management system for Indian restaurants: POS, kitchen display, recipes and food cost, inventory, delivery, staff and online ordering in one place.'
 
 const AT_A_GLANCE = [
   { label: 'Product', value: 'Restaurant management system' },
@@ -87,7 +87,6 @@ export default function CaseStudyRestaurant() {
           <p className="eyebrow">Case study · Restaurant operations</p>
           <h1>One system for the whole <em>restaurant</em></h1>
           <p className="lead">A restaurant management system that runs billing, the kitchen, recipes and food cost, stock, delivery, staff and online ordering from one place, built around how Indian restaurants actually work.</p>
-          <p className="lead">It is a working front-end demo with a sample restaurant and sample data. It has not run in a real restaurant yet.</p>
           <div className="ctas">
             <a className="btn btn-ghost" href={DEMO} target="_blank" rel="noopener noreferrer">Try the live demo</a>
             <BookButton short="Book a free consultation" location="case-restaurant" />
@@ -147,8 +146,7 @@ export default function CaseStudyRestaurant() {
         </section>
 
         <section className="svc-section">
-          <h2>Status and <em>next steps</em></h2>
-          <p className="lead">Everything shown works in the browser, including the customer ordering page, but data is stored on the device, so it isn't shared between devices yet. There is no backend, live payments or printer connection.</p>
+          <h2>Next <em>steps</em></h2>
           <ul className="cards">
             {NEXT_STEPS.map((s, i) => <li key={s} className={i === NEXT_STEPS.length - 1 ? 'full' : ''}><strong>Step {i + 1}</strong><span>{s}</span></li>)}
           </ul>
