@@ -2,7 +2,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Download, Pencil, Plus, Save } from 'lucide-react'
 import AdminLayout from '../AdminLayout'
-import { useToast } from '../ui'
+import { Badge, ErrorState, Skeleton, useToast } from '../ui'
 import { DOC_TEMPLATES } from '../../../data/docTemplates'
 import { addRow, choicesOf, clientValues, columnWeights, defaultValues, fieldsOf, parseTemplate } from '../../../lib/docTemplate'
 import { downloadTemplatePdf } from '../../../lib/docTemplatePdf'
@@ -15,7 +15,7 @@ const hintText = (h) => ({ N: 'no.', Nth: 'nth' }[h] || h.replace('VIKKU ', '').
 function Blank({ seg, value, onChange, inCell }) {
   const label = hintText(seg.hint)
   const shared = { value, 'aria-label': label, placeholder: label, onChange: e => onChange(e.target.value) }
-  const cls = `rounded border-b px-1 text-sm outline-none focus:border-orange-500 ${value ? 'border-slate-300 bg-orange-50/60 text-slate-900' : 'border-sky-300 bg-sky-50 text-slate-900 placeholder-sky-500/70'}`
+  const cls = `rounded border-b px-1 text-sm outline-none focus:border-[var(--ring)] ${value ? 'border-slate-300 bg-slate-100 text-slate-900' : 'border-sky-300 bg-sky-50 text-slate-900 placeholder-sky-500/70'}`
   const choices = choicesOf(seg.hint)
   if (!choices && (seg.hint.length > 34 || value.length > 44)) {
     return <textarea rows={Math.min(5, Math.ceil(Math.max(value.length, seg.hint.length) / (inCell ? 24 : 64)) + 1)} {...shared} className={`${cls} block w-full resize-y py-0.5`} />
@@ -32,7 +32,7 @@ function Blank({ seg, value, onChange, inCell }) {
 function Segments({ segments, fields, set, inCell }) {
   return segments.map((s, i) => (
     <Fragment key={i}>
-      {s.box ? <input type="checkbox" aria-label="Tick" className="mr-1 align-middle accent-orange-600" checked={!!fields[s.box]} onChange={e => set(s.box, e.target.checked ? 'yes' : '')} />
+      {s.box ? <input type="checkbox" aria-label="Tick" className="mr-1 align-middle accent-[var(--primary)]" checked={!!fields[s.box]} onChange={e => set(s.box, e.target.checked ? 'yes' : '')} />
         : s.field ? <Blank seg={s} value={fields[s.field] || ''} onChange={v => set(s.field, v)} inCell={inCell} />
         : s.bold ? <strong>{s.text}</strong> : s.text}
     </Fragment>
@@ -41,7 +41,7 @@ function Segments({ segments, fields, set, inCell }) {
 
 function Sheet({ title, blocks, fields, set, onAddRow }) {
   return (
-    <div className="mx-auto w-full max-w-[794px] rounded-lg border border-slate-200 bg-white px-5 py-6 sm:px-12 sm:py-10 text-[14px] leading-relaxed text-slate-900">
+    <div className="mx-auto w-full max-w-[794px] rounded-ui-lg border border-slate-200 bg-white shadow-ui-sm px-5 py-6 sm:px-12 sm:py-10 text-[14px] leading-relaxed text-slate-900">
       <header className="flex items-center gap-2.5 border-b-2 border-orange-600 pb-3">
         <img src="/logo-sm.png" alt="" width="28" height="28" className="h-7 w-7" />
         <span className="text-lg font-bold">Vikku Labs</span>
@@ -68,7 +68,7 @@ function Sheet({ title, blocks, fields, set, onAddRow }) {
                 ))}
               </tbody>
             </table>
-            {repeat && <button type="button" className="act mt-1.5" onClick={() => onAddRow(repeat)}><Plus size={12} className="mr-1" /> Add row</button>}
+            {repeat && <button type="button" className="act mt-1.5" onClick={() => onAddRow(repeat)}><Plus size={14} /> Add row</button>}
           </div>
         )
       })}
@@ -156,28 +156,29 @@ export default function CrmDocEditor() {
 
   return (
     <AdminLayout>
-      <Link to="/admin/documents" onClick={leave} className="mb-3 inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900"><ArrowLeft size={13} /> Documents</Link>
-      {error && <p className="mb-3 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700">{error}</p>}
-      {!doc ? <div className="flex h-32 items-center justify-center"><div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-slate-500" /></div> : (
+      <Link to="/admin/documents" onClick={leave} className="btn btn-ghost btn-sm -ml-2 mb-3 text-slate-600"><ArrowLeft size={14} /> Documents</Link>
+      {error && doc && <p role="alert" className="mb-4 rounded-ui border border-[var(--red-bd)] bg-[var(--red-bg)] px-4 py-2.5 text-[13px] text-[var(--red)]">{error}</p>}
+      {!doc ? (error ? <div className="card"><ErrorState title="Couldn't open this document" onRetry={() => location.reload()}>{error}</ErrorState></div>
+        : <div className="mx-auto max-w-[794px] card p-8 space-y-3"><Skeleton className="h-6 w-40" /><Skeleton className="h-4 w-full" /><Skeleton className="h-4 w-5/6" /><Skeleton className="h-4 w-2/3" /></div>) : (
         <>
-          <div className="sticky top-16 z-20 -mx-1 mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
-            <input aria-label="Document title" value={doc.title} onChange={e => change({ title: e.target.value })} className="min-w-[200px] flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-900 focus:border-orange-400 focus:outline-none" />
+          <div className="sticky top-14 z-20 mb-4 flex flex-wrap items-center gap-2 rounded-ui-lg border border-slate-200 bg-white/95 backdrop-blur px-3 py-2.5 shadow-ui-sm">
+            <input aria-label="Document title" value={doc.title} onChange={e => change({ title: e.target.value })} className="input min-w-[200px] flex-1 !h-[34px] font-medium" />
             {template?.party === 'client' && (
-              <select aria-label="Client" value={doc.client_id || ''} onChange={pickClient} className="max-w-[220px] rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm text-slate-900">
+              <select aria-label="Client" value={doc.client_id || ''} onChange={pickClient} className="input !h-[34px] !w-auto max-w-[220px]">
                 <option value="">Choose a client…</option>
                 {clients.map(c => <option key={c.id} value={c.id}>{c.company || c.name}</option>)}
               </select>
             )}
-            <span className={`text-xs ${left ? 'text-sky-700' : 'text-emerald-700'}`}>{left ? `${left} blank${left === 1 ? '' : 's'} left` : 'All filled in'}</span>
-            <button type="button" onClick={() => setWording(w => !w)} className="act" aria-expanded={wording}><Pencil size={12} className="mr-1" /> Edit wording</button>
-            <button type="button" disabled={busy} onClick={onSave} className="act disabled:opacity-50"><Save size={12} className="mr-1" /> Save</button>
-            <button type="button" disabled={busy} onClick={onDownload} className="btn-primary flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs disabled:opacity-50"><Download size={13} /> Download PDF</button>
+            <Badge tone={left ? 'blue' : 'green'}>{left ? `${left} blank${left === 1 ? '' : 's'} left` : 'All filled in'}</Badge>
+            <button type="button" onClick={() => setWording(w => !w)} className="btn" aria-expanded={wording}><Pencil /> Edit wording</button>
+            <button type="button" disabled={busy} onClick={onSave} className="btn"><Save /> Save</button>
+            <button type="button" disabled={busy} onClick={onDownload} className="btn btn-primary"><Download /> Download PDF</button>
           </div>
 
           {wording && (
-            <section className="mx-auto mb-4 w-full max-w-[794px] rounded-lg border border-slate-200 bg-white p-4">
-              <p className="mb-2 text-xs text-slate-500">Changes apply to this document. Put a blank in square capitals like [CLIENT]. Use <code>- [ ]</code> for a tick box, <code>###</code> for a heading and <code>**bold**</code> for bold.</p>
-              <textarea aria-label="Document wording" rows={16} value={doc.body} onChange={e => change({ body: e.target.value })} className="w-full resize-y rounded-lg border border-slate-200 p-3 font-mono text-xs leading-relaxed text-slate-900 focus:border-orange-400 focus:outline-none" />
+            <section className="card mx-auto mb-4 w-full max-w-[794px] p-4">
+              <p className="mb-2 text-[12px] text-slate-500">Changes apply to this document. Put a blank in square capitals like [CLIENT]. Use <code>- [ ]</code> for a tick box, <code>###</code> for a heading and <code>**bold**</code> for bold.</p>
+              <textarea aria-label="Document wording" rows={16} value={doc.body} onChange={e => change({ body: e.target.value })} className="input font-mono !text-[12px] leading-relaxed" />
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <button type="button" disabled={busy} onClick={saveAsTemplate} className="act disabled:opacity-50">Use this wording for all new documents</button>
                 {settings[`template:${template.id}`] && <button type="button" disabled={busy} onClick={resetTemplate} className="act disabled:opacity-50">Reset to original wording</button>}

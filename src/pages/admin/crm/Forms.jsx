@@ -11,18 +11,20 @@ import { Field, inputCls } from './LeadPanel'
 export function Modal({ title, onClose, onSubmit, saving, error, submitLabel, children, extra }) {
   useLockBodyScroll()
   return (
-    <div className="fixed inset-0 z-[9998] flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-[8vh]" onClick={onClose}>
-      <form onSubmit={onSubmit} onClick={e => e.stopPropagation()} className="w-full max-w-xl bg-[var(--surface)] rounded-2xl shadow-2xl p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div className="sm:col-span-2 flex items-center justify-between mb-1">
-          <h2 className="font-display font-bold text-base text-white">{title}</h2>
-          <button type="button" onClick={onClose} className="p-1.5 rounded-lg text-white/40 hover:text-white" aria-label="Close"><X size={16} /></button>
+    <div className="overlay" onClick={onClose}>
+      <form role="dialog" aria-modal="true" aria-label={title} onSubmit={onSubmit} onClick={e => e.stopPropagation()} className="dialog">
+        <div className="dialog-head">
+          <h2>{title}</h2>
+          <button type="button" onClick={onClose} className="btn btn-ghost btn-icon btn-sm text-slate-500" aria-label="Close"><X size={16} /></button>
         </div>
-        {children}
-        {error && <p className="sm:col-span-2 text-xs text-red-500">{error}</p>}
-        <div className="sm:col-span-2 flex flex-wrap gap-2 items-center">
+        <div className="dialog-body grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {children}
+          {error && <p role="alert" className="sm:col-span-2 text-[12.5px] text-[var(--red)]">{error}</p>}
+        </div>
+        <div className="dialog-foot">
           {extra}
-          <button type="button" onClick={onClose} className="ml-auto text-xs px-4 py-2 rounded-xl text-white/50 hover:text-white">Cancel</button>
-          <button type="submit" disabled={saving} className="btn-primary text-xs px-5 py-2 rounded-xl disabled:opacity-50">{saving ? 'Saving…' : submitLabel}</button>
+          <button type="button" onClick={onClose} className="btn btn-ghost ml-auto">Cancel</button>
+          <button type="submit" disabled={saving} className="btn btn-primary">{saving ? 'Saving…' : submitLabel}</button>
         </div>
       </form>
     </div>
@@ -253,7 +255,7 @@ export function BalanceForm({ currency, balance, onClose, onSaved }) {
     <Modal title={`Bank balance (${currency})`} onClose={onClose} onSubmit={f.submit} saving={f.saving} error={f.error} submitLabel="Save balance">
       <Field label="Balance *"><input className={inputCls} type="number" step="0.01" value={f.form.amount} onChange={f.set('amount')} autoFocus /></Field>
       <Field label="As of"><input className={inputCls} type="date" value={f.form.as_of} onChange={f.set('as_of')} /></Field>
-      <p className="sm:col-span-2 text-xs text-white/50">Enter what your bank shows at the end of this day. Payments and expenses dated after it adjust the balance automatically, so update it when it stops matching your bank.</p>
+      <p className="sm:col-span-2 text-[12px] text-slate-500">Enter what your bank shows at the end of this day. Payments and expenses dated after it adjust the balance automatically, so update it when it stops matching your bank.</p>
     </Modal>
   )
 }

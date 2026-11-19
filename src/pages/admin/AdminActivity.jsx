@@ -1,16 +1,24 @@
 import { useEffect, useState } from 'react'
 import { useAutoRefresh } from '../../hooks/useAutoRefresh'
-import { RefreshCw, UserPlus, TrendingUp, Folder, CreditCard, LogIn } from 'lucide-react'
+import { RefreshCw, Activity } from 'lucide-react'
 import AdminLayout from './AdminLayout'
+import { Badge, DataTable, EmptyState, ErrorState, PageHead } from './ui'
 import { getAdminActivity } from '../../lib/adminService'
 
 const TYPE_META = {
-  signup:    { icon: UserPlus,    color: 'text-green-400',  label: 'Signed up' },
-  upgrade:   { icon: TrendingUp,  color: 'text-violet-400', label: 'Upgraded' },
-  project:   { icon: Folder,      color: 'text-blue-400',   label: 'Created project' },
-  payment:   { icon: CreditCard,  color: 'text-emerald-400',label: 'Payment received' },
-  signin:    { icon: LogIn,       color: 'text-white/40',   label: 'Signed in' },
+  signup:    { tone: 'green',  label: 'Signed up' },
+  upgrade:   { tone: 'violet', label: 'Upgraded' },
+  project:   { tone: 'blue',   label: 'Created project' },
+  payment:   { tone: 'green',  label: 'Payment received' },
+  signin:    { tone: 'slate',  label: 'Signed in' },
 }
+const COLUMNS = [
+  { key: 'type', label: 'Event', render: ev => { const m = TYPE_META[ev.type] || TYPE_META.signin; return <Badge tone={m.tone}>{m.label}</Badge> } },
+  { key: 'email', label: 'User', sort: ev => ev.email?.toLowerCase(), render: ev => <span className="font-mono text-[12.5px] text-slate-900">{ev.email || 'Unknown'}</span> },
+  { key: 'detail', label: 'Detail', className: 'max-md:hidden', render: ev => <span className="block max-w-[360px] truncate text-slate-600">{ev.detail || '—'}</span> },
+  { key: 'when', label: 'When', sort: ev => ev.timestamp, render: ev => <time dateTime={ev.timestamp} title={ev.timestamp && new Date(ev.timestamp).toLocaleString('en-IN')} className="text-slate-500">{timeAgo(ev.timestamp)}</time> },
+]
+const TYPE_FILTER = { key: 'type', label: 'Event', all: 'All events', options: Object.entries(TYPE_META).map(([value, m]) => ({ value, label: m.label })), test: (ev, v) => (TYPE_META[ev.type] ? ev.type : 'signin') === v }
 
 function timeAgo(dateStr) {
   if (!dateStr) return '-'
@@ -44,48 +52,20 @@ export default function AdminActivity() {
   useAutoRefresh(load, 30000)
 
   return (
-    <AdminLayout title="Activity Feed">
-      <div className="flex items-center justify-between mb-5">
-        <p className="text-xs text-white/40">Last 50 actions across all users</p>
-        <button onClick={load} disabled={loading} className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors">
-          <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
-          Refresh
+    <AdminLayout>
+      <PageHead title="Activity Feed" sub="Last 50 actions across all users">
+        <button onClick={load} disabled={loading} className="btn btn-ghost text-slate-600">
+          <RefreshCw className={loading ? 'animate-spin' : ''} /> Refresh
         </button>
+      </PageHead>
+
+      <div className="card overflow-hidden">
+        {error && !events.length ? <ErrorState title="Couldn't load activity" onRetry={load}>{error}</ErrorState> : (
+          <DataTable rows={events} columns={COLUMNS} rowKey={ev => `${ev.type}-${ev.email}-${ev.timestamp}`} loading={loading && !events.length}
+            search={ev => [ev.email, ev.detail].filter(Boolean).join(' ')} searchLabel="Search email or detail" filters={[TYPE_FILTER]}
+            initialSort={{ key: 'when', dir: 'desc' }} empty={<EmptyState icon={Activity} title="No activity yet" />} />
+        )}
       </div>
-
-      {error && <div className="glass rounded-xl p-4 mb-4 text-sm text-red-400 border border-red-500/20">{error}</div>}
-
-      {loading && !events.length ? (
-        <div className="flex items-center justify-center h-48">
-          <div className="w-5 h-5 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
-        </div>
-      ) : events.length === 0 ? (
-        <div className="glass rounded-2xl p-8 text-center text-sm text-white/30">No activity yet</div>
-      ) : (
-        <div className="glass rounded-2xl overflow-hidden">
-          {events.map((ev, i) => {
-            const meta = TYPE_META[ev.type] || TYPE_META.signin
-            const Icon = meta.icon
-            return (
-              <div
-                key={i}
-                className={`flex items-start gap-3 px-4 py-3 ${i !== events.length - 1 ? 'border-b border-white/[0.04]' : ''} hover:bg-white/[0.02] transition-colors`}
-              >
-                <div className={`w-7 h-7 rounded-lg bg-white/[0.04] flex items-center justify-center flex-shrink-0 mt-0.5`}>
-                  <Icon size={12} className={meta.color} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-xs text-white/70 truncate font-mono">{ev.email || 'Unknown'}</p>
-                    <span className="text-[10px] text-white/25 flex-shrink-0">{timeAgo(ev.timestamp)}</span>
-                  </div>
-                  <p className="text-[11px] text-white/40 mt-0.5">{meta.label}{ev.detail ? ` - ${ev.detail}` : ''}</p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
     </AdminLayout>
   )
 }

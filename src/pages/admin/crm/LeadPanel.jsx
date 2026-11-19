@@ -6,12 +6,12 @@ import { LEAD_SOURCES, LEAD_STAGES, SERVICES, convertLead, createLead, deleteLea
 import Timeline from './Timeline'
 
 const EMPTY = { name: '', company: '', phone: '', email: '', city: '', country: 'India', source: 'website', service: '', value: '', currency: 'INR', stage: 'new', next_follow_up: '', lost_reason: '', notes: '' }
-export const inputCls = 'w-full glass rounded-xl px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none bg-transparent'
+export const inputCls = 'input'
 
 export function Field({ label, children, wide }) {
   return (
-    <label className={`flex flex-col gap-1 ${wide ? 'sm:col-span-2' : ''}`}>
-      <span className="text-[10px] text-white/40 uppercase tracking-wider">{label}</span>
+    <label className={`flex flex-col gap-1.5 ${wide ? 'sm:col-span-2' : ''}`}>
+      <span className="input-label">{label}</span>
       {children}
     </label>
   )
@@ -67,31 +67,32 @@ export default function LeadPanel({ lead, defaultStage = 'new', onClose, onSaved
   const wa = whatsappNumber(form.phone)
 
   return (
-    <div className="fixed inset-0 z-[9998] flex justify-end bg-black/40" onClick={onClose}>
-      <aside className="w-full max-w-xl h-full overflow-y-auto bg-[var(--surface)] shadow-2xl p-5 sm:p-6" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="font-display font-bold text-base text-white">{isNew ? 'New lead' : lead.name}</h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/[0.06]" aria-label="Close"><X size={16} /></button>
+    <div className="overlay drawer" onClick={onClose}>
+      <aside role="dialog" aria-modal="true" aria-label={isNew ? 'New lead' : lead.name} className="dialog" onClick={e => e.stopPropagation()}>
+        <div className="dialog-head">
+          <h2>{isNew ? 'New lead' : lead.name}</h2>
+          <button onClick={onClose} className="btn btn-ghost btn-icon btn-sm text-slate-500" aria-label="Close"><X size={16} /></button>
         </div>
+        <div className="dialog-body">
 
         {!isNew && (
           <div className="flex flex-wrap gap-2 mb-5">
             {lead.client_id ? (
-              <button onClick={() => navigate(`/admin/crm/clients/${lead.client_id}`)} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl bg-emerald-50 text-emerald-700">
-                <ExternalLink size={12} /> Open client
+              <button onClick={() => navigate(`/admin/crm/clients/${lead.client_id}`)} className="btn btn-sm">
+                <ExternalLink size={14} /> Open client
               </button>
             ) : (
-              <button onClick={convert} disabled={saving} className="btn-primary flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl disabled:opacity-50">
-                <UserCheck size={12} /> Convert to client
+              <button onClick={convert} disabled={saving} className="btn btn-primary btn-sm">
+                <UserCheck size={14} /> Convert to client
               </button>
             )}
             {wa && (
-              <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-xl bg-green-50 text-green-700">
-                <MessageCircle size={12} /> WhatsApp
+              <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer" className="btn btn-sm">
+                <MessageCircle size={14} /> WhatsApp
               </a>
             )}
-            <button onClick={remove} className="ml-auto flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl text-white/40 hover:text-red-500 hover:bg-red-50">
-              <Trash2 size={12} /> Delete
+            <button onClick={remove} className="btn btn-ghost btn-sm ml-auto text-slate-500 hover:!text-[var(--red)] hover:!bg-[var(--red-bg)]">
+              <Trash2 size={14} /> Delete
             </button>
           </div>
         )}
@@ -132,19 +133,20 @@ export default function LeadPanel({ lead, defaultStage = 'new', onClose, onSaved
           {form.stage === 'lost' && <Field label="Lost reason"><input className={inputCls} value={form.lost_reason} onChange={set('lost_reason')} placeholder="e.g. Budget, timing, chose another agency" /></Field>}
           <Field label="Notes" wide><textarea className={`${inputCls} resize-none`} rows={3} value={form.notes} onChange={set('notes')} /></Field>
 
-          {error && <p className="sm:col-span-2 text-xs text-red-500">{error}</p>}
+          {error && <p role="alert" className="sm:col-span-2 text-[12.5px] text-[var(--red)]">{error}</p>}
           <div className="sm:col-span-2 flex gap-2 justify-end">
-            <button type="button" onClick={onClose} className="text-xs px-4 py-2 rounded-xl text-white/50 hover:text-white">Cancel</button>
-            <button type="submit" disabled={saving} className="btn-primary text-xs px-5 py-2 rounded-xl disabled:opacity-50">{saving ? 'Saving…' : isNew ? 'Add lead' : 'Save changes'}</button>
+            <button type="button" onClick={onClose} className="btn btn-ghost">Cancel</button>
+            <button type="submit" disabled={saving} className="btn btn-primary">{saving ? 'Saving…' : isNew ? 'Add lead' : 'Save changes'}</button>
           </div>
         </form>
 
         {!isNew && (
-          <section className="mt-8">
-            <h3 className="text-[10px] text-white/40 uppercase tracking-widest mb-3">Timeline</h3>
+          <section className="mt-6 border-t border-slate-200 pt-5">
+            <h3 className="section-title">Timeline</h3>
             <Timeline leadId={lead.id} />
           </section>
         )}
+        </div>
       </aside>
     </div>
   )

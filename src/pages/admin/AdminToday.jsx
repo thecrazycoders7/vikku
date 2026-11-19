@@ -2,10 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Plus, ChevronDown, Video, MessageCircle, Mail, CalendarDays, CalendarClock, FileText, FolderKanban, Wallet, Repeat,
-  Target, UserPlus, Briefcase, ArrowRightLeft, BadgeCheck, StickyNote, Phone, CircleCheckBig, RefreshCw,
+  Target, UserPlus, Briefcase, ArrowRightLeft, BadgeCheck, StickyNote, Phone, CircleCheckBig,
 } from 'lucide-react'
 import AdminLayout from './AdminLayout'
-import { Badge, EmptyState, KpiCard, Menu, MenuItem, Panel, Skeleton, Sparkline, Trend, ViewAll, useToast } from './ui'
+import { Badge, EmptyState, ErrorState, KpiCard, Menu, MenuItem, Panel, Skeleton, Sparkline, Trend, ViewAll, useToast } from './ui'
 import { useAuth } from '../../contexts/AuthContext'
 import { getAdminOverview } from '../../lib/adminService'
 import {
@@ -148,8 +148,8 @@ function PriorityRow({ p }) {
     ? <a href={p.action.href} target="_blank" rel="noopener noreferrer" className="act">{p.action.label}</a>
     : <Link to={p.action.to} className="act">{p.action.label}</Link>
   return (
-    <li className="flex items-center gap-3 px-5 py-3">
-      <span className="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-slate-50 text-slate-500 ring-1 ring-inset ring-slate-200"><Icon size={15} /></span>
+    <li className="flex items-center gap-3 px-4 py-3">
+      <span aria-hidden="true" className="flex h-8 w-8 flex-none items-center justify-center rounded-ui bg-slate-100 text-slate-600"><Icon size={16} strokeWidth={1.75} /></span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-[13px] font-medium text-slate-900">{p.title}</p>
         <p className="truncate text-[12px] text-slate-500">{[p.sub, p.when].filter(Boolean).join(' · ')}</p>
@@ -165,15 +165,15 @@ function FollowUpRow({ lead, state, today, onLater }) {
   const late = state === 'overdue' ? dayDiff(today, lead.next_follow_up) : 0
   const when = state === 'overdue' ? `${late} day${late === 1 ? '' : 's'} overdue` : state === 'today' ? 'Due today' : weekdayText(lead.next_follow_up)
   return (
-    <li className="flex items-center gap-3 px-5 py-2.5">
+    <li className="flex items-center gap-3 px-4 py-2.5">
       <div className="min-w-0 flex-1">
-        <Link to={`/admin/crm/leads?lead=${lead.id}`} className="block truncate text-[13px] font-medium text-slate-900 hover:text-orange-700 rounded">{lead.name}</Link>
+        <Link to={`/admin/crm/leads?lead=${lead.id}`} className="block truncate text-[13px] font-medium text-slate-900 hover:underline rounded">{lead.name}</Link>
         <p className="truncate text-[12px] text-slate-500">{lead.company || sourceLabel(lead.source)} · {when}</p>
       </div>
-      {state !== 'upcoming' && <Badge tone={state === 'overdue' ? 'red' : 'amber'}>{state === 'overdue' ? 'Overdue' : 'Today'}</Badge>}
+      {state !== 'upcoming' && <span className="hidden sm:block"><Badge tone={state === 'overdue' ? 'red' : 'amber'}>{state === 'overdue' ? 'Overdue' : 'Today'}</Badge></span>}
       <div className="flex items-center gap-0.5">
-        {wa && <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer" className="icon-act" aria-label={`WhatsApp ${lead.name}`} title="WhatsApp"><MessageCircle size={15} /></a>}
-        {lead.email && <a href={`mailto:${lead.email}`} className="icon-act" aria-label={`Email ${lead.name}`} title="Email"><Mail size={15} /></a>}
+        {wa && <a href={`https://wa.me/${wa}`} target="_blank" rel="noopener noreferrer" className="icon-act" aria-label={`WhatsApp ${lead.name}`} title="WhatsApp"><MessageCircle size={16} strokeWidth={1.75} /></a>}
+        {lead.email && <a href={`mailto:${lead.email}`} className="icon-act" aria-label={`Email ${lead.name}`} title="Email"><Mail size={16} strokeWidth={1.75} /></a>}
         {state !== 'upcoming' && <button type="button" onClick={() => onLater(lead)} className="act" title="Move this follow-up to tomorrow">Tomorrow</button>}
       </div>
     </li>
@@ -225,34 +225,38 @@ export default function AdminToday() {
   return (
     <AdminLayout>
 
-      <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
+      <div className="page-head">
         <div>
-          <h1 className="text-[26px] leading-8 font-semibold tracking-tight text-slate-900">{greeting}{first ? `, ${first}` : ''}.</h1>
-          <p className="mt-1 text-[14px] text-slate-500">
+          <h1>{greeting}{first ? `, ${first}` : ''}.</h1>
+          <p>
             Your business at a glance · {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', timeZone: IST })}
           </p>
         </div>
+        <div className="actions">
         <Menu width="w-52" trigger={({ open, toggle }) => (
           <button type="button" onClick={toggle} aria-haspopup="menu" aria-expanded={open}
-            className="btn-primary inline-flex items-center gap-1.5 h-9 rounded-lg px-3.5 text-[13px]">
-            <Plus size={15} /> Create new <ChevronDown size={14} className="opacity-80" />
+            className="btn btn-primary">
+            <Plus aria-hidden="true" /> Create new <ChevronDown aria-hidden="true" className="opacity-80" />
           </button>
         )}>
           {CREATE.map(c => <MenuItem key={c.to} icon={c.icon} to={c.to}>{c.label}</MenuItem>)}
         </Menu>
+        </div>
       </div>
 
-      {error && (
-        <div role="alert" className="mb-5 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-800">
+      {error && (v ? (
+        <div role="alert" className="mb-4 flex items-center gap-3 rounded-ui border border-[var(--red-bd)] bg-[var(--red-bg)] px-4 py-2.5 text-[13px] text-[var(--red)]">
           Couldn't load the CRM: {error}
-          <button type="button" onClick={load} className="ml-auto inline-flex items-center gap-1 font-medium hover:underline"><RefreshCw size={13} /> Retry</button>
+          <button type="button" onClick={load} className="btn btn-sm ml-auto">Try again</button>
         </div>
-      )}
+      ) : (
+        <div className="card mb-4"><ErrorState title="Couldn't load the CRM" onRetry={load}>{error}</ErrorState></div>
+      ))}
 
       {/* KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {!v ? [0, 1, 2, 3].map(i => (
-          <div key={i} className="bg-white border border-slate-200 rounded-xl p-5"><Skeleton className="h-4 w-24" /><Skeleton className="mt-3 h-8 w-32" /><Skeleton className="mt-3 h-3 w-40" /></div>
+          <div key={i} className="card kpi"><Skeleton className="h-4 w-24" /><Skeleton className="mt-2.5 h-7 w-32" /><Skeleton className="mt-2 h-3 w-40 max-w-full" /></div>
         )) : (
           <>
             <KpiCard to="/admin/crm/leads" label="Open pipeline" value={moneyText(v.pipeline.pipeline)}
@@ -276,10 +280,10 @@ export default function AdminToday() {
         </p>
       )}
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-5">
+      <div className="mt-4 grid gap-4 xl:grid-cols-5">
         <Panel className="xl:col-span-3" title="Today's priorities" count={v?.priorities.length}
           action={v && v.priorities.length > 7 && (
-            <button type="button" onClick={() => setAllPriorities(a => !a)} className="text-[13px] font-medium text-slate-500 hover:text-orange-700 rounded">
+            <button type="button" onClick={() => setAllPriorities(a => !a)} className="btn btn-ghost btn-sm text-slate-500 hover:text-slate-900">
               {allPriorities ? 'Show fewer' : `Show all ${v.priorities.length}`}
             </button>
           )}>
@@ -289,7 +293,7 @@ export default function AdminToday() {
               No meetings in the next two days, overdue payments, waiting quotes or deadlines this week.
             </EmptyState>
           ) : (
-            <ul className="divide-y divide-slate-100">{shown.map(p => <PriorityRow key={p.key} p={p} />)}</ul>
+            <ul className="divide-y divide-slate-200">{shown.map(p => <PriorityRow key={p.key} p={p} />)}</ul>
           )}
         </Panel>
 
@@ -302,8 +306,8 @@ export default function AdminToday() {
           ) : (
             [['overdue', 'Overdue'], ['today', 'Today'], ['upcoming', 'Next 7 days']].map(([key, label]) => fu[key].length > 0 && (
               <div key={key}>
-                <p className="px-5 pt-3 pb-1 text-[11px] font-medium uppercase tracking-wider text-slate-400">{label}</p>
-                <ul className="divide-y divide-slate-100">
+                <p className="px-4 pt-3 pb-1 text-[11px] font-medium uppercase tracking-[.06em] text-slate-400">{label}</p>
+                <ul className="divide-y divide-slate-200">
                   {fu[key].map(l => <FollowUpRow key={l.id} lead={l} state={key} today={today} onLater={later} />)}
                 </ul>
               </div>
@@ -312,21 +316,21 @@ export default function AdminToday() {
         </Panel>
       </div>
 
-      <Panel className="mt-6" title="Recent activity" action={<ViewAll to="/admin/crm/leads">Open CRM</ViewAll>}>
+      <Panel className="mt-4" title="Recent activity" action={<ViewAll to="/admin/crm/leads">Open CRM</ViewAll>}>
         {!activity || !v ? <ListSkeleton rows={4} /> : !activity.length ? (
           <EmptyState icon={ArrowRightLeft} title="No CRM activity yet">New leads, stage changes, payments, quotes and meetings appear here as they happen.</EmptyState>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-200">
             {activity.map(a => {
               const Icon = ACTIVITY_ICON[a.kind] || StickyNote
               const client = a.client_id && v.clients[a.client_id], lead = a.lead_id && v.leads[a.lead_id]
               const record = client ? { name: client.name, to: `/admin/crm/clients/${client.id}` } : lead ? { name: lead.name, to: `/admin/crm/leads?lead=${lead.id}` } : null
               const text = a.kind === 'stage_change' && a.body?.includes('→') ? `Moved to ${stageLabel(a.body.split('→')[1].trim())}` : a.body
               return (
-                <li key={a.id} className="flex items-center gap-3 px-5 py-2.5">
-                  <Icon size={15} className="flex-none text-slate-400" />
+                <li key={a.id} className="flex items-center gap-3 px-4 py-2.5">
+                  <Icon size={16} strokeWidth={1.75} aria-hidden="true" className="flex-none text-slate-400" />
                   <p className="min-w-0 flex-1 truncate text-[13px] text-slate-700">
-                    {record && <Link to={record.to} className="font-medium text-slate-900 hover:text-orange-700 rounded">{record.name}</Link>}
+                    {record && <Link to={record.to} className="font-medium text-slate-900 hover:underline rounded">{record.name}</Link>}
                     {record && <span className="text-slate-300"> · </span>}{text}
                   </p>
                   <time dateTime={a.created_at} className="flex-none text-[12px] text-slate-400 tabular-nums">{ago(a.created_at)}</time>
@@ -344,7 +348,7 @@ export default function AdminToday() {
 
 function ListSkeleton({ rows = 3 }) {
   return (
-    <div className="px-5 py-4 space-y-4">
+    <div className="px-4 py-4 space-y-4">
       {Array.from({ length: rows }, (_, i) => (
         <div key={i} className="flex items-center gap-3"><Skeleton className="h-8 w-8" /><div className="flex-1 space-y-1.5"><Skeleton className="h-3 w-2/3" /><Skeleton className="h-3 w-1/3" /></div></div>
       ))}

@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useAutoRefresh } from '../../hooks/useAutoRefresh'
-import { Search, RefreshCw, ChevronDown, Download, X, Folder, AlertTriangle } from 'lucide-react'
+import { RefreshCw, Download, X, Folder, AlertTriangle, Users as UsersIcon } from 'lucide-react'
 import AdminLayout from './AdminLayout'
-import { SortHeader, useSort } from './ui'
+import { Badge, DataTable, EmptyState, ErrorState, PageHead, Skeleton } from './ui'
 import { getAdminUsers, adminChangePlan, getAdminUserDetail, adminDeleteUser, getAdminExpiring } from '../../lib/adminService'
 import useLockBodyScroll from '../../hooks/useLockBodyScroll'
 
-const PLAN_STYLES = {
-  free:  'bg-white/10 text-white/50',
-  pro:   'bg-violet-500/20 text-violet-300',
-  team:  'bg-blue-500/20 text-blue-300',
-}
+const PLAN_TONE = { free: 'slate', pro: 'violet', team: 'blue' }
 
 function timeAgo(dateStr) {
   if (!dateStr) return '-'
@@ -30,43 +26,19 @@ function fmt(dateStr) {
 }
 
 function PlanDropdown({ userId, currentPlan, onChanged }) {
-  const [open, setOpen]     = useState(false)
   const [saving, setSaving] = useState(false)
-
   const change = async (plan) => {
-    if (plan === currentPlan) { setOpen(false); return }
+    if (plan === currentPlan) return
     setSaving(true)
     try { await adminChangePlan(userId, plan); onChanged(userId, plan) }
     catch (err) { console.error(err) }
-    finally { setSaving(false); setOpen(false) }
+    finally { setSaving(false) }
   }
-
   return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen(o => !o)}
-        disabled={saving}
-        className={`flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-full ${PLAN_STYLES[currentPlan] || PLAN_STYLES.free}`}
-      >
-        {saving ? '…' : currentPlan}
-        <ChevronDown size={9} />
-      </button>
-      {open && (
-        <div className="absolute right-0 top-full mt-1 z-20 glass rounded-xl p-1 w-24 shadow-xl">
-          {['free', 'pro', 'team'].map(p => (
-            <button
-              key={p}
-              onClick={() => change(p)}
-              className={`w-full text-left px-3 py-2 text-xs rounded-lg transition-colors ${
-                p === currentPlan ? 'text-white/30 cursor-default' : 'text-white/80 hover:bg-white/[0.07] hover:text-white'
-              }`}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    <select value={currentPlan} disabled={saving} onChange={e => change(e.target.value)} aria-label={`Change plan (now ${currentPlan})`}
+      className="act cursor-pointer">
+      {['free', 'pro', 'team'].map(p => <option key={p} value={p}>{p[0].toUpperCase() + p.slice(1)}</option>)}
+    </select>
   )
 }
 
@@ -97,63 +69,51 @@ function UserDetailModal({ userId, onClose, onDeleted }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <div className="glass rounded-2xl w-full max-w-md p-6 relative" onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors" aria-label="Close">
-          <X size={16} />
-        </button>
-        <p className="text-xs text-white/40 uppercase tracking-widest mb-4">User Detail</p>
-
-        {loading ? (
-          <div className="flex items-center justify-center h-32">
-            <div className="w-5 h-5 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
-          </div>
-        ) : data ? (
-          <>
-            <div className="space-y-2 mb-5">
-              <p className="text-sm font-mono text-white">{data.user?.email}</p>
-              <div className="flex gap-2 flex-wrap">
-                <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${PLAN_STYLES[data.subscription?.plan || 'free'] || PLAN_STYLES.free}`}>
-                  {data.subscription?.plan || 'free'}
-                </span>
-                {data.subscription?.status && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-white/40">
-                    {data.subscription.status}
-                  </span>
+    <div className="overlay" onClick={onClose}>
+      <div role="dialog" aria-modal="true" aria-label="User detail" className="dialog !max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="dialog-head">
+          <h2>User detail</h2>
+          <button onClick={onClose} className="btn btn-ghost btn-icon btn-sm text-slate-500" aria-label="Close"><X size={16} /></button>
+        </div>
+        <div className="dialog-body">
+          {loading ? (
+            <div className="space-y-2.5 py-2"><Skeleton className="h-4 w-56" /><Skeleton className="h-5 w-24 rounded-full" /><Skeleton className="h-3 w-40" /></div>
+          ) : data ? (
+            <>
+              <div className="space-y-2 mb-5">
+                <p className="text-[14px] font-mono text-slate-900 break-all">{data.user?.email}</p>
+                <div className="flex gap-2 flex-wrap">
+                  <Badge tone={PLAN_TONE[data.subscription?.plan || 'free']}><span className="capitalize">{data.subscription?.plan || 'free'}</span></Badge>
+                  {data.subscription?.status && <Badge tone="slate">{data.subscription.status}</Badge>}
+                </div>
+                <p className="text-[12.5px] text-slate-500 tabular-nums">Joined: {fmt(data.user?.created_at)}</p>
+                {data.subscription?.current_period_end && (
+                  <p className="text-[12.5px] text-slate-500 tabular-nums">Period ends: {fmt(data.subscription.current_period_end)}</p>
                 )}
               </div>
-              <p className="text-xs text-white/40">Joined: {fmt(data.user?.created_at)}</p>
-              {data.subscription?.current_period_end && (
-                <p className="text-xs text-white/40">Period ends: {fmt(data.subscription.current_period_end)}</p>
-              )}
-            </div>
 
-            {data.projects?.length > 0 && (
-              <div className="mb-5">
-                <p className="text-[10px] text-white/30 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                  <Folder size={10} /> {data.projects.length} Projects
-                </p>
-                <div className="space-y-1.5 max-h-40 overflow-y-auto">
-                  {data.projects.map(p => (
-                    <div key={p.id} className="flex items-center justify-between text-xs">
-                      <span className="text-white/70 truncate flex-1">{p.name}</span>
-                      <span className="text-white/30 ml-2">{p.status}</span>
-                    </div>
-                  ))}
+              {data.projects?.length > 0 && (
+                <div className="mb-1">
+                  <p className="section-title flex items-center gap-1.5 !mb-2"><Folder size={14} aria-hidden="true" className="text-slate-400" /> {data.projects.length} Projects</p>
+                  <div className="divide-y divide-slate-200 max-h-40 overflow-y-auto rounded-ui border border-slate-200">
+                    {data.projects.map(p => (
+                      <div key={p.id} className="flex items-center justify-between px-3 py-2 text-[13px]">
+                        <span className="text-slate-900 truncate flex-1">{p.name}</span>
+                        <span className="text-slate-500 ml-2">{p.status}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
-
-            <button
-              onClick={handleDelete}
-              disabled={deleting}
-              className="w-full text-sm font-medium py-2 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors disabled:opacity-50"
-            >
-              {deleting ? 'Deleting…' : 'Delete User'}
-            </button>
-          </>
-        ) : (
-          <p className="text-sm text-white/40 text-center py-8">Failed to load user</p>
+              )}
+            </>
+          ) : (
+            <ErrorState title="Failed to load user" />
+          )}
+        </div>
+        {data && (
+          <div className="dialog-foot">
+            <button onClick={handleDelete} disabled={deleting} className="btn btn-danger">{deleting ? 'Deleting…' : 'Delete User'}</button>
+          </div>
         )}
       </div>
     </div>
@@ -175,9 +135,6 @@ export default function AdminUsers() {
   const [expiring, setExpiring]         = useState([])
   const [loading, setLoading]           = useState(true)
   const [error, setError]               = useState('')
-  const [search, setSearch]             = useState('')
-  const [planFilter, setPlanFilter]     = useState('all')
-  const [activeFilter, setActiveFilter] = useState(false)
   const [detailUserId, setDetailUserId] = useState(null)
 
   const load = async () => {
@@ -205,136 +162,61 @@ export default function AdminUsers() {
   }
 
   const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString()
-  const filtered = users.filter(u => {
-    if (search && !u.email?.toLowerCase().includes(search.toLowerCase())) return false
-    if (planFilter !== 'all' && u.plan !== planFilter) return false
-    if (activeFilter && (!u.lastSignIn || u.lastSignIn < sevenDaysAgo)) return false
-    return true
-  })
-
-  const { sorted, sort, toggle } = useSort(filtered, { key: 'joined', dir: 'desc' }, {
-    email: u => u.email?.toLowerCase(), plan: u => ({ free: 0, pro: 1, team: 2 })[u.plan] ?? 0, projects: u => u.projectCount,
-    joined: u => u.joinedAt, active: u => u.lastSignIn,
-  })
+  const columns = [
+    { key: 'email', label: 'Email', sort: u => u.email?.toLowerCase(), render: u => <span className="font-mono text-[12.5px] text-slate-900 block max-w-[320px] truncate">{u.email}</span> },
+    { key: 'plan', label: 'Plan', sort: u => ({ free: 0, pro: 1, team: 2 })[u.plan] ?? 0, render: u => <Badge tone={PLAN_TONE[u.plan] || 'slate'}><span className="capitalize">{u.plan}</span></Badge> },
+    { key: 'projects', label: 'Projects', num: true, sort: u => u.projectCount, render: u => <span className="text-slate-600">{u.projectCount}</span> },
+    { key: 'joined', label: 'Joined', className: 'max-sm:hidden', sort: u => u.joinedAt, render: u => <span className="text-slate-600" title={fmt(u.joinedAt)}>{timeAgo(u.joinedAt)}</span> },
+    { key: 'active', label: 'Last active', className: 'max-md:hidden', sort: u => u.lastSignIn, render: u => <span className="text-slate-600">{timeAgo(u.lastSignIn)}</span> },
+    { key: 'change', label: <span className="sr-only">Change plan</span>, render: u => (
+      <div className="flex justify-end" onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()}>
+        <PlanDropdown userId={u.id} currentPlan={u.plan} onChanged={handlePlanChanged} />
+      </div>
+    ) },
+  ]
+  const filters = [
+    { key: 'plan', label: 'Plan', all: 'All plans', options: ['free', 'pro', 'team'].map(p => ({ value: p, label: p[0].toUpperCase() + p.slice(1) })), test: (u, v) => u.plan === v },
+    { key: 'active', label: 'Activity', all: 'Any activity', options: [{ value: '7d', label: 'Active 7d' }], test: u => u.lastSignIn && u.lastSignIn >= sevenDaysAgo },
+  ]
 
   return (
-    <AdminLayout title="Users">
-      {/* Expiry alerts */}
+    <AdminLayout>
+      <PageHead title="Users">
+        <button onClick={load} disabled={loading} className="btn btn-ghost text-slate-600">
+          <RefreshCw className={loading ? 'animate-spin' : ''} /> Refresh
+        </button>
+      </PageHead>
+
       {expiring.length > 0 && (
-        <div className="glass rounded-xl p-4 mb-4 border border-orange-500/20">
+        <div role="status" className="rounded-ui-lg border border-[var(--amber-bd)] bg-[var(--amber-bg)] p-4 mb-4">
           <div className="flex items-center gap-2 mb-2">
-            <AlertTriangle size={13} className="text-orange-400" />
-            <p className="text-xs font-medium text-orange-400">{expiring.length} subscription{expiring.length !== 1 ? 's' : ''} expiring within 7 days</p>
+            <AlertTriangle size={16} aria-hidden="true" className="text-[var(--amber)]" />
+            <p className="text-[13px] font-medium text-[var(--amber)]">{expiring.length} subscription{expiring.length !== 1 ? 's' : ''} expiring within 7 days</p>
           </div>
           <div className="space-y-1">
             {expiring.map(s => (
-              <div key={s.id} className="flex items-center justify-between text-xs">
-                <span className="text-white/60 font-mono truncate flex-1">{s.email}</span>
-                <span className="text-orange-400/70 ml-3 flex-shrink-0">expires {new Date(s.current_period_end).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</span>
+              <div key={s.id} className="flex items-center justify-between text-[12.5px]">
+                <span className="text-slate-700 font-mono truncate flex-1">{s.email}</span>
+                <span className="text-[var(--amber)] ml-3 flex-shrink-0 tabular-nums">expires {new Date(s.current_period_end).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-2 mb-3">
-        <div className="relative flex-1 min-w-[160px] max-w-xs">
-          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
-          <input
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search email…"
-            className="w-full glass rounded-xl pl-8 pr-4 py-2 text-sm text-white placeholder-white/30 focus:outline-none"
-          />
-        </div>
-        <span className="text-xs text-white/40">{filtered.length} users</span>
-        <button
-          onClick={() => exportCSV(filtered)}
-          className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors ml-auto"
-        >
-          <Download size={12} /> CSV
-        </button>
-        <button
-          onClick={load}
-          disabled={loading}
-          className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors"
-        >
-          <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
-          Refresh
-        </button>
+      <div className="card overflow-hidden">
+        {error && !users.length ? <ErrorState title="Couldn't load users" onRetry={load}>{error}</ErrorState> : (
+          <DataTable rows={users} columns={columns} loading={loading && !users.length} filters={filters} initialSort={{ key: 'joined', dir: 'desc' }}
+            search={u => u.email || ''} searchLabel="Search email" onRowClick={u => setDetailUserId(u.id)}
+            toolbar={visible => (
+              <>
+                <span className="text-[12.5px] text-slate-500 tabular-nums">{visible.length} users</span>
+                <button onClick={() => exportCSV(visible)} className="btn btn-sm"><Download size={14} /> CSV</button>
+              </>
+            )}
+            empty={<EmptyState icon={UsersIcon} title="No users found" />} />
+        )}
       </div>
-
-      {/* Filters */}
-      <div className="flex items-center gap-2 mb-4 flex-wrap">
-        {['all', 'free', 'pro', 'team'].map(f => (
-          <button
-            key={f}
-            onClick={() => setPlanFilter(f)}
-            className={`text-xs px-3 py-1.5 rounded-lg transition-colors capitalize ${
-              planFilter === f ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/70'
-            }`}
-          >
-            {f}
-          </button>
-        ))}
-        <button
-          onClick={() => setActiveFilter(a => !a)}
-          className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${
-            activeFilter ? 'bg-cyan-500/20 text-cyan-300' : 'text-white/40 hover:text-white/70'
-          }`}
-        >
-          Active 7d
-        </button>
-      </div>
-
-      {error && (
-        <div className="glass rounded-xl p-4 mb-4 text-sm text-red-400 border border-red-500/20">{error}</div>
-      )}
-
-      {loading && !users.length ? (
-        <div className="flex items-center justify-center h-48">
-          <div className="w-5 h-5 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
-        </div>
-      ) : (
-        <div className="glass rounded-2xl overflow-hidden">
-          <div className="grid grid-cols-[1fr_84px_96px_96px_116px_80px] gap-3 px-4 py-2.5 border-b border-white/[0.06] text-[10px] text-white/30 uppercase tracking-widest">
-            <SortHeader label="Email" k="email" sort={sort} onSort={toggle} />
-            <SortHeader label="Plan" k="plan" sort={sort} onSort={toggle} />
-            <SortHeader label="Projects" k="projects" sort={sort} onSort={toggle} className="text-right" />
-            <SortHeader label="Joined" k="joined" sort={sort} onSort={toggle} />
-            <SortHeader label="Last active" k="active" sort={sort} onSort={toggle} />
-            <span className="text-right">Change</span>
-          </div>
-
-          {filtered.length === 0 ? (
-            <div className="px-4 py-8 text-center text-sm text-white/30">No users found</div>
-          ) : (
-            sorted.map((u, i) => (
-              <div
-                key={u.id}
-                onClick={() => setDetailUserId(u.id)}
-                className={`grid grid-cols-[1fr_84px_96px_96px_116px_80px] gap-3 px-4 py-3 items-center cursor-pointer ${
-                  i !== filtered.length - 1 ? 'border-b border-white/[0.04]' : ''
-                } hover:bg-white/[0.02] transition-colors`}
-              >
-                <span className="text-xs text-white/80 truncate font-mono">{u.email}</span>
-                <span>
-                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${PLAN_STYLES[u.plan] || PLAN_STYLES.free}`}>
-                    {u.plan}
-                  </span>
-                </span>
-                <span className="text-xs text-white/50 text-right">{u.projectCount}</span>
-                <span className="text-xs text-white/40">{timeAgo(u.joinedAt)}</span>
-                <span className="text-xs text-white/40">{timeAgo(u.lastSignIn)}</span>
-                <div className="flex justify-end" onClick={e => e.stopPropagation()}>
-                  <PlanDropdown userId={u.id} currentPlan={u.plan} onChanged={handlePlanChanged} />
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
 
       {detailUserId && (
         <UserDetailModal

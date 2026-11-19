@@ -4,7 +4,7 @@ import { Download, Pause, Pencil, Play, Plus, Trash2, Wallet } from 'lucide-reac
 import AdminLayout from '../AdminLayout'
 import { BalanceForm, ExpenseForm, RecurringForm } from './Forms'
 import { fmtDate } from './Lists'
-import { EmptyState, KpiCard, Panel, useToast } from '../ui'
+import { EmptyState, KpiCard, PageHead, Panel, useToast } from '../ui'
 import {
   EXPENSE_CATEGORIES, PAYMENT_KINDS, deleteRecurring, formatMoney, labelOf, listCashBalances, listClients, listExpenses, listPayments,
   listProjects, listRecurring, listRetainers, postRecurringExpenses, updateRecurring,
@@ -13,8 +13,8 @@ import {
   burnRate, cashNow, currenciesIn, financeCsv, financePeriods, financeView, monthlyCost, monthlyTotals, niceMax, runwayMonths,
 } from '../../../lib/financeUtils'
 
-// Series colours are checked for contrast and colour blindness; money in is blue, money out orange everywhere.
-const IN = '#2A78D6', OUT = '#EA580C'
+// Chart series tokens from the design system (contrast and colour-blind checked): money in is blue, money out orange.
+const IN = 'var(--series-1)', OUT = 'var(--series-2)'
 const EMPTY = { payments: [], expenses: [], retainers: [], clients: [], projects: [], recurring: [], balances: [] }
 const SETUP = 'Regular costs and bank balance need the database update. Run supabase/migrations/20261103_crm_finance_cash.sql.'
 
@@ -22,7 +22,7 @@ const compact = (n, currency) => new Intl.NumberFormat(currency === 'USD' ? 'en-
 
 function Legend() {
   return (
-    <div className="flex flex-wrap gap-4 text-xs text-slate-600">
+    <div className="flex flex-wrap gap-4 text-[12px] text-slate-600">
       {[['Money in', IN], ['Money out', OUT]].map(([label, color]) => (
         <span key={label} className="flex items-center gap-1.5"><span aria-hidden="true" className="h-2.5 w-2.5 rounded-sm" style={{ background: color }} />{label}</span>
       ))}
@@ -47,7 +47,7 @@ function MonthlyChart({ months, currency }) {
           {months.map((m, i) => (
             <div key={m.key} tabIndex={0} aria-label={`${m.title}: ${formatMoney(m.in, currency)} in, ${formatMoney(m.out, currency)} out`}
               onMouseEnter={() => setActive(i)} onMouseLeave={() => setActive(null)} onFocus={() => setActive(i)} onBlur={() => setActive(null)}
-              className={`relative flex min-w-0 flex-1 flex-col rounded outline-none focus-visible:ring-2 focus-visible:ring-orange-400 ${active === i ? 'bg-slate-50' : ''}`}>
+              className={`relative flex min-w-0 flex-1 flex-col rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${active === i ? 'bg-slate-50' : ''}`}>
               <div className="flex flex-1 items-end justify-center gap-0.5 border-b border-slate-300 px-px">
                 {[[m.in, IN], [m.out, OUT]].map(([value, color]) => (
                   <span key={color} className="block w-full max-w-[18px] rounded-t" style={{ height: value ? `max(${(value / top) * 100}%, 2px)` : 0, background: color }} />
@@ -55,7 +55,7 @@ function MonthlyChart({ months, currency }) {
               </div>
               <span className={`h-6 pt-1.5 text-center text-[11px] text-slate-500 ${i % 2 ? 'invisible sm:visible' : ''}`}>{m.label}</span>
               {active === i && (
-                <div role="tooltip" className={`absolute bottom-full z-10 mb-1 w-44 rounded-lg border border-slate-200 bg-white p-2.5 text-xs shadow-md ${i < 3 ? 'left-0' : i > 8 ? 'right-0' : 'left-1/2 -translate-x-1/2'}`}>
+                <div role="tooltip" className={`absolute bottom-full z-10 mb-1 w-44 rounded-ui border border-slate-200 bg-white p-2.5 text-[12px] shadow-ui-lg ${i < 3 ? 'left-0' : i > 8 ? 'right-0' : 'left-1/2 -translate-x-1/2'}`}>
                   <p className="mb-1 font-medium text-slate-900">{m.title}</p>
                   {[['Money in', m.in], ['Money out', m.out], ['Profit', m.in - m.out]].map(([k, v]) => (
                     <p key={k} className="flex justify-between gap-3 text-slate-600"><span>{k}</span><span className="tabular-nums text-slate-900">{formatMoney(v, currency)}</span></p>
@@ -74,7 +74,7 @@ function MonthlyTable({ months, currency }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-[13px]">
-        <thead><tr className="text-left text-xs text-slate-500"><th className="py-1.5 font-medium">Month</th>{['Money in', 'Money out', 'Profit'].map(h => <th key={h} className="py-1.5 text-right font-medium">{h}</th>)}</tr></thead>
+        <thead><tr className="text-left text-[12px] text-slate-500"><th className="py-1.5 font-medium">Month</th>{['Money in', 'Money out', 'Profit'].map(h => <th key={h} className="py-1.5 text-right font-medium">{h}</th>)}</tr></thead>
         <tbody className="divide-y divide-slate-100 tabular-nums text-slate-900">
           {[...months].reverse().map(m => <tr key={m.key}><td className="py-1.5">{m.title}</td><td className="text-right">{formatMoney(m.in, currency)}</td><td className="text-right">{formatMoney(m.out, currency)}</td><td className="text-right">{formatMoney(m.in - m.out, currency)}</td></tr>)}
         </tbody>
@@ -137,33 +137,33 @@ export default function CrmFinances() {
 
   return (
     <AdminLayout>
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <div className="mr-auto min-w-0">
-          <h1 className="font-display text-lg font-bold text-slate-900">Finances</h1>
-          <p className="text-xs text-slate-500">What came in, what went out and what's left</p>
-        </div>
-        <select aria-label="Period" value={periodId} onChange={e => setPeriodId(e.target.value)} className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-sm text-slate-900">
+      <PageHead title="Finances" sub="What came in, what went out and what's left">
+        <select aria-label="Period" value={periodId} onChange={e => setPeriodId(e.target.value)} className="input !h-[34px] !w-auto">
           {periods.map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
         </select>
         {currencies.length > 1 && (
-          <select aria-label="Currency" value={currency} onChange={e => setCurrency(e.target.value)} className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-sm text-slate-900">
+          <select aria-label="Currency" value={currency} onChange={e => setCurrency(e.target.value)} className="input !h-[34px] !w-auto">
             {currencies.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         )}
-        <button type="button" onClick={exportCsv} className="act h-8"><Download size={13} className="mr-1" /> Export CSV</button>
-        <button type="button" onClick={() => setModal({ type: 'expense' })} className="btn-primary flex h-8 items-center gap-1.5 rounded-lg px-3 text-xs"><Plus size={13} /> Add expense</button>
-      </div>
+        <button type="button" onClick={exportCsv} className="btn"><Download /> Export CSV</button>
+        <button type="button" onClick={() => setModal({ type: 'expense' })} className="btn btn-primary"><Plus /> Add expense</button>
+      </PageHead>
 
-      {error && <p className="mb-3 rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700">{error}</p>}
+      {error && (
+        <div role="alert" className="mb-4 flex items-center gap-3 rounded-ui border border-[var(--red-bd)] bg-[var(--red-bg)] px-4 py-2.5 text-[13px] text-[var(--red)]">
+          {error}<button type="button" onClick={load} className="btn btn-sm ml-auto">Try again</button>
+        </div>
+      )}
 
-      <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <KpiCard label="Money in" value={money(view.moneyIn)} sub={period.label} />
         <KpiCard label="Money out" value={money(view.moneyOut)} sub={period.label} />
         <KpiCard label="Profit" value={money(view.profit)} sub={view.margin === null ? 'No money in yet' : `${view.margin}% of money in`} />
         <KpiCard label="Still to collect" value={money(view.toCollect)} to="/admin/crm/payments" sub={view.overdueCount ? `${money(view.overdue)} overdue · ${view.overdueCount} payment${view.overdueCount === 1 ? '' : 's'}` : 'Nothing overdue'} />
       </div>
 
-      <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <KpiCard label="Bank balance" value={cash ? money(cash.amount) : 'Not set'} sub={
           <button type="button" disabled={setupNeeded} onClick={() => setModal({ type: 'balance' })} className="underline hover:text-slate-900 disabled:no-underline disabled:opacity-60">{cash ? `Based on ${fmtDate(cash.asOf)} · Update` : 'Add your balance'}</button>
         } />
@@ -171,30 +171,30 @@ export default function CrmFinances() {
         <KpiCard label="Regular costs" value={`${money(Math.round(burn.regular))}/mo`} sub={`${costs.filter(r => r.status === 'active').length} active`} />
       </div>
 
-      {setupNeeded && <p className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">{SETUP}</p>}
+      {setupNeeded && <p role="status" className="mb-4 rounded-ui border border-[var(--amber-bd)] bg-[var(--amber-bg)] px-4 py-2.5 text-[13px] text-[var(--amber)]">{SETUP}</p>}
 
       {!setupNeeded && !loading && (
         <div className="mb-4">
-          <Panel title="Regular costs" count={costs.length} action={<button type="button" className="act" onClick={() => setModal({ type: 'recurring' })}><Plus size={12} className="mr-1" /> Add regular cost</button>}>
+          <Panel title="Regular costs" count={costs.length} action={<button type="button" className="act" onClick={() => setModal({ type: 'recurring' })}><Plus size={14} /> Add regular cost</button>}>
             {costs.length === 0 ? <EmptyState icon={Wallet} title="No regular costs yet">Add tools, hosting, rent or salaries once. They're added to your expenses each time they come due.</EmptyState> : (
               <>
-                <ul className="divide-y divide-slate-100">
+                <ul className="divide-y divide-slate-200">
                   {costs.map(r => (
-                    <li key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-5 py-2.5">
+                    <li key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2.5">
                       <div className="min-w-[150px] flex-1">
-                        <p className={`truncate text-sm font-medium ${r.status === 'paused' ? 'text-slate-400' : 'text-slate-900'}`}>{r.title}</p>
-                        <p className="truncate text-xs text-slate-500">{labelOf(EXPENSE_CATEGORIES, r.category)} · {r.status === 'paused' ? 'Paused' : `Next on ${fmtDate(r.next_due)}`}</p>
+                        <p className={`truncate text-[13px] font-medium ${r.status === 'paused' ? 'text-slate-400' : 'text-slate-900'}`}>{r.title}</p>
+                        <p className="truncate text-[12px] text-slate-500">{labelOf(EXPENSE_CATEGORIES, r.category)} · {r.status === 'paused' ? 'Paused' : `Next on ${fmtDate(r.next_due)}`}</p>
                       </div>
-                      <p className="text-right text-sm tabular-nums text-slate-900">{money(r.amount)}<span className="text-xs text-slate-500">/{r.every === 'year' ? `yr (${money(Math.round(monthlyCost(r)))}/mo)` : 'mo'}</span></p>
+                      <p className="text-right text-[13px] tabular-nums text-slate-900">{money(r.amount)}<span className="text-[12px] text-slate-500">/{r.every === 'year' ? `yr (${money(Math.round(monthlyCost(r)))}/mo)` : 'mo'}</span></p>
                       <div className="flex">
-                        <button type="button" className="icon-act" aria-label={`${r.status === 'paused' ? 'Resume' : 'Pause'} ${r.title}`} onClick={() => run(() => updateRecurring(r.id, { status: r.status === 'paused' ? 'active' : 'paused' }))}>{r.status === 'paused' ? <Play size={14} /> : <Pause size={14} />}</button>
-                        <button type="button" className="icon-act" aria-label={`Edit ${r.title}`} onClick={() => setModal({ type: 'recurring', item: r })}><Pencil size={14} /></button>
-                        <button type="button" className="icon-act" aria-label={`Delete ${r.title}`} onClick={() => removeCost(r)}><Trash2 size={14} /></button>
+                        <button type="button" className="icon-act" aria-label={`${r.status === 'paused' ? 'Resume' : 'Pause'} ${r.title}`} onClick={() => run(() => updateRecurring(r.id, { status: r.status === 'paused' ? 'active' : 'paused' }))}>{r.status === 'paused' ? <Play size={15} /> : <Pause size={15} />}</button>
+                        <button type="button" className="icon-act" aria-label={`Edit ${r.title}`} onClick={() => setModal({ type: 'recurring', item: r })}><Pencil size={15} /></button>
+                        <button type="button" className="icon-act hover:!text-[var(--red)] hover:!bg-[var(--red-bg)]" aria-label={`Delete ${r.title}`} onClick={() => removeCost(r)}><Trash2 size={15} /></button>
                       </div>
                     </li>
                   ))}
                 </ul>
-                <p className="border-t border-slate-100 px-5 py-2.5 text-xs text-slate-500">Costs that have come due are added when you open this page, with their correct dates.</p>
+                <p className="border-t border-slate-200 px-4 py-2.5 text-[12px] text-slate-500">Costs that have come due are added when you open this page, with their correct dates.</p>
               </>
             )}
           </Panel>
@@ -206,7 +206,7 @@ export default function CrmFinances() {
       ) : (
         <div className="space-y-4">
           <Panel title="Last 12 months" action={<button type="button" className="act" onClick={() => setAsTable(t => !t)}>{asTable ? 'View as chart' : 'View as table'}</button>}>
-            <div className="space-y-3 p-5">
+            <div className="space-y-3 p-4">
               {asTable ? <MonthlyTable months={months} currency={currency} /> : <><Legend /><MonthlyChart months={months} currency={currency} /></>}
             </div>
           </Panel>
@@ -214,7 +214,7 @@ export default function CrmFinances() {
           <div className="grid gap-4 lg:grid-cols-2">
             <Panel title={`Where the money went · ${period.label}`}>
               {view.byCategory.length === 0 ? <EmptyState icon={Wallet} title="No expenses in this period" /> : (
-                <ul className="space-y-3 p-5">
+                <ul className="space-y-3 p-4">
                   {view.byCategory.map(c => (
                     <li key={c.id}>
                       <div className="mb-1 flex justify-between gap-3 text-[13px]"><span className="text-slate-700">{labelOf(EXPENSE_CATEGORIES, c.id)}</span><span className="tabular-nums text-slate-900">{money(c.amount)}</span></div>
@@ -227,13 +227,13 @@ export default function CrmFinances() {
 
             <Panel title={`Profit by client · ${period.label}`}>
               {view.byClient.length === 0 ? <EmptyState icon={Wallet} title="Nothing in this period" /> : (
-                <div className="overflow-x-auto px-5 py-3">
+                <div className="overflow-x-auto px-4 py-3">
                   <table className="w-full text-[13px]">
-                    <thead><tr className="text-left text-xs text-slate-500"><th className="py-1.5 font-medium">Client</th>{['In', 'Out', 'Profit'].map(h => <th key={h} className={`py-1.5 pl-3 text-right font-medium ${h === 'Profit' ? '' : 'hidden sm:table-cell'}`}>{h}</th>)}</tr></thead>
+                    <thead><tr className="text-left text-[12px] text-slate-500"><th className="py-1.5 font-medium">Client</th>{['In', 'Out', 'Profit'].map(h => <th key={h} className={`py-1.5 pl-3 text-right font-medium ${h === 'Profit' ? '' : 'hidden sm:table-cell'}`}>{h}</th>)}</tr></thead>
                     <tbody className="divide-y divide-slate-100 tabular-nums">
                       {view.byClient.map(c => (
                         <tr key={c.id || 'none'}>
-                          <td className="max-w-[160px] truncate py-2 text-slate-900">{c.id ? <Link to={`/admin/crm/clients/${c.id}`} className="hover:text-orange-700">{c.name}</Link> : <span className="text-slate-500">{c.name}</span>}</td>
+                          <td className="max-w-[160px] truncate py-2 text-slate-900">{c.id ? <Link to={`/admin/crm/clients/${c.id}`} className="hover:underline">{c.name}</Link> : <span className="text-slate-500">{c.name}</span>}</td>
                           <td className="hidden pl-3 text-right text-slate-600 sm:table-cell">{money(c.in)}</td>
                           <td className="hidden pl-3 text-right text-slate-600 sm:table-cell">{money(c.out)}</td>
                           <td className="pl-3 text-right font-medium text-slate-900">{money(c.profit)}</td>
@@ -241,13 +241,13 @@ export default function CrmFinances() {
                       ))}
                     </tbody>
                   </table>
-                  <p className="mt-2 text-xs text-slate-500">Link an expense to a client when you add it, so it counts against them.</p>
+                  <p className="mt-2 text-[12px] text-slate-500">Link an expense to a client when you add it, so it counts against them.</p>
                 </div>
               )}
             </Panel>
           </div>
 
-          <p className="text-xs text-slate-500">
+          <p className="text-[12px] text-slate-500">
             Monthly retainers: {money(view.retainers)}. Money in counts payments marked received on the <Link to="/admin/crm/payments" className="underline hover:text-slate-900">Payments page</Link>. INR and USD are never converted or added together.
           </p>
         </div>

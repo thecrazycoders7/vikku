@@ -1,14 +1,15 @@
 import { CheckCircle2, Trash2, Pencil } from 'lucide-react'
 import { PAYMENT_KINDS, PAYMENT_METHODS, formatMoney, isoDay, labelOf, moneyText } from '../../../lib/crmService'
+import { Badge } from '../ui'
 
 export const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : ''
 
-export function MoneyTile({ label, sums, tone = 'text-white', hint }) {
+export function MoneyTile({ label, sums, tone = '', hint }) {
   return (
-    <div className="glass rounded-2xl p-4 min-w-0">
-      <p className="text-[10px] text-white/40 uppercase tracking-wider">{label}</p>
-      <p className={`mt-1 font-display font-bold text-lg break-words ${tone}`}>{typeof sums === 'object' ? moneyText(sums) : sums}</p>
-      {hint && <p className="text-[10px] text-white/30 mt-0.5">{hint}</p>}
+    <div className="card kpi min-w-0">
+      <p className="kpi-label">{label}</p>
+      <p className={`kpi-value break-words ${tone}`}>{typeof sums === 'object' ? moneyText(sums) : sums}</p>
+      {hint && <p className="kpi-foot">{hint}</p>}
     </div>
   )
 }
@@ -16,32 +17,30 @@ export function MoneyTile({ label, sums, tone = 'text-white', hint }) {
 // Payment rows with mark-as-received, edit and delete.
 export function PaymentRows({ payments, clientsById = {}, projectsById = {}, onReceived, onEdit, onDelete, showClient }) {
   const today = isoDay()
-  if (!payments.length) return <p className="text-xs text-white/30 py-4">No payments yet.</p>
+  if (!payments.length) return <p className="text-[13px] text-slate-500 py-4">No payments yet.</p>
   return (
-    <div className="divide-y divide-black/[0.05]">
+    <div className="divide-y divide-slate-200">
       {payments.map(p => {
         const overdue = p.status === 'pending' && p.due_on && p.due_on < today
         return (
           <div key={p.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-white">{formatMoney(p.amount, p.currency)}
-                <span className={`ml-2 text-[10px] font-medium px-2 py-0.5 rounded-full ${p.status === 'received' ? 'bg-emerald-50 text-emerald-700' : overdue ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-700'}`}>
-                  {p.status === 'received' ? 'Received' : overdue ? 'Overdue' : 'Pending'}
-                </span>
+              <p className="flex items-center gap-2 text-[14px] font-semibold text-slate-900 tabular-nums">{formatMoney(p.amount, p.currency)}
+                <Badge tone={p.status === 'received' ? 'green' : overdue ? 'red' : 'amber'}>{p.status === 'received' ? 'Received' : overdue ? 'Overdue' : 'Pending'}</Badge>
               </p>
-              <p className="text-[11px] text-white/40 truncate">
+              <p className="text-[12px] text-slate-500 truncate">
                 {[showClient && clientsById[p.client_id]?.name, projectsById[p.project_id]?.name, labelOf(PAYMENT_KINDS, p.kind), p.method && labelOf(PAYMENT_METHODS, p.method), p.reference].filter(Boolean).join(' · ')}
               </p>
             </div>
-            <p className="text-[11px] text-white/50">{p.status === 'received' ? `Received ${fmtDate(p.paid_on)}` : p.due_on ? `Due ${fmtDate(p.due_on)}` : 'No due date'}</p>
+            <p className="text-[12px] text-slate-500 tabular-nums">{p.status === 'received' ? `Received ${fmtDate(p.paid_on)}` : p.due_on ? `Due ${fmtDate(p.due_on)}` : 'No due date'}</p>
             <div className="flex items-center gap-1">
               {p.status === 'pending' && onReceived && (
-                <button onClick={() => onReceived(p)} className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700" title="Mark as received today">
-                  <CheckCircle2 size={12} /> Received
+                <button onClick={() => onReceived(p)} className="act" title="Mark as received today">
+                  <CheckCircle2 size={14} /> Received
                 </button>
               )}
-              {onEdit && <button onClick={() => onEdit(p)} className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/[0.06]" aria-label="Edit payment"><Pencil size={13} /></button>}
-              {onDelete && <button onClick={() => onDelete(p)} className="p-1.5 rounded-lg text-white/30 hover:text-red-500 hover:bg-red-50" aria-label="Delete payment"><Trash2 size={13} /></button>}
+              {onEdit && <button onClick={() => onEdit(p)} className="icon-act" aria-label="Edit payment"><Pencil size={15} /></button>}
+              {onDelete && <button onClick={() => onDelete(p)} className="icon-act hover:!text-[var(--red)] hover:!bg-[var(--red-bg)]" aria-label="Delete payment"><Trash2 size={15} /></button>}
             </div>
           </div>
         )
@@ -50,27 +49,27 @@ export function PaymentRows({ payments, clientsById = {}, projectsById = {}, onR
   )
 }
 
-const RETAINER_TONE = { active: 'bg-emerald-50 text-emerald-700', paused: 'bg-amber-50 text-amber-700', ended: 'bg-white/[0.06] text-white/50' }
+const RETAINER_TONE = { active: 'green', paused: 'amber', ended: 'slate' }
 
 // Retainer rows; "Record month" logs this month's retainer payment and moves the next billing date on.
 export function RetainerRows({ retainers, clientsById = {}, onRecord, onEdit, showClient }) {
-  if (!retainers.length) return <p className="text-xs text-white/30 py-4">No retainers yet.</p>
+  if (!retainers.length) return <p className="text-[13px] text-slate-500 py-4">No retainers yet.</p>
   return (
-    <div className="divide-y divide-black/[0.05]">
+    <div className="divide-y divide-slate-200">
       {retainers.map(r => (
         <div key={r.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3">
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-white">{formatMoney(r.amount, r.currency)}<span className="text-white/40 font-normal">/month</span>
-              <span className={`ml-2 text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${RETAINER_TONE[r.status]}`}>{r.status}</span>
+            <p className="flex items-center gap-2 text-[14px] font-semibold text-slate-900 tabular-nums"><span>{formatMoney(r.amount, r.currency)}<span className="text-slate-500 font-normal">/month</span></span>
+              <Badge tone={RETAINER_TONE[r.status]}><span className="capitalize">{r.status}</span></Badge>
             </p>
-            <p className="text-[11px] text-white/40 truncate">{[showClient && clientsById[r.client_id]?.name, r.title].filter(Boolean).join(' · ')}</p>
+            <p className="text-[12px] text-slate-500 truncate">{[showClient && clientsById[r.client_id]?.name, r.title].filter(Boolean).join(' · ')}</p>
           </div>
-          <p className="text-[11px] text-white/50">{r.next_billing_date ? `Next bill ${fmtDate(r.next_billing_date)}` : 'No billing date'}</p>
+          <p className="text-[12px] text-slate-500 tabular-nums">{r.next_billing_date ? `Next bill ${fmtDate(r.next_billing_date)}` : 'No billing date'}</p>
           <div className="flex items-center gap-1">
             {r.status === 'active' && onRecord && (
-              <button onClick={() => onRecord(r)} className="text-[11px] font-medium px-2.5 py-1.5 rounded-lg bg-orange-50 text-orange-700">Record month</button>
+              <button onClick={() => onRecord(r)} className="act">Record month</button>
             )}
-            {onEdit && <button onClick={() => onEdit(r)} className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/[0.06]" aria-label="Edit retainer"><Pencil size={13} /></button>}
+            {onEdit && <button onClick={() => onEdit(r)} className="icon-act" aria-label="Edit retainer"><Pencil size={15} /></button>}
           </div>
         </div>
       ))}
