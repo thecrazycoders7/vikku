@@ -2,12 +2,12 @@ import { Link } from 'react-router-dom'
 import SiteNav, { BookButton, WhatsAppButton } from '../components/SiteNav'
 import Footer from '../components/Footer'
 import Seo from '../components/Seo'
+import DemoRequest from '../components/DemoRequest'
 import './home3d.css'
 
 const SITE = 'https://www.vikku.in'
 const PATH = '/products/restaurant-management-system'
 const IMG = '/products/restaurant-management-system'
-const DEMO = 'https://kavari-grand-rms.vercel.app'
 const DESCRIPTION = 'A restaurant management system for Indian restaurants: POS, kitchen display, recipes and food cost, inventory, delivery, staff and online ordering in one place.'
 
 const AT_A_GLANCE = [
@@ -88,7 +88,7 @@ export default function CaseStudyRestaurant() {
           <h1>One system for the whole <em>restaurant</em></h1>
           <p className="lead">A restaurant management system that runs billing, the kitchen, recipes and food cost, stock, delivery, staff and online ordering from one place, built around how Indian restaurants actually work.</p>
           <div className="ctas">
-            <a className="btn btn-ghost" href={DEMO} target="_blank" rel="noopener noreferrer">Try the live demo</a>
+            <DemoRequest product="restaurant" />
             <BookButton short="Book a free consultation" location="case-restaurant" />
           </div>
         </header>
@@ -123,7 +123,7 @@ export default function CaseStudyRestaurant() {
 
         <section className="svc-section" id="screens">
           <h2>Inside the <em>system</em></h2>
-          <p className="lead">Screens from the live demo, shown with a sample restaurant and sample data.</p>
+          <p className="lead">Screens from the demo, shown with a sample restaurant and sample data.</p>
           <div className="cs-shots">
             {SCREENS.map(s => (
               <figure className="cs-shot" key={s.file}>

@@ -4,12 +4,13 @@ import Footer from '../components/Footer'
 import Seo from '../components/Seo'
 import './home3d.css'
 
-const DESCRIPTION = 'Software built and run by Vikku Labs, including Vikku, an AI phone receptionist for hospitals, Harsha Farms, a dairy delivery app, a restaurant management system and Vikku PM.'
+const DESCRIPTION = 'Software built and run by Vikku Labs, including Vikku, an AI phone receptionist for hospitals, Harsha Farms, a dairy delivery app, a restaurant management system, a school management system and Vikku PM.'
 
 const PRODUCTS = [
   { name: 'Vikku AI Receptionist', status: 'In testing, no live hospital yet', desc: 'An AI phone receptionist for hospitals. It answers calls in Telugu, English and Hindi, books patients into the doctor\'s real queue, and hands emergencies to staff.', to: '/products/hospital-receptionist', cta: 'View product' },
   { name: 'Harsha Farms', status: 'Pre-launch, runs on Android with sample data', desc: 'A dairy subscription and delivery app that runs a daily milk business from one place, for customers, delivery partners, vendors and administrators.', to: '/products/harsha-farms', cta: 'Read the case study' },
-  { name: 'Restaurant management system', status: 'Live demo', desc: 'Billing, kitchen display, recipes and food cost, stock, delivery, staff and online ordering for Indian restaurants, in one place.', to: '/products/restaurant-management-system', cta: 'Read the case study' },
+  { name: 'Restaurant management system', status: 'Demo on request', desc: 'Billing, kitchen display, recipes and food cost, stock, delivery, staff and online ordering for Indian restaurants, in one place.', to: '/products/restaurant-management-system', cta: 'Read the case study' },
+  { name: 'School management system', status: 'Demo on request', desc: 'Admissions, attendance, exams, fees, transport, library, hostel, staff and payroll for schools, in one place.', to: '/products/school-management-system', cta: 'View product' },
   { name: 'Vikku PM', status: 'Live', desc: 'Project management for founders and small teams. Describe a project and the AI drafts a realistic task and milestone plan.', to: '/pm', cta: 'Open Vikku PM' },
 ]
 
