@@ -40,7 +40,7 @@ You must be at least 18 years old to create an account. We reserve the right to 
 
 • You authorise us to charge your payment method via Razorpay at the price shown at checkout.
 • Each plan is a one-time payment for one month or one year, as you choose. Plans do not renew automatically. To keep your plan, pay again before it ends.
-• Prices are in Indian Rupees (INR). No GST is charged.
+• Prices are in Indian Rupees (INR). GST at 18% is added at checkout.
 • You can request a refund within 7 days of your first payment, as set out in our Refund Policy. Otherwise, we do not refund part of a paid period, and you keep access until it ends.
 • We reserve the right to change pricing with 30 days' notice. A new price applies only to payments made after it takes effect.
 

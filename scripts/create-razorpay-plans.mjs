@@ -1,12 +1,13 @@
 /**
  * One-off helper: creates the 4 Razorpay subscription Plans (Pro/Team ×
- * monthly/annual), then prints the env vars to
+ * monthly/annual) with GST-inclusive amounts, then prints the env vars to
  * paste into Vercel.
  *
  * Run once:
  *   RAZORPAY_KEY_ID=rzp_live_xxx RAZORPAY_KEY_SECRET=xxx node scripts/create-razorpay-plans.mjs
  *
- * Amounts must match PLAN_PRICING in src/lib/razorpayService.js, in paise.
+ * Amounts must match priceBreakdown() in src/lib/razorpayService.js
+ * (base price + 18% GST), expressed in paise.
  */
 import Razorpay from 'razorpay'
 
@@ -20,9 +21,14 @@ if (!KEY_ID || !KEY_SECRET) {
 
 const razorpay = new Razorpay({ key_id: KEY_ID, key_secret: KEY_SECRET })
 
+const GST = 0.18
 const base = {
   pro:  { monthly: 299, annual: 2999 },
   team: { monthly: 999, annual: 9999 },
+}
+const gstInclusivePaise = (rupees) => {
+  const basePaise = rupees * 100
+  return basePaise + Math.round(basePaise * GST)
 }
 
 // [envVar, plan, cycle, period, displayName]
@@ -35,7 +41,7 @@ const PLANS = [
 
 const out = []
 for (const [envVar, plan, cycle, period, name] of PLANS) {
-  const amount = base[plan][cycle] * 100
+  const amount = gstInclusivePaise(base[plan][cycle])
   try {
     const created = await razorpay.plans.create({
       period,
@@ -44,7 +50,7 @@ for (const [envVar, plan, cycle, period, name] of PLANS) {
         name,
         amount,
         currency: 'INR',
-        description: name,
+        description: `${name} — incl. 18% GST`,
       },
     })
     console.log(`✓ ${name}: ${created.id}  (₹${(amount / 100).toFixed(2)})`)

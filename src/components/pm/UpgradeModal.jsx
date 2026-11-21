@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X, Sparkles, Loader2, AlertCircle, Check, Minus } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
-import { openRazorpayCheckout, PLAN_PRICING } from '../../lib/razorpayService'
+import { openRazorpayCheckout, PLAN_PRICING, priceBreakdown } from '../../lib/razorpayService'
 import useLockBodyScroll from '../../hooks/useLockBodyScroll'
 
 // Feature comparison table: [label, free, pro, team]
@@ -79,7 +79,9 @@ export default function UpgradeModal({ onClose, onUpgraded, reason, currentPlan 
 
   const isAnnual = billingCycle === 'annual'
   const fmt = (n) => `₹${n.toLocaleString('en-IN')}`
+  const fmt2 = (n) => `₹${n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
   const priceFor = (planKey) => fmt(PLAN_PRICING[planKey][billingCycle])
+  const totalFor = (planKey) => fmt2(priceBreakdown(planKey, billingCycle).total)
 
   const handleUpgrade = (planKey) => {
     setError('')
@@ -168,6 +170,7 @@ export default function UpgradeModal({ onClose, onUpgraded, reason, currentPlan 
                 <p className={`text-[10px] font-semibold mb-0.5 ${currentPlan === 'pro' ? 'text-violet-400' : 'text-black/50'}`}>Pro</p>
                 <p className={`font-display font-extrabold text-xs ${currentPlan === 'pro' ? 'text-white' : 'text-black'}`}>{priceFor('pro')}</p>
                 <p className={`text-[9px] ${currentPlan === 'pro' ? 'text-white/30' : 'text-black/40'}`}>{isAnnual ? '/year' : '/month'}</p>
+                <p className={`text-[8px] leading-tight mt-0.5 ${currentPlan === 'pro' ? 'text-white/30' : 'text-black/40'}`}>+18% GST<br />= {totalFor('pro')}</p>
                 {currentPlan === 'pro' ? (
                   <div className="mt-2 py-1 rounded-lg bg-violet-500/15 text-[9px] text-violet-400 font-semibold">
                     Current plan
@@ -187,6 +190,7 @@ export default function UpgradeModal({ onClose, onUpgraded, reason, currentPlan 
                 <p className={`text-[10px] font-semibold mb-0.5 ${currentPlan === 'team' ? 'text-violet-400' : 'text-white/40'}`}>Team</p>
                 <p className="font-display font-extrabold text-xs text-white">{priceFor('team')}</p>
                 <p className="text-[9px] text-white/30">{isAnnual ? '/year' : '/month'}</p>
+                <p className="text-[8px] leading-tight mt-0.5 text-white/30">+18% GST<br />= {totalFor('team')}</p>
                 {currentPlan === 'team' ? (
                   <div className="mt-2 py-1 rounded-lg bg-violet-500/15 text-[9px] text-violet-400 font-semibold">
                     Current plan
@@ -236,7 +240,7 @@ export default function UpgradeModal({ onClose, onUpgraded, reason, currentPlan 
             )}
 
             <p className="text-center text-[10px] text-white/20">
-              Secured by Razorpay · One-time payment · No auto-renew
+              Secured by Razorpay · One-time payment · No auto-renew · Incl. 18% GST
             </p>
           </div>
         </div>

@@ -42,7 +42,7 @@ export default function InvoiceGenerator() {
   const [agencyName, setAgencyName] = useState('Vikku Labs')
   const [currency, setCurrency] = useState('INR')
   const [notes, setNotes] = useState('')
-  const [chargeGst, setChargeGst] = useState(false)
+  const [chargeGst, setChargeGst] = useState(true)
   const [lines, setLines] = useState([])
   const [saving, setSaving] = useState(false)
   const [savedMsg, setSavedMsg] = useState('')
@@ -411,7 +411,7 @@ export default function InvoiceGenerator() {
             {currency === 'INR' && (
               <label className="flex items-center gap-2 text-xs text-white/50">
                 <input type="checkbox" checked={chargeGst} onChange={e => setChargeGst(e.target.checked)} />
-                Add GST (18%), only if GST registered
+                Add GST (18%)
               </label>
             )}
             {gst > 0 && (
