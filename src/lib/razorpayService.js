@@ -1,6 +1,7 @@
 import { supabase } from './supabaseClient'
 
-// Prices in rupees. Vikku Labs is not GST registered, so no tax is added. api/verify-payment.js mirrors these.
+// Prices in rupees. Vikku Labs is not GST registered, so no tax is added. api/_billing.js mirrors these;
+// the server charges its own copy, so changing only this one changes what's shown, not what's charged.
 export const PLAN_PRICING = {
   pro:  { monthly: 299, annual: 2999 },
   team: { monthly: 999, annual: 9999 },
@@ -42,6 +43,9 @@ export async function openRazorpayCheckout({ plan, billingCycle = 'monthly', mod
 
   const cycle = billingCycle === 'annual' ? 'annual' : 'monthly'
   const totalPaise = PLAN_PRICING[plan][cycle] * 100
+  // Every payment endpoint needs the signed-in user: the order or subscription is tied to this account.
+  const { data: { session } } = await supabase.auth.getSession()
+  const auth = { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token || ''}` }
 
   // ── Try an auto-renewing subscription first ──────────────────────────────
   // Needs Razorpay Plan IDs configured server-side. If not configured, the
@@ -53,8 +57,8 @@ export async function openRazorpayCheckout({ plan, billingCycle = 'monthly', mod
     try {
       const res = await fetch('/api/create-subscription', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan, billingCycle: cycle, email: user?.email || '' }),
+        headers: auth,
+        body: JSON.stringify({ plan, billingCycle: cycle }),
       })
       if (res.ok) {
         const data = await res.json()
@@ -71,12 +75,8 @@ export async function openRazorpayCheckout({ plan, billingCycle = 'monthly', mod
     try {
       const res = await fetch('/api/create-order', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: totalPaise,
-          currency: 'INR',
-          receipt: `sub_${plan}_${cycle}_${Date.now()}`,
-        }),
+        headers: auth,
+        body: JSON.stringify({ plan, billingCycle: cycle }),
       })
       if (res.ok) {
         const data = await res.json()
@@ -106,20 +106,16 @@ export async function openRazorpayCheckout({ plan, billingCycle = 'monthly', mod
       : { amount: totalPaise, currency: 'INR', order_id: orderId }),
     handler: async (response) => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
-        const token = session?.access_token || ''
-        // The server verifies the signature + amount and grants the plan with
+        // The server verifies the signature, the buyer and the amount and grants the plan with
         // the service-role key. The client never writes the subscription itself.
         const verifyRes = await fetch('/api/verify-payment', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          headers: auth,
           body: JSON.stringify({
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_order_id: response.razorpay_order_id,
             razorpay_subscription_id: response.razorpay_subscription_id,
             razorpay_signature: response.razorpay_signature,
-            plan,
-            billingCycle: cycle,
           }),
         })
         const verifyData = await verifyRes.json()
@@ -175,7 +171,7 @@ export async function cancelSubscription(userId) {
   // Reading own subscription is allowed by RLS
   const { data: sub } = await supabase
     .from('user_subscriptions')
-    .select('current_period_end, razorpay_subscription_id')
+    .select('current_period_end')
     .eq('user_id', userId)
     .single()
 
@@ -184,7 +180,7 @@ export async function cancelSubscription(userId) {
   const res = await fetch('/api/cancel-subscription', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-    body: JSON.stringify({ subscription_id: sub?.razorpay_subscription_id || null }),
+    body: '{}',
   })
   if (!res.ok) {
     const data = await res.json().catch(() => ({}))

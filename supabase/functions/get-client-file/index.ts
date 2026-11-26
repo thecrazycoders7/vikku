@@ -6,7 +6,7 @@ function corsHeaders(req: Request) {
   return {
     'Access-Control-Allow-Origin': new Set(['https://vikku.in', 'https://www.vikku.in']).has(origin) ? origin : 'https://www.vikku.in',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-share-pin',
     'Vary': 'Origin',
   }
 }
@@ -39,6 +39,15 @@ serve(async (req) => {
 
     if (!project) {
       return new Response(JSON.stringify({ error: 'Invalid share token' }), {
+        status: 403, headers: { ...corsHeaders(req), 'Content-Type': 'application/json' },
+      })
+    }
+
+    // A project with a share PIN only hands out files with the right PIN (pm_share_pin_ok,
+    // supabase/migrations/20261126_security_fixes.sql, also limits wrong guesses).
+    const { data: pinOk, error: pinError } = await sb.rpc('pm_share_pin_ok', { p_token: shareToken, p_pin: req.headers.get('x-share-pin') })
+    if (pinError || !pinOk) {
+      return new Response(JSON.stringify({ error: 'PIN required' }), {
         status: 403, headers: { ...corsHeaders(req), 'Content-Type': 'application/json' },
       })
     }

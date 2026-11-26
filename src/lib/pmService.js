@@ -54,11 +54,16 @@ export async function getProject(idOrSlug) {
 
 // Public client-share reads go through SECURITY DEFINER RPCs (get_shared_*),
 // because the pm_* tables are locked to owner/members by RLS. The RPCs only
-// ever return rows for the project matching the share token.
+// ever return rows for the project matching the share token, and only with the
+// right PIN when the project has one (checked in the database, not here).
+let sharePin = null
+export const setSharePin = (pin) => { sharePin = pin || null }
+export const getSharePin = () => sharePin
+
 export async function getProjectByToken(token) {
   if (!supabase) return null
   try {
-    const { data, error } = await supabase.rpc('get_shared_project', { p_token: token })
+    const { data, error } = await supabase.rpc('get_shared_project', { p_token: token, p_pin: sharePin })
     if (error || !data) return null
     return data // already { ...project (no share_pin), has_share_pin }
   } catch (err) {
@@ -69,21 +74,21 @@ export async function getProjectByToken(token) {
 
 export async function getSharedTasks(token) {
   if (!supabase) return []
-  const { data, error } = await supabase.rpc('get_shared_tasks', { p_token: token })
+  const { data, error } = await supabase.rpc('get_shared_tasks', { p_token: token, p_pin: sharePin })
   if (error) { console.error('getSharedTasks:', error.message); return [] }
   return data || []
 }
 
 export async function getSharedMilestones(token) {
   if (!supabase) return []
-  const { data, error } = await supabase.rpc('get_shared_milestones', { p_token: token })
+  const { data, error } = await supabase.rpc('get_shared_milestones', { p_token: token, p_pin: sharePin })
   if (error) { console.error('getSharedMilestones:', error.message); return [] }
   return data || []
 }
 
 export async function getSharedComments(token) {
   if (!supabase) return []
-  const { data, error } = await supabase.rpc('get_shared_comments', { p_token: token })
+  const { data, error } = await supabase.rpc('get_shared_comments', { p_token: token, p_pin: sharePin })
   if (error) { console.error('getSharedComments:', error.message); return [] }
   return data || []
 }
@@ -91,7 +96,7 @@ export async function getSharedComments(token) {
 export async function addSharedComment(token, authorName, content) {
   if (!supabase) throw new Error('Database not configured')
   const { data, error } = await supabase.rpc('add_shared_comment', {
-    p_token: token, p_author: authorName, p_content: content,
+    p_token: token, p_author: authorName, p_content: content, p_pin: sharePin,
   })
   if (error) throw error
   return data
@@ -100,7 +105,7 @@ export async function addSharedComment(token, authorName, content) {
 export async function approveMilestoneAsClient(milestoneId, token, status, note = null) {
   if (!supabase) throw new Error('Database not configured')
   const { data, error } = await supabase.rpc('approve_milestone_client', {
-    p_milestone_id: milestoneId, p_token: token, p_status: status, p_note: note,
+    p_milestone_id: milestoneId, p_token: token, p_status: status, p_note: note, p_pin: sharePin,
   })
   if (error) throw error
   return data
@@ -856,7 +861,7 @@ export async function verifySharePin(token, pin) {
 export async function approveTaskAsClient(taskId, shareToken, status, note = null) {
   if (!supabase) throw new Error('Database not configured')
   const { data, error } = await supabase.rpc('approve_task_client', {
-    p_task_id: taskId, p_share_token: shareToken, p_status: status, p_note: note,
+    p_task_id: taskId, p_share_token: shareToken, p_status: status, p_note: note, p_pin: sharePin,
   })
   if (error) throw error
   return data

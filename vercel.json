@@ -11,7 +11,7 @@
       "destination": "/api/og/:shareId"
     },
     {
-      "source": "/(login|signup|forgot-password|reset-password|account|payment-demo|vibelevel)",
+      "source": "/(login|signup|forgot-password|reset-password|account|vibelevel)",
       "destination": "/app.html"
     },
     {

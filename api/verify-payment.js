@@ -1,110 +1,68 @@
-import crypto from 'crypto'
 import Razorpay from 'razorpay'
 import { adminClient, callerOf } from './_auth.js'
+import { hmac, safeEqual, checkOrderPayment, checkSubscription } from './_billing.js'
 
-// Price floor per plan/cycle in rupees — mirrors PLAN_PRICING in src/lib/razorpayService.js
-const BASE = {
-  pro:  { monthly: 299, annual: 2999 },
-  team: { monthly: 999, annual: 9999 },
-}
-const expectedPaise = (plan, cycle) => (BASE[plan]?.[cycle] ?? 0) * 100
-
+// Confirms a Razorpay checkout and grants the plan. The signature proves Razorpay sent the ids; the
+// plan and the buyer come from the order or subscription notes written by create-order /
+// create-subscription, so a payment can't be replayed on another account or upgraded to a bigger plan.
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
-  }
+  if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
 
-  // ── 0. Authenticate caller via Supabase JWT ──────────────────────────────
   const admin = adminClient()
-  if (!admin) {
-    return res.status(500).json({ success: false, error: 'Server misconfigured' })
-  }
-  const caller = await callerOf(req, admin)
-  if (!caller) {
-    return res.status(401).json({ success: false, error: 'Unauthorized' })
-  }
-
-  const {
-    razorpay_order_id,
-    razorpay_payment_id,
-    razorpay_signature,
-    razorpay_subscription_id,
-    plan,
-    billingCycle,
-  } = req.body || {}
-
-  // Use the verified caller's id — never trust userId from the body
-  const userId = caller.id
-
-  const secret = process.env.RAZORPAY_KEY_SECRET
-  if (!secret) {
-    return res.status(500).json({ success: false, error: 'Server misconfigured' })
-  }
-  if (!razorpay_payment_id || !razorpay_signature) {
-    return res.status(400).json({ success: false, error: 'Missing required fields' })
-  }
-
-  // ── 1. Verify the signature ──────────────────────────────────────────────
-  // Subscription:  HMAC(payment_id | subscription_id)
-  // One-time order: HMAC(order_id | payment_id)
-  const isSubscription = !!razorpay_subscription_id
-  let body
-  if (isSubscription) body = `${razorpay_payment_id}|${razorpay_subscription_id}`
-  else if (razorpay_order_id) body = `${razorpay_order_id}|${razorpay_payment_id}`
-  else return res.status(400).json({ success: false, error: 'Missing order or subscription id' })
-
-  const expectedSig = crypto.createHmac('sha256', secret).update(body).digest('hex')
-  if (expectedSig !== razorpay_signature) {
-    return res.status(400).json({ success: false, error: 'Invalid payment signature' })
-  }
-
-  // ── 2. Validate plan + user ──────────────────────────────────────────────
-  const cycle = billingCycle === 'annual' ? 'annual' : 'monthly'
-  if (!BASE[plan] || !userId) {
-    return res.status(400).json({ success: false, error: 'Missing plan or user' })
-  }
-
   const keyId = process.env.RAZORPAY_KEY_ID
+  const secret = process.env.RAZORPAY_KEY_SECRET
+  if (!admin || !keyId || !secret) return res.status(500).json({ success: false, error: 'Server misconfigured' })
 
-  // ── 3. Verify the amount actually paid (blocks ₹1-for-Team forgery) ───────
-  // Subscriptions are fixed by their Razorpay Plan, so only the one-time
-  // order path needs an explicit amount check.
-  if (!isSubscription && keyId) {
-    try {
-      const razorpay = new Razorpay({ key_id: keyId, key_secret: secret })
-      const payment = await razorpay.payments.fetch(razorpay_payment_id)
-      const paid = Number(payment?.amount || 0)
-      const okStatus = ['captured', 'authorized'].includes(payment?.status)
-      if (!okStatus || paid < expectedPaise(plan, cycle)) {
-        return res.status(400).json({ success: false, error: 'Payment amount mismatch' })
-      }
-    } catch (err) {
-      console.error('payment fetch failed:', err)
-      return res.status(502).json({ success: false, error: 'Could not verify payment with gateway' })
+  const caller = await callerOf(req, admin)
+  if (!caller) return res.status(401).json({ success: false, error: 'Unauthorized' })
+
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, razorpay_subscription_id } = req.body || {}
+  if (!razorpay_payment_id || !razorpay_signature) return res.status(400).json({ success: false, error: 'Missing required fields' })
+
+  // Subscription: HMAC(payment_id | subscription_id). One-time order: HMAC(order_id | payment_id).
+  const isSubscription = !!razorpay_subscription_id
+  if (!isSubscription && !razorpay_order_id) return res.status(400).json({ success: false, error: 'Missing order or subscription id' })
+  const signed = isSubscription ? `${razorpay_payment_id}|${razorpay_subscription_id}` : `${razorpay_order_id}|${razorpay_payment_id}`
+  if (!safeEqual(hmac(secret, signed), razorpay_signature)) return res.status(400).json({ success: false, error: 'Invalid payment signature' })
+
+  let check
+  try {
+    const razorpay = new Razorpay({ key_id: keyId, key_secret: secret })
+    if (isSubscription) {
+      check = checkSubscription({ userId: caller.id, sub: await razorpay.subscriptions.fetch(razorpay_subscription_id) })
+    } else {
+      const [order, payment] = await Promise.all([razorpay.orders.fetch(razorpay_order_id), razorpay.payments.fetch(razorpay_payment_id)])
+      check = checkOrderPayment({ userId: caller.id, order, payment, nowS: Math.floor(Date.now() / 1000) })
     }
+  } catch (err) {
+    console.error('Razorpay lookup failed:', err)
+    return res.status(502).json({ success: false, error: 'Could not verify payment with gateway' })
   }
+  if (!check.ok) return res.status(400).json({ success: false, error: check.error })
 
-  // ── 4. Grant the plan server-side (clients can't write this table) ────────
+  // Already applied (a retry or a replay): don't push the period end out again.
+  const { data: current } = await admin.from('user_subscriptions').select('razorpay_payment_id').eq('user_id', caller.id).maybeSingle()
+  if (current?.razorpay_payment_id === razorpay_payment_id) return res.status(200).json({ success: true })
+
   const periodEnd = new Date()
-  if (cycle === 'annual') periodEnd.setFullYear(periodEnd.getFullYear() + 1)
+  if (check.cycle === 'annual') periodEnd.setFullYear(periodEnd.getFullYear() + 1)
   else periodEnd.setMonth(periodEnd.getMonth() + 1)
 
   const row = {
-    user_id: userId,
-    plan,
-    billing_cycle: cycle,
+    user_id: caller.id,
+    plan: check.plan,
+    billing_cycle: check.cycle,
     razorpay_payment_id,
     status: 'active',
     current_period_end: periodEnd.toISOString(),
     updated_at: new Date().toISOString(),
   }
-  if (razorpay_subscription_id) row.razorpay_subscription_id = razorpay_subscription_id
+  if (isSubscription) row.razorpay_subscription_id = razorpay_subscription_id
 
   const { error } = await admin.from('user_subscriptions').upsert(row, { onConflict: 'user_id' })
   if (error) {
     console.error('subscription grant failed:', error)
     return res.status(500).json({ success: false, error: 'Failed to activate subscription' })
   }
-
   return res.status(200).json({ success: true })
 }

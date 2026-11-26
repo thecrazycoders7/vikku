@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CheckCircle2, Circle, Clock, Flag, ThumbsUp, ThumbsDown, MessageSquare, Send, Loader2, Lock, Paperclip, Download, File, FileImage, FileText } from 'lucide-react'
-import { getProjectByToken, getSharedTasks, getSharedMilestones, approveMilestoneAsClient, getSharedComments, addSharedComment, verifySharePin, approveTaskAsClient } from '../../lib/pmService'
+import { getProjectByToken, getSharedTasks, getSharedMilestones, approveMilestoneAsClient, getSharedComments, addSharedComment, verifySharePin, approveTaskAsClient, setSharePin, getSharePin } from '../../lib/pmService'
 import { notifyClientComment, notifyClientApproval, notifyMilestoneApproval, insertPmNotification } from '../../lib/notificationService'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const pinHeaders = () => (getSharePin() ? { 'x-share-pin': getSharePin() } : {})
 
 function ClientFileIcon({ mime }) {
   if (mime?.startsWith('image/')) return <FileImage size={13} className="text-blue-400 flex-shrink-0" />
@@ -24,7 +25,7 @@ function ClientFiles({ shareToken, projectId }) {
     // We fetch using the service-role edge function.
     const load = async () => {
       try {
-        const res = await fetch(`${SUPABASE_URL}/functions/v1/get-client-file?share_token=${shareToken}&list=1`)
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/get-client-file?share_token=${shareToken}&list=1`, { headers: pinHeaders() })
         if (res.ok) {
           const data = await res.json()
           setFiles(data.files || [])
@@ -38,7 +39,7 @@ function ClientFiles({ shareToken, projectId }) {
   const handleDownload = async (fileId, fileName) => {
     setDownloading(fileId)
     try {
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/get-client-file?share_token=${shareToken}&file_id=${fileId}`)
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/get-client-file?share_token=${shareToken}&file_id=${fileId}`, { headers: pinHeaders() })
       if (res.ok) {
         const { url } = await res.json()
         if (url) window.open(url, '_blank')
@@ -407,6 +408,7 @@ export default function ClientView() {
 
   useEffect(() => {
     async function load() {
+      setSharePin(null) // a PIN typed for another share link must not carry over
       const p = await getProjectByToken(token)
       if (!p) { setNotFound(true); setLoading(false); return }
       setProject(p)
@@ -427,13 +429,17 @@ export default function ClientView() {
     try {
       const ok = await verifySharePin(token, pinInput.trim())
       if (ok) {
+        // The database only returns project contents with the PIN, so keep it for every later call.
+        setSharePin(pinInput.trim())
+        const full = await getProjectByToken(token)
+        if (full) setProject(full)
         await loadProjectData(project.id)
         setPinVerified(true)
       } else {
         setPinError('Incorrect PIN. Please try again.')
       }
-    } catch {
-      setPinError('Something went wrong. Please try again.')
+    } catch (err) {
+      setPinError(/too many attempts/.test(err?.message || '') ? 'Too many wrong PINs. Try again in 15 minutes.' : 'Something went wrong. Please try again.')
     }
     setPinChecking(false)
   }
