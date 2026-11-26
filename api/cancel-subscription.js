@@ -19,7 +19,13 @@ export default async function handler(req, res) {
     }
     const userId = caller.id;
 
-    const { subscription_id } = req.body || {};
+    // Only the caller's own subscription, as stored when it was granted - never an id from the request.
+    const { data: own } = await admin
+      .from('user_subscriptions')
+      .select('razorpay_subscription_id')
+      .eq('user_id', userId)
+      .maybeSingle();
+    const subscription_id = own?.razorpay_subscription_id;
 
     // Stop auto-renewal at Razorpay (best-effort; access stays until period end)
     if (subscription_id && process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {

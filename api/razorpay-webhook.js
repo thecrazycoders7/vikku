@@ -1,8 +1,17 @@
-import crypto from 'crypto'
 import { createClient } from '@supabase/supabase-js'
+import { hmac, safeEqual } from './_billing.js'
+
+// The signature covers the exact bytes Razorpay sent, so read the raw body rather than a re-serialised object.
+export const config = { api: { bodyParser: false } }
+
+async function rawBody(req) {
+  const chunks = []
+  for await (const chunk of req) chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk)
+  return Buffer.concat(chunks).toString('utf8')
+}
 
 const supabase = createClient(
-  process.env.SUPABASE_URL,
+  process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 )
 
@@ -16,15 +25,14 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Webhook secret not configured' })
   }
 
-  const signature = req.headers['x-razorpay-signature']
-  const body = JSON.stringify(req.body)
-  const expectedSig = crypto.createHmac('sha256', secret).update(body).digest('hex')
-
-  if (signature !== expectedSig) {
+  const raw = await rawBody(req)
+  if (!safeEqual(hmac(secret, raw), req.headers['x-razorpay-signature'])) {
     return res.status(400).json({ error: 'Invalid signature' })
   }
 
-  const { event, payload } = req.body
+  let event, payload
+  try { ({ event, payload } = JSON.parse(raw)) }
+  catch { return res.status(400).json({ error: 'Invalid JSON' }) }
 
   try {
     if (event === 'subscription.charged') {

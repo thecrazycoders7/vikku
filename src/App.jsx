@@ -47,7 +47,6 @@ const JoinProject           = lazy(() => import('./pages/pm/JoinProject'))
 const ReferralPage          = lazy(() => import('./pages/pm/ReferralPage'))
 const InvoiceGenerator      = lazy(() => import('./pages/pm/InvoiceGenerator'))
 const PublicShowcase        = lazy(() => import('./pages/pm/PublicShowcase'))
-const PaymentDemo            = lazy(() => import('./pages/PaymentDemo'))
 const VibeLevel              = lazy(() => import('./pages/VibeLevel'))
 const PrivacyPolicy          = lazy(() => import('./pages/PrivacyPolicy'))
 const TermsOfService         = lazy(() => import('./pages/TermsOfService'))
@@ -158,7 +157,6 @@ export default function App() {
               <Route path="/pm/refer"                       element={<ReferralPage />} />
               <Route path="/pm/projects/:id/invoice"    element={<InvoiceGenerator />} />
               <Route path="/showcase/:token"            element={<PublicShowcase />} />
-              <Route path="/payment-demo"            element={<PaymentDemo />} />
               <Route path="/vibelevel"               element={<VibeLevel />} />
               <Route path="/privacy"                 element={<PrivacyPolicy />} />
               <Route path="/terms"                   element={<TermsOfService />} />
