@@ -1,6 +1,6 @@
 import Razorpay from 'razorpay'
 import { adminClient, callerOf } from './_auth.js'
-import { hmac, safeEqual, checkOrderPayment, checkSubscription } from './_billing.js'
+import { hmac, safeEqual, checkOrderPayment, checkSubscription, razorpayKeys } from './_billing.js'
 
 // Confirms a Razorpay checkout and grants the plan. The signature proves Razorpay sent the ids; the
 // plan and the buyer come from the order or subscription notes written by create-order /
@@ -9,8 +9,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
 
   const admin = adminClient()
-  const keyId = process.env.RAZORPAY_KEY_ID
-  const secret = process.env.RAZORPAY_KEY_SECRET
+  const { key_id: keyId, key_secret: secret } = razorpayKeys()
   if (!admin || !keyId || !secret) return res.status(500).json({ success: false, error: 'Server misconfigured' })
 
   const caller = await callerOf(req, admin)

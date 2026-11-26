@@ -1,5 +1,6 @@
 import Razorpay from 'razorpay';
 import { adminClient, callerOf } from './_auth.js';
+import { razorpayKeys } from './_billing.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -28,12 +29,10 @@ export default async function handler(req, res) {
     const subscription_id = own?.razorpay_subscription_id;
 
     // Stop auto-renewal at Razorpay (best-effort; access stays until period end)
-    if (subscription_id && process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+    const keys = razorpayKeys();
+    if (subscription_id && keys.key_id && keys.key_secret) {
       try {
-        const razorpay = new Razorpay({
-          key_id: process.env.RAZORPAY_KEY_ID,
-          key_secret: process.env.RAZORPAY_KEY_SECRET,
-        });
+        const razorpay = new Razorpay(keys);
         await razorpay.subscriptions.cancel(subscription_id, true); // cancel at cycle end
       } catch (err) {
         console.error('Razorpay cancel failed (continuing):', err?.message);
