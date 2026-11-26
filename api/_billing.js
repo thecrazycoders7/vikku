@@ -26,6 +26,12 @@ export function safeEqual(a, b) {
   return x.length === y.length && crypto.timingSafeEqual(x, y)
 }
 
+// The key id is public (the browser has it as VITE_RAZORPAY_KEY_ID), so fall back to that copy.
+export const razorpayKeys = (env = process.env) => ({
+  key_id: env.RAZORPAY_KEY_ID || env.VITE_RAZORPAY_KEY_ID,
+  key_secret: env.RAZORPAY_KEY_SECRET,
+})
+
 export const hmac = (secret, body) => crypto.createHmac('sha256', secret).update(body).digest('hex')
 
 const MAX_PAYMENT_AGE_S = 24 * 3600 // verify runs right after checkout; an old payment is a replay

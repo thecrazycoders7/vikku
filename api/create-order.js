@@ -1,6 +1,6 @@
 import Razorpay from 'razorpay'
 import { adminClient, callerOf } from './_auth.js'
-import { planOf, pricePaise } from './_billing.js'
+import { planOf, pricePaise, razorpayKeys } from './_billing.js'
 
 // One-time order for a Vikku PM plan. The price comes from the plan, never the browser, and the buyer
 // and plan are written into the order's notes so verify-payment can only apply it to this account.
@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   if (!p) return res.status(400).json({ error: 'Unknown plan' })
 
   try {
-    const razorpay = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET })
+    const razorpay = new Razorpay(razorpayKeys())
     const order = await razorpay.orders.create({
       amount: pricePaise(p),
       currency: 'INR',

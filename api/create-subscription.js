@@ -1,6 +1,6 @@
 import Razorpay from 'razorpay'
 import { adminClient, callerOf } from './_auth.js'
-import { planOf, planIdFor } from './_billing.js'
+import { planOf, planIdFor, razorpayKeys } from './_billing.js'
 
 // Auto-renewing subscription for a Vikku PM plan. Needs the RAZORPAY_PLAN_* ids in Vercel; without one
 // it answers { configured: false } and the browser falls back to a one-time order.
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   if (!caller) return res.status(401).json({ error: 'Please sign in to upgrade.' })
 
   try {
-    const razorpay = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET })
+    const razorpay = new Razorpay(razorpayKeys())
     const subscription = await razorpay.subscriptions.create({
       plan_id: planId,
       total_count: p.cycle === 'annual' ? 10 : 120, // ~10 years, i.e. renews until cancelled
